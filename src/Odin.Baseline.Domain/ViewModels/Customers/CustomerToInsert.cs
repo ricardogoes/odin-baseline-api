@@ -6,5 +6,7 @@ namespace Odin.Baseline.Domain.ViewModels.Customers
     {
         [Required(ErrorMessage = "Name required")]
         public string Name { get; set; }
+
+        public string Document { get; set; }
     }
 }

@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Odin.Baseline.Api;
 using Odin.Baseline.Api.Attributes;
 using Odin.Baseline.Api.IoC;
 using Odin.Baseline.Crosscutting.AutoMapper;
+using Odin.Baseline.Data.Persistence;
 using Odin.Baseline.Domain.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +17,15 @@ var appSettings = new AppSettings
     AWSCognitoSettings = new AWSCognitoSettings
     {
         CognitoAuthorityUrl = Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__CognitoAuthorityUrl")
-    }
+    },
+    ConnectionStrings = new ConnectionStrings
+    {
+        OdinBaselineDB = Environment.GetEnvironmentVariable("OdinSettings__ConnectionStrings__OdinBaselineDB")
+    },
+    CancellationTokenTimeout = builder.Configuration.GetSection("CancellationTokenTimeout").Get<int>()
 };
+
+builder.Services.AddDbContext<OdinBaselineDbContext>(options => options.UseNpgsql(appSettings.ConnectionStrings.OdinBaselineDB));
 
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(MappingConfiguration));

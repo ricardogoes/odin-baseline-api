@@ -6,12 +6,21 @@ namespace Odin.Baseline.Api.Controllers
     [Produces("application/json")]
     public abstract class BaseController : ControllerBase
     {
-        private readonly ILogger _logger;
-        
-        public BaseController(
-            ILogger logger)
+        public readonly ILogger _logger; 
+        public readonly CancellationToken _cancellationToken;
+        public readonly string _loggedUsername;
+
+
+
+        public BaseController(AppSettings appSettings, ILogger logger)
         {
             _logger = logger;
+            _loggedUsername = User.Claims.Where(x => x.Type == "cognito:username").FirstOrDefault().Value;
+
+            var tokenSource = new CancellationTokenSource();
+            tokenSource.CancelAfter(appSettings.CancellationTokenTimeout);
+
+            _cancellationToken = tokenSource.Token;
         }
 
         protected IActionResult HandleError(Exception ex)

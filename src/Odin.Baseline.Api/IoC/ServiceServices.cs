@@ -12,7 +12,11 @@ namespace Odin.Baseline.Api.IoC
 
         protected override void Scoped(IServiceCollection services)
         {
+            services.AddScoped<ICompaniesPositionsService, CompaniesPositionsService>(); 
             services.AddScoped<ICustomersService, CustomersService>();
+            services.AddScoped<IDepartmentsService, DepartmentsService>();
+            services.AddScoped<IEmployeesService, EmployeesService>();
+
             base.Scoped(services);
         }
     }

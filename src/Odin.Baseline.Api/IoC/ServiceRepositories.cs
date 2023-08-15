@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Data.Repositories;
+﻿using Odin.Baseline.Data.Helpers;
+using Odin.Baseline.Data.Repositories;
 using Odin.Baseline.Domain.Interfaces.Repositories;
 
 namespace Odin.Baseline.Api.IoC
@@ -12,7 +13,9 @@ namespace Odin.Baseline.Api.IoC
 
         protected override void Scoped(IServiceCollection services)
         {
-            services.AddScoped<ICustomersRepository, CustomersRepository>();
+            services.AddScoped<IRepository, Repository>();
+            services.AddScoped<ISortHelper, SortHelper>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             base.Scoped(services);
         }
     }

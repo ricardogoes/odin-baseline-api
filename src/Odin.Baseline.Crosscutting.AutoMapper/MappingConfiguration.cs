@@ -9,7 +9,10 @@ namespace Odin.Baseline.Crosscutting.AutoMapper
         {
             var mapperConfig = new MapperConfiguration(x =>
             {
+                x.AddProfile<CompaniesPositionsProfile>();
                 x.AddProfile<CustomersProfile>();
+                x.AddProfile<DepartmentsProfile>();
+                x.AddProfile<EmployeesProfile>();
             });
 
             return mapperConfig.CreateMapper();
