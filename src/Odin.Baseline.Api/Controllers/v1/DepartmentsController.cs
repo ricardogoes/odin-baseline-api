@@ -1,148 +1,136 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Odin.Baseline.Api.Attributes;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Odin.Baseline.Api.Models;
+using Odin.Baseline.Application.Departments.ChangeStatusDepartment;
+using Odin.Baseline.Application.Departments.Common;
+using Odin.Baseline.Application.Departments.CreateDepartment;
+using Odin.Baseline.Application.Departments.GetDepartmentById;
+using Odin.Baseline.Application.Departments.UpdateDepartment;
+using Odin.Baseline.Application.Employees.Common;
+using Odin.Baseline.Application.Employees.GetEmployees;
 using Odin.Baseline.Domain.CustomExceptions;
-using Odin.Baseline.Domain.Interfaces.Services;
-using Odin.Baseline.Domain.Models;
-using Odin.Baseline.Domain.QueryModels;
-using Odin.Baseline.Domain.ViewModels.Departments;
+using Odin.Baseline.Domain.Enums;
 
 namespace Odin.Baseline.Api.Controllers.v1
 {
     [ApiController]
-    //[Authorize]
+    [Authorize]
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/departments")]
-    public class DepartmentsController : BaseController
+    [Route("v{version:apiVersion}/departments")]
+    public class DepartmentsController : ControllerBase
     {
-        private readonly IDepartmentsService _departmentsService;
-        private readonly IEmployeesService _employeesService;
+        private readonly IMediator _mediator;
 
-        public DepartmentsController(AppSettings appSettings, IDepartmentsService departmentsService, IEmployeesService employeesService,
-            ILogger<DepartmentsController> logger)
-            : base(appSettings, logger)
+        public DepartmentsController(IMediator mediator)
         {
-            _departmentsService = departmentsService ?? throw new ArgumentNullException(nameof(departmentsService));
-            _employeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
+            _mediator = mediator;
         }
 
-        [HttpGet("{departmentId}")]
-        public async Task<IActionResult> GetDepartmentByIdAsync(int departmentId)
+        [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(DepartmentOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
         {
-            try
-            {
-                if (departmentId <= 0)
-                    throw new BadRequestException("Invalid request");
+            if (id == Guid.Empty)
+                throw new BadRequestException("Invalid request");
 
-                var department = await _departmentsService.GetByIdAsync(departmentId, _cancellationToken);
-                if (department is null)
-                    throw new NotFoundException("Department not found");
+            var department = await _mediator.Send(new GetDepartmentByIdInput { Id = id }, cancellationToken);
 
-                return Ok(new ApiResponse(ApiResponseState.Success, department));
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return HandleError(ex);
-            }
+            return Ok(department);
         }
 
         [HttpPost]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> InsertDepartmentAsync([FromBody] DepartmentToInsert departmentToInsert)
+        [ProducesResponseType(typeof(DepartmentOutput), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Create([FromBody] CreateDepartmentInput input, CancellationToken cancellationToken)
         {
-            try
-            {
-                var departmentInserted = await _departmentsService.InsertAsync(departmentToInsert, _loggedUsername, _cancellationToken);
+            //TODO: Alterar quando auth estiver implementado
+            input.LoggedUsername = "ricardo.goes";
 
-                return CreatedAtAction(
-                    controllerName: "Departments",
-                    actionName: "GetDepartmentById",
-                    routeValues: new { departmentId = departmentInserted.DepartmentId },
-                    value: new ApiResponse(ApiResponseState.Success, departmentInserted));
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return HandleError(ex);
-            }
+            var departmentCreated = await _mediator.Send(input, cancellationToken);
+
+            return CreatedAtAction(
+                actionName: nameof(GetById),
+                routeValues: new { id = departmentCreated.Id },
+                value: departmentCreated);
         }
 
-        [HttpPut("{departmentId}")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> UpdateDepartmentAsync(int departmentId, [FromBody] DepartmentToUpdate departmentToUpdate)
+        [HttpPut("{id:guid}")]
+        [ProducesResponseType(typeof(DepartmentOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateDepartmentInput input, CancellationToken cancellationToken)
         {
-            try
-            {
-                if (departmentId <= 0 || departmentId != departmentToUpdate.DepartmentId)
-                    throw new BadRequestException("Invalid request");
+            if (id == Guid.Empty || id != input.Id)
+                throw new BadRequestException("Invalid request");
 
-                var departmentUpdated = await _departmentsService.UpdateAsync(departmentToUpdate, _loggedUsername, _cancellationToken);
+            //TODO: Alterar quando auth estiver implementado
+            input.LoggedUsername = "ricardo.goes";
 
-                return Ok(new ApiResponse(ApiResponseState.Success, departmentUpdated));
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return HandleError(ex);
-            }
+            var departmentUpdated = await _mediator.Send(input, cancellationToken);
+
+            return Ok(departmentUpdated);
         }
 
-        [HttpPut("{departmentId}/status")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> ChangeStatusDepartmentAsync(int departmentId)
+        [HttpPut("{id:guid}/status")]
+        [ProducesResponseType(typeof(DepartmentOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, [FromQuery] string action, CancellationToken cancellationToken)
         {
-            try
-            {
-                if (departmentId <= 0)
-                    throw new BadRequestException("Invalid request");
+            if (id == Guid.Empty || string.IsNullOrWhiteSpace(action))
+                throw new BadRequestException("Invalid request");
 
-                var departmentUpdated = await _departmentsService.ChangeStatusAsync(departmentId, _loggedUsername, _cancellationToken);
-                return Ok(new ApiResponse(ApiResponseState.Success, departmentUpdated));
-            }
-            catch (BadRequestException ex)
+            if (action.ToUpper() != "ACTIVATE" && action.ToUpper() != "DEACTIVATE")
+                throw new BadRequestException("Invalid action. Only ACTIVATE or DEACTIVATE values are allowed");
+
+            var departmentUpdated = await _mediator.Send(new ChangeStatusDepartmentInput
             {
-                return BadRequest(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return HandleError(ex);
-            }
+                Id = id,
+                Action = (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
+                LoggedUsername = "ricardo.goes" // TODO: Alterar quando auth estiver implementado
+            }, cancellationToken);
+
+            return Ok(departmentUpdated);
         }
 
-        [HttpGet("{departmentId}/employees")]
-        public async Task<IActionResult> GetEmployeesByDepartmentAsync(int departmentId, [FromQuery] EmployeesQueryModel queryData)
+        [HttpGet("{id:guid}/employees")]
+        [ProducesResponseType(typeof(DepartmentOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetEmployeesByDepartment([FromRoute] Guid id,
+            CancellationToken cancellationToken,
+            [FromQuery(Name = "page_number")] int? pageNumber = null,
+            [FromQuery(Name = "page_size")] int? pageSize = null,
+            [FromQuery(Name = "sort")] string? sort = null,
+            [FromQuery(Name = "first_name")] string? firstName = null,
+            [FromQuery(Name = "last_name")] string? lastName = null,
+            [FromQuery(Name = "document")] string? document = null,
+            [FromQuery(Name = "email")] string? email = null,
+            [FromQuery(Name = "is_active")] bool? isActive = null)
         {
-            try
-            {
-                if (departmentId <= 0)
-                    throw new BadRequestException("Invalid request");
+            if (id == Guid.Empty)
+                throw new BadRequestException("Invalid request");
 
-                var employees = await _employeesService.GetByDepartmentAsync(departmentId, queryData, _cancellationToken);
+            var input = new GetEmployeesInput
+            {
+                DepartmentId = id,
+                FirstName = firstName ?? "",
+                LastName = lastName ?? "",
+                Document = document ?? "",
+                Email = email ?? "",
+                IsActive = isActive,
+                PageNumber = pageNumber ?? 1,
+                PageSize = pageSize ?? 10,
+                Sort = sort
+            };
 
-                return Ok(new ApiResponse(ApiResponseState.Success, employees));
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return HandleError(ex);
-            }
+            var paginatedEmployees = await _mediator.Send(input, cancellationToken);
+            return Ok(new PaginatedApiResponse<EmployeeOutput>(paginatedEmployees));
         }
     }
 }

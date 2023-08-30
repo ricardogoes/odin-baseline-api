@@ -1,46 +1,88 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Odin.Baseline.Domain.SeedWork;
+using Odin.Baseline.Domain.Validations;
 
 namespace Odin.Baseline.Domain.Entities
 {
-    [Table("departments")]
-    public class Department
+    public class Department : Entity
     {
-        [Key]
-        [Column("department_id")]
-        public int DepartmentId { get; set; }
-
-        [Required]
-        [ForeignKey(nameof(Customer))]
-        [Column("customer_id")]
-        public int CustomerId { get; set; }
-
-        [Required]
-        [Column("name"), StringLength(255)]
+        public Guid CustomerId { get; private set; }
         public string Name { get; set; }
-
-        [Required]
-        [Column("is_active")]
         public bool IsActive { get; set; }
 
-        [Required]
-        [Column("created_by"), StringLength(255)]
-        public string CreatedBy { get; set; }
+        //TODO: Implementar loggedUsername
+        private const string LOGGED_USERNAME = "ricardo.goes";
 
-        [Required]
-        [Column("created_at")]
-        public DateTime CreatedAt { get; set; }
+        public Department(Guid id, Guid customerId, string name, bool isActive = true)
+            : base(id)
+        {
+            CustomerId = customerId;
+            Name = name;
+            IsActive = isActive;
 
-        [Required]
-        [Column("last_updated_by"), StringLength(255)] 
-        public string LastUpdatedBy { get; set; }
+            Validate();
+        }
 
-        [Required]
-        [Column("last_updated_at")] 
-        public DateTime LastUpdatedAt { get; set; }
+        public Department(Guid customerId, string name, bool isActive = true)
+        {
+            CustomerId = customerId;
+            Name = name;
+            IsActive = isActive;
 
-        public Customer Customer { get; set; } = null;
-        
-        public ICollection<Employee> Employees { get; set; } = null;
+            Validate();
+        }
+
+        public void Create(string loggedUsername = LOGGED_USERNAME)
+        {
+            CreatedAt = DateTime.UtcNow;
+            CreatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedAt = DateTime.UtcNow;
+            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+
+            Validate();
+        }
+
+        public void Update(string newName, Guid? newCustomerId = null, string loggedUsername = LOGGED_USERNAME)
+        {
+            CustomerId = newCustomerId ?? CustomerId;
+            Name = newName;
+            LastUpdatedAt = DateTime.UtcNow;
+            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+
+            Validate();
+        }
+
+        public void SetAuditLog(DateTime createdAt, string createdBy, DateTime lastUpdatedAt, string lastUpdatedBy)
+        {
+            CreatedAt = createdAt;
+            CreatedBy = createdBy;
+            LastUpdatedAt = lastUpdatedAt;
+            LastUpdatedBy = lastUpdatedBy;
+
+            Validate();
+        }
+
+        public void Activate(string loggedUsername = LOGGED_USERNAME)
+        {
+            IsActive = true;
+            LastUpdatedAt = DateTime.UtcNow;
+            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+
+            Validate();
+        }
+
+        public void Deactivate(string loggedUsername = LOGGED_USERNAME)
+        {
+            IsActive = false;
+            LastUpdatedAt = DateTime.UtcNow;
+            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+
+            Validate();
+        }
+
+        private void Validate()
+        {
+            DomainValidation.NotNullOrEmpty(CustomerId, nameof(CustomerId));
+            DomainValidation.NotNullOrEmpty(Name, nameof(Name));
+        }
     }
 }

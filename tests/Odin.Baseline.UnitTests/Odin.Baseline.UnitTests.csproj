@@ -3,34 +3,42 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Bogus" Version="34.0.2" />
-	  <PackageReference Include="FluentAssertions" Version="6.11.0" />
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-	  <PackageReference Include="Moq" Version="4.20.1" />
-	  <PackageReference Include="xunit" Version="2.5.0" />
-	  <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="7.0.6" />
-	  <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		  <PrivateAssets>all</PrivateAssets>
-	  </PackageReference>
-	  <PackageReference Include="coverlet.collector" Version="3.2.0">
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		  <PrivateAssets>all</PrivateAssets>
-	  </PackageReference>	  
+    <Compile Remove="TestResults\**" />
+    <EmbeddedResource Remove="TestResults\**" />
+    <None Remove="TestResults\**" />
   </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\Odin.Baseline.Domain\Odin.Baseline.Domain.csproj" />
-		<ProjectReference Include="..\..\src\Odin.Baseline.Service\Odin.Baseline.Service.csproj" />
-		<ProjectReference Include="..\..\src\Odin.Baseline.Data\Odin.Baseline.Data.csproj" />
-		<ProjectReference Include="..\..\src\Odin.Baseline.CrossCutting.AutoMapper\Odin.Baseline.CrossCutting.AutoMapper.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="34.0.2" />
+    <PackageReference Include="FluentAssertions" Version="6.11.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="Moq" Version="4.20.69" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Odin.Baseline.Application\Odin.Baseline.Application.csproj" />
+    <ProjectReference Include="..\..\src\Odin.Baseline.Domain\Odin.Baseline.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Odin.Baseline.Infra.Data.EF\Odin.Baseline.Infra.Data.EF.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infra.Data.EF\Expressions\" />
+  </ItemGroup>
 
 </Project>

@@ -1,8 +1,9 @@
-﻿namespace Odin.Baseline.Domain.Interfaces.Repositories
+﻿using Odin.Baseline.Domain.SeedWork;
+
+namespace Odin.Baseline.Domain.Interfaces.Repositories
 {
     public interface IUnitOfWork : IDisposable
-    {
-        IRepository Repository();
-        Task<int> CommitAsync(CancellationToken cancellationToken);
+    {        
+        Task CommitAsync(CancellationToken cancellationToken);
     }
 }

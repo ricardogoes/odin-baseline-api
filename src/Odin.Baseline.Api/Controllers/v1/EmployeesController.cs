@@ -1,123 +1,129 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Odin.Baseline.Api.Attributes;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Odin.Baseline.Application.Employees.AddPosition;
+using Odin.Baseline.Application.Employees.ChangeAddressEmployee;
+using Odin.Baseline.Application.Employees.ChangeStatusEmployee;
+using Odin.Baseline.Application.Employees.Common;
+using Odin.Baseline.Application.Employees.CreateEmployee;
+using Odin.Baseline.Application.Employees.GetEmployeeById;
+using Odin.Baseline.Application.Employees.UpdateEmployee;
 using Odin.Baseline.Domain.CustomExceptions;
-using Odin.Baseline.Domain.Interfaces.Services;
-using Odin.Baseline.Domain.Models;
-using Odin.Baseline.Domain.ViewModels.Employees;
+using Odin.Baseline.Domain.Enums;
 
 namespace Odin.Baseline.Api.Controllers.v1
 {
     [ApiController]
-    //[Authorize]
+    [Authorize]
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/employees")]
-    public class EmployeesController : BaseController
+    [Route("v{version:apiVersion}/employees")]
+    public class EmployeesController : ControllerBase
     {
-        private readonly IEmployeesService _employeesService;
+        private readonly IMediator _mediator;
 
-        public EmployeesController(AppSettings appSettings, IEmployeesService employeesService,
-            ILogger<EmployeesController> logger)
-            : base(appSettings, logger)
+        public EmployeesController(IMediator mediator)
         {
-            _employeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
+            _mediator = mediator;
         }
 
-        [HttpGet("{employeeId}")]
-        public async Task<IActionResult> GetEmployeeByIdAsync(int employeeId)
+        [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(EmployeeOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
         {
-            try
-            {
-                if (employeeId <= 0)
-                    throw new BadRequestException("Invalid request");
+            if (id == Guid.Empty)
+                throw new BadRequestException("Invalid request");
 
-                var employee = await _employeesService.GetByIdAsync(employeeId, _cancellationToken);
-                if (employee is null)
-                    throw new NotFoundException("Employee not found");
+            var employee = await _mediator.Send(new GetEmployeeByIdInput { Id = id }, cancellationToken);
 
-                return Ok(new ApiResponse(ApiResponseState.Success, employee));
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return HandleError(ex);
-            }
+            return Ok(employee);
         }
 
         [HttpPost]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> InsertEmployeeAsync([FromBody] EmployeeToInsert employeeToInsert)
+        [ProducesResponseType(typeof(EmployeeOutput), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Create([FromBody] CreateEmployeeInput input, CancellationToken cancellationToken)
         {
-            try
-            {
-                var employeeInserted = await _employeesService.InsertAsync(employeeToInsert, _loggedUsername, _cancellationToken);
+            //TODO: Alterar quando auth estiver implementado
+            input.LoggedUsername = "ricardo.goes";
 
-                return CreatedAtAction(
-                    controllerName: "Employees",
-                    actionName: "GetEmployeeById",
-                    routeValues: new { employeeId = employeeInserted.EmployeeId },
-                    value: new ApiResponse(ApiResponseState.Success, employeeInserted));
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return HandleError(ex);
-            }
+            var employeeCreated = await _mediator.Send(input, cancellationToken);
+
+            return CreatedAtAction(
+                actionName: nameof(GetById),
+                routeValues: new { id = employeeCreated.Id },
+                value: employeeCreated);
         }
 
-        [HttpPut("{employeeId}")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> UpdateEmployeeAsync(int employeeId, [FromBody] EmployeeToUpdate employeeToUpdate)
+        [HttpPut("{id:guid}")]
+        [ProducesResponseType(typeof(EmployeeOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateEmployeeInput input, CancellationToken cancellationToken)
         {
-            try
-            {
-                if (employeeId <= 0 || employeeId != employeeToUpdate.EmployeeId)
-                    throw new BadRequestException("Invalid request");
+            if (id == Guid.Empty || id != input.Id)
+                throw new BadRequestException("Invalid request");
 
-                var employeeUpdated = await _employeesService.UpdateAsync(employeeToUpdate, _loggedUsername, _cancellationToken);
+            //TODO: Alterar quando auth estiver implementado
+            input.LoggedUsername = "ricardo.goes";
 
-                return Ok(new ApiResponse(ApiResponseState.Success, employeeUpdated));
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return HandleError(ex);
-            }
+            var employeeUpdated = await _mediator.Send(input, cancellationToken);
+
+            return Ok(employeeUpdated);
         }
 
-        [HttpPut("{employeeId}/status")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> ChangeStatusEmployeeAsync(int employeeId)
+        [HttpPut("{id:guid}/status")]
+        [ProducesResponseType(typeof(EmployeeOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, [FromQuery] string action, CancellationToken cancellationToken)
         {
-            try
-            {
-                if (employeeId <= 0)
-                    throw new BadRequestException("Invalid request");
+            if (id == Guid.Empty || string.IsNullOrWhiteSpace(action))
+                throw new BadRequestException("Invalid request");
 
-                var employeeUpdated = await _employeesService.ChangeStatusAsync(employeeId, _loggedUsername, _cancellationToken);
-                return Ok(new ApiResponse(ApiResponseState.Success, employeeUpdated));
-            }
-            catch (BadRequestException ex)
+            if (action.ToUpper() != "ACTIVATE" && action.ToUpper() != "DEACTIVATE")
+                throw new BadRequestException("Invalid action. Only ACTIVATE or DEACTIVATE values are allowed");
+
+            var employeeUpdated = await _mediator.Send(new ChangeStatusEmployeeInput
             {
-                return BadRequest(new ApiResponse(ApiResponseState.Failed, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return HandleError(ex);
-            }
+                Id = id,
+                Action = (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
+                LoggedUsername = "ricardo.goes" // TODO: Alterar quando auth estiver implementado
+            }, cancellationToken);
+
+            return Ok(employeeUpdated);
+        }
+
+        [HttpPut("{id:guid}/addresses")]
+        [ProducesResponseType(typeof(EmployeeOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangeAddress([FromRoute] Guid id, [FromBody] ChangeAddressEmployeeInput input, CancellationToken cancellationToken)
+        {
+            if (id == Guid.Empty || id != input.EmployeeId)
+                throw new BadRequestException("Invalid request");
+
+            var employeeUpdated = await _mediator.Send(input, cancellationToken);
+
+            return Ok(employeeUpdated);
+        }
+
+        [HttpPost("{id:guid}/positions")]
+        [ProducesResponseType(typeof(EmployeeOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AddPosition([FromRoute] Guid id, [FromBody] AddPositionInput input, CancellationToken cancellationToken)
+        {
+            if (id == Guid.Empty || id != input.EmployeeId)
+                throw new BadRequestException("Invalid request");
+
+            var employeeUpdated = await _mediator.Send(input, cancellationToken);
+
+            return Ok(employeeUpdated);
         }
     }
 }

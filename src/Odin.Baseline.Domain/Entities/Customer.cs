@@ -1,46 +1,94 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Odin.Baseline.Domain.SeedWork;
+using Odin.Baseline.Domain.Validations;
+using Odin.Baseline.Domain.ValueObjects;
 
 namespace Odin.Baseline.Domain.Entities
 {
-    [Table("customers")]
-    public class Customer
+    public class Customer : EntityWithDocument
     {
-        [Key]
-        [Column("customer_id")]
-        public int CustomerId { get; set; }
+        public string Name { get; private set; }
+        public Address Address { get; private set; }
+        public bool IsActive { get; private set; }
 
-        [Required]
-        [Column("name"), StringLength(255)]
-        public string Name { get; set; }
+        //TODO: Implementar loggedUsername
+        private const string LOGGED_USERNAME = "ricardo.goes";
 
-        [Column("document"), StringLength(255)]
-        public string Document { get; set; }
+        public Customer(Guid id, string name, string document, bool isActive = true)
+            : base(document, id)
+        {
+            Name = name;
+            IsActive = isActive;
 
-        [Required]
-        [Column("is_active")]
-        public bool IsActive { get; set; }
+            Validate();
+        }
 
-        [Required]
-        [Column("created_by"), StringLength(255)]
-        public string CreatedBy { get; set; }
+        public Customer(string name, string document, bool isActive = true)    
+            : base(document)
+        {
+            Name = name;
+            IsActive = isActive;
 
-        [Required]
-        [Column("created_at")]
-        public DateTime CreatedAt { get; set; }
+            Validate();
+        }
 
-        [Required]
-        [Column("last_updated_by"), StringLength(255)]
-        public string LastUpdatedBy { get; set; }
+        public void Create(string loggedUsername = LOGGED_USERNAME)
+        {
+            CreatedAt = DateTime.UtcNow;
+            CreatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedAt = DateTime.UtcNow;
+            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
 
-        [Required]
-        [Column("last_updated_at")]
-        public DateTime LastUpdatedAt { get; set; }
+            Validate();
+        }
 
-        public ICollection<Department> Departments { get; set; }
+        public void Update(string newName, string newDocument = null, string loggedUsername = LOGGED_USERNAME)
+        {
+            Name = newName;
+            Document = newDocument ?? Document;
+            LastUpdatedAt = DateTime.UtcNow;
+            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
 
-        public ICollection<CompanyPosition> CompaniesPositions { get; set; }
+            Validate();
+        }
 
-        public ICollection<Employee> Employees { get; set; }
+        public void SetAuditLog(DateTime createdAt, string createdBy, DateTime lastUpdatedAt, string lastUpdatedBy)
+        {
+            CreatedAt = createdAt;
+            CreatedBy = createdBy;
+            LastUpdatedAt = lastUpdatedAt;
+            LastUpdatedBy = lastUpdatedBy;
+
+            Validate();
+        }
+
+        public void ChangeAddress(Address newAddress)
+        {
+            Address = newAddress;
+            Validate();
+        }
+
+        public void Activate(string loggedUsername = LOGGED_USERNAME)
+        {
+            IsActive = true;
+            LastUpdatedAt = DateTime.UtcNow;
+            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+
+            Validate();
+        }
+
+        public void Deactivate(string loggedUsername = LOGGED_USERNAME)
+        {
+            IsActive = false;
+            LastUpdatedAt = DateTime.UtcNow;
+            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+
+            Validate();
+        }
+
+        private void Validate()
+        {
+            DomainValidation.NotNullOrEmpty(Name, nameof(Name));
+            CpfCnpjValidation.CpfCnpj(Document, nameof(Document));
+        }
     }
 }

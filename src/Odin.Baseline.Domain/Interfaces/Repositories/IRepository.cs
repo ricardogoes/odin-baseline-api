@@ -1,35 +1,22 @@
-﻿using Odin.Baseline.Domain.Models;
-using System.Linq.Expressions;
+﻿using Odin.Baseline.Domain.DTO.Common;
+using Odin.Baseline.Domain.SeedWork;
 
 namespace Odin.Baseline.Domain.Interfaces.Repositories
 {
-    public interface IRepository
+    public interface IRepository<T> where T : Entity
     {
-        Task<TResult> GetByIdAsync<T, TResult>(int id, CancellationToken cancellationToken) 
-            where T : class 
-            where TResult : class;
-        
-        Task<PagedList<TResult>> FindListAsync<T, TResult>(Expression<Func<T, bool>> expression, int pageNumber, int pageSize, string sort, CancellationToken cancellationToken = default)
-            where T : class
-            where TResult : class;
+        Task InsertAsync(T entity, CancellationToken cancellationToken) ;
 
-        Task<PagedList<TResult>> FindAllAsync<T, TResult>(int pageNumber, int pageSize, string sort, CancellationToken cancellationToken) 
-            where T : class
-            where TResult: class;
+        Task UpdateAsync(T entity);
 
-        Task<TResult> SingleOrDefaultAsync<T, TResult>(Expression<Func<T, bool>> expression, string includeProperties) 
-            where T : class
-            where TResult: class;
+        Task DeleteAsync(T entity);
 
-        TResult Insert<T, TResult>(T entity)
-            where T : class
-            where TResult : class;
+        Task<T> FindByIdAsync(Guid id, CancellationToken cancellationToken);
 
-        TResult Update<T, TResult>(T entity)
-            where T : class
-            where TResult : class;
+        Task<PaginatedListOutput<T>> FindPaginatedListAsync(Dictionary<string, object> filters, int pageNumber, int pageSize, string sort, CancellationToken cancellationToken);
 
-        void UpdateRange<T>(IEnumerable<T> entities) where T : class;
-        void Delete<T>(T entity) where T : class;
+        //Task<IEnumerable<Guid>> FindListIdsByIdsAsync(List<Guid> ids, CancellationToken cancellationToken);
+
+        //Task<IReadOnlyList<T>> FindListByIdsAsync(List<Guid> ids, CancellationToken cancellationToken);
     }
 }

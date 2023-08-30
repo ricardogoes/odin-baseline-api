@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  odin.baseline.db:
+    container_name: odin_baseline
+    hostname: odin_baseline
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: tIiefwntHebhEXI78twf
+
+networks:
+  default:
+    name: odin_baseline
