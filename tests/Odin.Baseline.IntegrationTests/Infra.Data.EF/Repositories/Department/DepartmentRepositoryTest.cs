@@ -2,6 +2,7 @@
 using Odin.Baseline.Application.Departments.GetDepartments;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Infra.Data.EF.Mappers;
+using Odin.Baseline.Infra.Data.EF.Models;
 using Odin.Baseline.Infra.Data.EF.Repositories;
 
 namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
@@ -21,7 +22,12 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         public async Task InsertValidDepartment()
         {
             var dbContext = _fixture.CreateDbContext();
-            var exampleDepartment = _fixture.GetValidDepartment();
+            
+            var exampleCustomer = _fixture.GetValidCustomerModel();
+            await dbContext.AddAsync(exampleCustomer, CancellationToken.None);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+
+            var exampleDepartment = _fixture.GetValidDepartment(exampleCustomer.Id);
 
             var repository = new DepartmentRepository(dbContext);
             var unitOfWork = new UnitOfWork(dbContext);
@@ -45,8 +51,12 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var exampleDepartment = _fixture.GetValidDepartmentModel();
-            var exampleDepartmentsList = _fixture.GetValidDepartmentsModelList(new List<Guid> { Guid.NewGuid() }, 15);
+            var exampleCustomer = _fixture.GetValidCustomerModel();
+            await dbContext.AddAsync(exampleCustomer);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+
+            var exampleDepartment = _fixture.GetValidDepartmentModel(exampleCustomer.Id);
+            var exampleDepartmentsList = _fixture.GetValidDepartmentsModelList(new List<Guid> { exampleCustomer.Id }, 15);
             exampleDepartmentsList.Add(exampleDepartment);
 
             await dbContext.AddRangeAsync(exampleDepartmentsList);
@@ -85,11 +95,16 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         [Trait("Integration/Infra.Data.EF", "Repositories / DepartmentRepository")]
         public async Task Update()
         {
-            var dbContext = _fixture.CreateDbContext();
-            var exampleDepartment = _fixture.GetValidDepartment();
+            var dbContext = _fixture.CreateDbContext(true);
+
+            var exampleCustomer = _fixture.GetValidCustomerModel();
+            await dbContext.AddAsync(exampleCustomer);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+
+            var exampleDepartment = _fixture.GetValidDepartment(exampleCustomer.Id);
             var newDepartmentValues = _fixture.GetValidDepartment();
 
-            var exampleDepartmentsList = _fixture.GetValidDepartmentsModelList(new List<Guid> { Guid.NewGuid() }, 15);
+            var exampleDepartmentsList = _fixture.GetValidDepartmentsModelList(new List<Guid> { exampleCustomer.Id }, 15);
             exampleDepartmentsList.Add(exampleDepartment.ToDepartmentModel());
 
             await dbContext.AddRangeAsync(exampleDepartmentsList);
@@ -101,7 +116,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
             var departmentRepository = new DepartmentRepository(dbContext);
             var unitOfWork = new UnitOfWork(dbContext);
 
-            await departmentRepository.UpdateAsync(exampleDepartment);
+            await departmentRepository.UpdateAsync(exampleDepartment, CancellationToken.None);
             await unitOfWork.CommitAsync(CancellationToken.None);
 
             var dbDepartment = await departmentRepository.FindByIdAsync(exampleDepartment.Id, CancellationToken.None);
@@ -141,15 +156,17 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var customerId1 = Guid.NewGuid();
-            var customerId2 = Guid.NewGuid();
+            var customer1 = _fixture.GetValidCustomerModel();
+            var customer2 = _fixture.GetValidCustomerModel();
 
-            var exampleDepartmentsList = _fixture.GetValidDepartmentsModelList(new List<Guid> { customerId1, customerId2 }, 15);
+            await dbContext.AddRangeAsync(new List<CustomerModel> { customer1, customer2 });
+
+            var exampleDepartmentsList = _fixture.GetValidDepartmentsModelList(new List<Guid> { customer1.Id, customer2.Id }, 15);
 
             await dbContext.AddRangeAsync(exampleDepartmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetDepartmentsInput(1, 20, sort: "name", customerId: customerId1, name: "", isActive: true);
+            var searchInput = new GetDepartmentsInput(1, 20, sort: "name", customerId: customer1.Id, name: "", isActive: true, "", null, null, "", null, null);
             var filters = new Dictionary<string, object>
             {
                 { "CustomerId", searchInput.CustomerId },
@@ -162,15 +179,15 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
-            output.TotalItems.Should().Be(exampleDepartmentsList.Where(x => x.CustomerId == customerId1 && x.IsActive).Count());
-            output.Items.Should().HaveCount(exampleDepartmentsList.Where(x => x.CustomerId == customerId1 && x.IsActive).Count());
+            output.TotalItems.Should().Be(exampleDepartmentsList.Where(x => x.CustomerId == customer1.Id && x.IsActive).Count()) ;
+            output.Items.Should().HaveCount(exampleDepartmentsList.Where(x => x.CustomerId == customer1.Id && x.IsActive).Count());
             foreach (var outputItem in output.Items)
             {
                 var exampleItem = exampleDepartmentsList.Find(
                     department => department.Id == outputItem.Id
                 );
                 exampleItem.Should().NotBeNull();
-                outputItem.CustomerId.Should().Be(customerId1);
+                outputItem.CustomerId.Should().Be(customer1.Id);
                 outputItem.Name.Should().Be(exampleItem!.Name);
                 outputItem.IsActive.Should().Be(exampleItem.IsActive);
                 outputItem.CreatedAt.Should().Be(exampleItem.CreatedAt);
@@ -182,12 +199,17 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         public async Task SearchRetursListAndTotal()
         {
             var dbContext = _fixture.CreateDbContext();
-            var exampleDepartmentsList = _fixture.GetValidDepartmentsModelList(new List<Guid> { Guid.NewGuid() },15);
+
+            var exampleCustomer = _fixture.GetValidCustomerModel();
+            await dbContext.AddAsync(exampleCustomer);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+
+            var exampleDepartmentsList = _fixture.GetValidDepartmentsModelList(new List<Guid> { exampleCustomer.Id },15);
 
             await dbContext.AddRangeAsync(exampleDepartmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetDepartmentsInput(1, 20, customerId: Guid.Empty, name: "", isActive: null, sort: "name");
+            var searchInput = new GetDepartmentsInput(page: 1, pageSize: 20, sort: "name", customerId: Guid.Empty, name: "", isActive: null, "", null, null, "", null, null);
             var filters = new Dictionary<string, object>
             {
                 { "CustomerId", searchInput.CustomerId },
@@ -219,7 +241,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         {
             var dbContext = _fixture.CreateDbContext();
             var departmentRepository = new DepartmentRepository(dbContext);
-            var searchInput = new GetDepartmentsInput(1, 20, customerId: Guid.Empty, name: "", isActive: true, sort: "");
+            var searchInput = new GetDepartmentsInput(page: 1, pageSize: 20, sort: "", customerId: Guid.Empty, name: "", isActive: null, "", null, null, "", null, null);
             var filters = new Dictionary<string, object>
             {
                 { "CustomerId", searchInput.CustomerId },

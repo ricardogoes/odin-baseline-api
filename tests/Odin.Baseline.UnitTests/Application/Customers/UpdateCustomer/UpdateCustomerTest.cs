@@ -42,7 +42,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
             _repositoryMock.Setup(x => x.FindByIdAsync(exampleCustomer.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(exampleCustomer);
 
-            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Customer>()))
+            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(exampleCustomer));
 
             var useCase = new App.UpdateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
@@ -53,7 +53,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
             output.Document.Should().Be(input.Document);
 
             _repositoryMock.Verify(x => x.FindByIdAsync(exampleCustomer.Id, It.IsAny<CancellationToken>()), Times.Once);
-            _repositoryMock.Verify(x => x.UpdateAsync(exampleCustomer), Times.Once);
+            _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 

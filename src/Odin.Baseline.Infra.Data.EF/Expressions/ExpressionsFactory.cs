@@ -38,10 +38,15 @@ namespace Odin.Baseline.Infra.Data.EF.Expressions
                         expression = Expression.Call(typeof(Enumerable), "Contains", new[] { propertyType }, constant, member);
                         break;
                     case ExpressionOperator.GreaterThanOrEqual:
-                        expression = Expression.GreaterThanOrEqual(member, Expression.Constant(constant));
+                        expression = Expression.GreaterThanOrEqual(member, Expression.Convert(constant, member.Type));
                         break;
                     case ExpressionOperator.LessThanOrEqual:
-                        Expression.GreaterThanOrEqual(member, Expression.Constant(constant));
+                        if(member.Type == typeof(DateTime))
+                        {
+                            var endOfDayConstant = Expression.Constant(((DateTime)constant.Value).EndOfDay());
+                            expression = Expression.LessThanOrEqual(member, Expression.Convert(endOfDayConstant, member.Type));
+                        }
+                        
                         break;
                 };
 
@@ -59,10 +64,24 @@ namespace Odin.Baseline.Infra.Data.EF.Expressions
             {
                 if (!string.IsNullOrWhiteSpace(filters[key]?.ToString()) && filters[key] is string)
                     expressionsFilter.Add(new ExpressionFilter { Field = key, Operator = ExpressionOperator.Contains, Value = filters[key] });
+                
                 else if (!string.IsNullOrWhiteSpace(filters[key]?.ToString()) && filters[key] is bool)
                     expressionsFilter.Add(new ExpressionFilter { Field = key, Operator = ExpressionOperator.Equal, Value = filters[key] });
+                
                 else if (!string.IsNullOrWhiteSpace(filters[key]?.ToString()) && filters[key] is Guid && Guid.Parse(filters[key].ToString()) != Guid.Empty)
                     expressionsFilter.Add(new ExpressionFilter { Field = key, Operator = ExpressionOperator.Equal, Value = filters[key] });
+
+                else if (!string.IsNullOrWhiteSpace(filters[key]?.ToString()) && 
+                    filters[key] is DateTime && 
+                    DateTime.Parse(filters[key].ToString()) != default &&
+                    key.Contains("Start"))
+                    expressionsFilter.Add(new ExpressionFilter { Field = key.Replace("Start", ""), Operator = ExpressionOperator.GreaterThanOrEqual, Value = filters[key] });
+
+                else if (!string.IsNullOrWhiteSpace(filters[key]?.ToString()) &&
+                    filters[key] is DateTime &&
+                    DateTime.Parse(filters[key].ToString()) != default &&
+                    key.Contains("End"))
+                    expressionsFilter.Add(new ExpressionFilter { Field = key.Replace("End", ""), Operator = ExpressionOperator.LessThanOrEqual, Value = filters[key] });
             }
 
             return expressionsFilter.Any() ? expressionsFilter : null;

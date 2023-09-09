@@ -26,7 +26,7 @@ namespace Odin.Baseline.Infra.Data.EF.Configurations
 
             builder.Property(position => position.BaseSalary)
                 .HasColumnName("base_salary")
-                .HasPrecision(2);
+                .HasPrecision(18, 4);
 
             builder.Property(position => position.IsActive)
                .HasColumnName("is_active")

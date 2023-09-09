@@ -21,9 +21,11 @@ namespace Odin.Baseline.EndToEndTests.Departments.ChangeStatusDepartment
         [Trait("E2E/Controllers", "Departments / [v1]ChangeStatusDepartment")]
         public async Task ActivateDepartment()
         {
-            var departmentsList = _fixture.GetValidDepartmentsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var departmentsList = _fixture.GetValidDepartmentsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(departmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -46,9 +48,11 @@ namespace Odin.Baseline.EndToEndTests.Departments.ChangeStatusDepartment
         [Trait("E2E/Controllers", "Departments / [v1]ChangeStatusDepartment")]
         public async Task DeactivateDepartment()
         {
-            var departmentsList = _fixture.GetValidDepartmentsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var departmentsList = _fixture.GetValidDepartmentsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(departmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -86,7 +90,6 @@ namespace Odin.Baseline.EndToEndTests.Departments.ChangeStatusDepartment
         [Trait("E2E/Controllers", "Departments / [v1]ChangeStatusDepartment")]
         public async Task ErrorWhenInvalidAction()
         {
-
             var departmentToChangeStatus = _fixture.GetValidDepartment();
 
             var input = _fixture.GetInputWithInvalidAction(departmentToChangeStatus.Id);
@@ -107,7 +110,8 @@ namespace Odin.Baseline.EndToEndTests.Departments.ChangeStatusDepartment
         [Trait("E2E/Controllers", "Departments / [v1]ChangeStatusDepartment")]
         public async Task ErrorWhenNotFound()
         {
-            var departmentsList = _fixture.GetValidDepartmentsModelList(20);
+
+            var departmentsList = _fixture.GetValidDepartmentsModelList(length: 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
             await dbContext.AddRangeAsync(departmentsList);

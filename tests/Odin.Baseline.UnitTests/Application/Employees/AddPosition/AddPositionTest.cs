@@ -33,7 +33,11 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
             };
 
             var employee = _fixture.GetValidEmployee(positionsHistory);
+            
             _repositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(employee));
+
+            _repositoryMock.Setup(s => s.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(employee));
 
             var useCase = new App.AddPosition(_unitOfWorkMock.Object, _repositoryMock.Object);
@@ -62,7 +66,11 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
             var input = _fixture.GetValidInput();
 
             var employee = _fixture.GetValidEmployee();
+            
             _repositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(employee));
+
+            _repositoryMock.Setup(s => s.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(employee));
 
             var useCase = new App.AddPosition(_unitOfWorkMock.Object, _repositoryMock.Object);

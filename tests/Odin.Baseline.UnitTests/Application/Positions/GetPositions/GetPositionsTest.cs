@@ -40,7 +40,7 @@ namespace Odin.Baseline.UnitTests.Application.Positions.GetPositions
                 .Returns(() => Task.FromResult(expectedPositions));
 
             var useCase = new App.GetPositions(_repositoryMock.Object);
-            var positions = await useCase.Handle(new App.GetPositionsInput(1, 10, "name", Guid.NewGuid(), "Unit Testing", true), new CancellationToken());
+            var positions = await useCase.Handle(new App.GetPositionsInput(1, 10, "name", Guid.NewGuid(), "Unit Testing", true, "", null, null, "", null, null), new CancellationToken());
 
             positions.TotalItems.Should().Be(4);
         }

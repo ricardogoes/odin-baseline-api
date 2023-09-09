@@ -13,12 +13,12 @@ namespace Odin.Baseline.EndToEndTests.Employees.UpdateEmployee
             : base()
         { }
 
-        public UpdateEmployeeInput GetValidUpdateEmployeeInput(Guid? id = null)
+        public UpdateEmployeeInput GetValidUpdateEmployeeInput(Guid? id = null, Guid? customerId = null, Guid? departmentId = null)
            => new()
            {
                Id = id ?? Guid.NewGuid(),
-               CustomerId = Guid.NewGuid(),
-               DepartmentId = Guid.NewGuid(),
+               CustomerId = customerId ?? Guid.NewGuid(),
+               DepartmentId = departmentId,
                FirstName = GetValidEmployeeFirstName(),
                LastName = GetValidEmployeeLastName(),
                Document = GetValidEmployeeDocument(),

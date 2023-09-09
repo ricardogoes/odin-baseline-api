@@ -22,10 +22,10 @@ namespace Odin.Baseline.Application.Employees.AddPosition
 
             employee.AddHistoricPosition(new EmployeePositionHistory(input.PositionId, input.Salary, input.StartDate, input.FinishDate));
 
-            await _repository.UpdateAsync(employee);
+            var employeeUpdated = await _repository.UpdateAsync(employee, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            return EmployeeOutput.FromEmployee(employee);
+            return EmployeeOutput.FromEmployee(employeeUpdated);
         }
     }
 }

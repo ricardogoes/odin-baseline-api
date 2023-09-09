@@ -22,7 +22,14 @@ namespace Odin.Baseline.EndToEndTests.Positions.CreatePosition
         [Trait("E2E/Controllers", "Positions / [v1]CreatePosition")]
         public async Task InsertValidPosition()
         {
-            var input = _fixture.GetValidInput();
+            var dbContext = _fixture.CreateDbContext();
+
+            var customer = _fixture.GetValidCustomerModel();
+
+            await dbContext.AddAsync(customer);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+
+            var input = _fixture.GetValidInput(customer.Id);
 
             var (response, output) = await _fixture.ApiClient.PostAsync<PositionOutput>("/v1/positions", input);
 

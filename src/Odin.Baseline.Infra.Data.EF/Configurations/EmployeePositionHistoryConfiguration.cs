@@ -24,8 +24,7 @@ namespace Odin.Baseline.Infra.Data.EF.Configurations
 
             builder.Property(position => position.Salary)
                 .HasColumnName("salary")
-                .HasPrecision(2)
-                .IsRequired();
+                .HasPrecision(18, 4);
 
             builder.Property(position => position.StartDate)
                .HasColumnName("start_date")

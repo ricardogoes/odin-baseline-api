@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Odin.Baseline.Api.Models;
+using Odin.Baseline.Api.Helpers;
 using Odin.Baseline.Application.Customers.ChangeAddressCustomer;
 using Odin.Baseline.Application.Customers.ChangeStatusCustomer;
 using Odin.Baseline.Application.Customers.Common;
@@ -17,6 +18,10 @@ using Odin.Baseline.Application.Positions.Common;
 using Odin.Baseline.Application.Positions.GetPositions;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Enums;
+using Odin.Baseline.Infra.Messaging.Extensions;
+using Microsoft.AspNetCore.Http.HttpResults;
+using System.Xml.Linq;
+using Odin.Baseline.Application.Departments.GetDepartmentById;
 
 namespace Odin.Baseline.Api.Controllers.v1
 {
@@ -49,7 +54,7 @@ namespace Odin.Baseline.Api.Controllers.v1
             {
                 PageNumber = PageNumber ?? 1,
                 PageSize = PageSize ?? 10,
-                Sort = !string.IsNullOrWhiteSpace(Sort) ? Sort : "",
+                Sort = Utils.GetSortParam(Sort),
                 Name = !string.IsNullOrWhiteSpace(Name) ? Name : "",
                 Document = !string.IsNullOrWhiteSpace(Document) ? Document : "",
                 IsActive = IsActive
@@ -154,20 +159,30 @@ namespace Odin.Baseline.Api.Controllers.v1
             [FromQuery(Name = "page_size")] int? pageSize = null,
             [FromQuery(Name = "sort")] string? sort = null,
             [FromQuery(Name = "name")] string? name = null,
-            [FromQuery(Name = "is_active")] bool? isActive = null)
+            [FromQuery(Name = "is_active")] bool? isActive = null,
+            [FromQuery(Name = "created_by")] string? createdBy = null,
+            [FromQuery(Name = "last_updated_by")] string? lastUpdatedBy = null,
+            [FromQuery(Name = "created_at_start")] DateTime? createdAtStart = null,
+            [FromQuery(Name = "created_at_end")] DateTime? createdAtEnd = null,
+            [FromQuery(Name = "last_updated_at_start")] DateTime? LastUpdatedAtStart = null,
+            [FromQuery(Name = "last_updated_at_end")] DateTime? LastUpdatedAtEnd = null)
         {
             if (id == Guid.Empty)
                 throw new BadRequestException("Invalid request");
 
-            var input = new GetDepartmentsInput
-            {
-                CustomerId = id,
-                Name = name ?? "",
-                IsActive = isActive,
-                PageNumber = pageNumber ?? 1,
-                PageSize = pageSize ?? 10,
-                Sort = sort
-            };
+            var input = new GetDepartmentsInput(
+                page: pageNumber ?? 1,
+                pageSize: pageSize ?? 5,
+                sort: Utils.GetSortParam(sort),
+                customerId: id,
+                name: name ?? "",
+                isActive: isActive,
+                createdBy: createdBy,
+                createdAtStart: createdAtStart,
+                createdAtEnd: createdAtEnd,
+                lastUpdatedBy: lastUpdatedBy,
+                lastUpdatedAtStart: LastUpdatedAtStart,
+                lastUpdatedAtEnd: LastUpdatedAtEnd);            
 
             var paginatedDepartments = await _mediator.Send(input, cancellationToken);
             return Ok(new PaginatedApiResponse<DepartmentOutput>(paginatedDepartments));
@@ -183,20 +198,30 @@ namespace Odin.Baseline.Api.Controllers.v1
             [FromQuery(Name = "page_size")] int? pageSize = null,
             [FromQuery(Name = "sort")] string? sort = null,
             [FromQuery(Name = "name")] string? name = null,
-            [FromQuery(Name = "is_active")] bool? isActive = null)
+            [FromQuery(Name = "is_active")] bool? isActive = null,
+            [FromQuery(Name = "created_by")] string? createdBy = null,
+            [FromQuery(Name = "last_updated_by")] string? lastUpdatedBy = null,
+            [FromQuery(Name = "created_at_start")] DateTime? createdAtStart = null,
+            [FromQuery(Name = "created_at_end")] DateTime? createdAtEnd = null,
+            [FromQuery(Name = "last_updated_at_start")] DateTime? LastUpdatedAtStart = null,
+            [FromQuery(Name = "last_updated_at_end")] DateTime? LastUpdatedAtEnd = null)
         {
             if (id == Guid.Empty)
                 throw new BadRequestException("Invalid request");
 
-            var input = new GetPositionsInput
-            {
-                CustomerId = id,
-                Name = name ?? "",                
-                IsActive = isActive,
-                PageNumber = pageNumber ?? 1,
-                PageSize = pageSize ?? 10,
-                Sort = sort
-            };
+            var input = new GetPositionsInput(
+                page: pageNumber ?? 1,
+                pageSize: pageSize ?? 5,
+                sort: Utils.GetSortParam(sort),
+                customerId: id,
+                name: name ?? "",
+                isActive: isActive,
+                createdBy: createdBy,
+                createdAtStart: createdAtStart,
+                createdAtEnd: createdAtEnd,
+                lastUpdatedBy: lastUpdatedBy,
+                lastUpdatedAtStart: LastUpdatedAtStart,
+                lastUpdatedAtEnd: LastUpdatedAtEnd);
 
             var paginatedPositions = await _mediator.Send(input, cancellationToken);
             return Ok(new PaginatedApiResponse<PositionOutput>(paginatedPositions));
@@ -210,27 +235,41 @@ namespace Odin.Baseline.Api.Controllers.v1
             [FromQuery(Name = "page_number")] int? pageNumber = null,
             [FromQuery(Name = "page_size")] int? pageSize = null,
             [FromQuery(Name = "sort")] string? sort = null,
+            [FromQuery(Name = "department_id")] Guid? departmentId = null,
             [FromQuery(Name = "first_name")] string? firstName = null,
             [FromQuery(Name = "last_name")] string? lastName = null,
             [FromQuery(Name = "document")] string? document = null,
             [FromQuery(Name = "email")] string? email = null,
-            [FromQuery(Name = "is_active")] bool? isActive = null)
+            [FromQuery(Name = "is_active")] bool? isActive = null,
+            [FromQuery(Name = "created_by")] string? createdBy = null,
+            [FromQuery(Name = "last_updated_by")] string? lastUpdatedBy = null,
+            [FromQuery(Name = "created_at_start")] DateTime? createdAtStart = null,
+            [FromQuery(Name = "created_at_end")] DateTime? createdAtEnd = null,
+            [FromQuery(Name = "last_updated_at_start")] DateTime? LastUpdatedAtStart = null,
+            [FromQuery(Name = "last_updated_at_end")] DateTime? LastUpdatedAtEnd = null)
         {
             if (id == Guid.Empty)
                 throw new BadRequestException("Invalid request");
 
             var input = new GetEmployeesInput
-            {
-                CustomerId = id,
-                FirstName = firstName ?? "",
-                LastName = lastName ?? "",
-                Document = document ?? "",
-                Email = email ?? "",
-                IsActive = isActive,
-                PageNumber = pageNumber ?? 1,
-                PageSize = pageSize ?? 10,
-                Sort = sort
-            };
+            (
+                page: pageNumber ?? 1,
+                pageSize: pageSize ?? 5,
+                sort: Utils.GetSortParam(sort),
+                customerId: id,
+                departmentId: departmentId,
+                firstName: firstName ?? "",
+                lastName: lastName ?? "",
+                document: document ?? "",
+                email: email ?? "",
+                isActive: isActive,
+                createdBy: createdBy,
+                createdAtStart: createdAtStart,
+                createdAtEnd: createdAtEnd,
+                lastUpdatedBy: lastUpdatedBy,
+                lastUpdatedAtStart: LastUpdatedAtStart,
+                lastUpdatedAtEnd: LastUpdatedAtEnd
+            );;
 
             var paginatedEmployees = await _mediator.Send(input, cancellationToken);
             return Ok(new PaginatedApiResponse<EmployeeOutput>(paginatedEmployees));

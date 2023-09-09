@@ -22,15 +22,17 @@ namespace Odin.Baseline.EndToEndTests.Positions.UpdatePosition
         [Trait("E2E/Controllers", "Positions / [v1]UpdatePosition")]
         public async Task UpdateValidPosition()
         {
-            var positionsList = _fixture.GetValidPositionsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var positionsList = _fixture.GetValidPositionsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var positionToUpdate = positionsList[10];
 
-            var input = _fixture.GetValidInput(positionToUpdate.Id) ;
+            var input = _fixture.GetValidInput(positionToUpdate.Id, customer.Id) ;
 
             var (response, output) = await _fixture.ApiClient.PutAsync<PositionOutput>($"/v1/positions/{positionToUpdate.Id}", input);
 
@@ -48,9 +50,11 @@ namespace Odin.Baseline.EndToEndTests.Positions.UpdatePosition
         public async Task ErrorWhenInvalidIds()
         {
 
-            var positionsList = _fixture.GetValidPositionsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var positionsList = _fixture.GetValidPositionsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -77,9 +81,11 @@ namespace Odin.Baseline.EndToEndTests.Positions.UpdatePosition
         )]
         public async Task ErrorWhenCantInstantiatePosition(UpdatePositionInput input, string expectedDetail)
         {
-            var positionsList = _fixture.GetValidPositionsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var positionsList = _fixture.GetValidPositionsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -101,9 +107,11 @@ namespace Odin.Baseline.EndToEndTests.Positions.UpdatePosition
         [Trait("E2E/Controllers", "Positions / [v1]UpdatePosition")]
         public async Task ErrorWhenNotFound()
         {
-            var positionsList = _fixture.GetValidPositionsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var positionsList = _fixture.GetValidPositionsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 

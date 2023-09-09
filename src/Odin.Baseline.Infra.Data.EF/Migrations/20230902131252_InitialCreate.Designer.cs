@@ -12,7 +12,7 @@ using Odin.Baseline.Infra.Data.EF;
 namespace Odin.Baseline.Infra.Data.EF.Migrations
 {
     [DbContext(typeof(OdinBaselineDbContext))]
-    [Migration("20230825165913_InitialCreate")]
+    [Migration("20230902131252_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -91,7 +91,7 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("street_name");
 
-                    b.Property<int>("StreetNumber")
+                    b.Property<int?>("StreetNumber")
                         .HasColumnType("integer")
                         .HasColumnName("street_number");
 
@@ -124,9 +124,6 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid")
                         .HasColumnName("customer_id");
-
-                    b.Property<string>("Document")
-                        .HasColumnType("text");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
@@ -240,7 +237,7 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("street_name");
 
-                    b.Property<int>("StreetNumber")
+                    b.Property<int?>("StreetNumber")
                         .HasColumnType("integer")
                         .HasColumnName("street_number");
 
@@ -268,6 +265,10 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("position_id");
 
+                    b.Property<DateTime?>("FinishDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("finish_date");
+
                     b.Property<bool>("IsActual")
                         .HasColumnType("boolean")
                         .HasColumnName("is_actual");
@@ -276,6 +277,10 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                         .HasPrecision(2)
                         .HasColumnType("numeric(2)")
                         .HasColumnName("salary");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_date");
 
                     b.HasKey("EmployeeId", "PositionId");
 
@@ -292,7 +297,6 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                         .HasColumnName("id");
 
                     b.Property<decimal?>("BaseSalary")
-                        .IsRequired()
                         .HasPrecision(2)
                         .HasColumnType("numeric(2)")
                         .HasColumnName("base_salary");

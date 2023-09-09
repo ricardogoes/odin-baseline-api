@@ -18,8 +18,15 @@ namespace Odin.Baseline.Application.Departments.GetDepartments
         {
             var filters = new Dictionary<string, object>
             {
+                { "CustomerId", input.CustomerId },
                 { "Name", input.Name },
                 { "IsActive", input.IsActive },
+                { "CreatedBy", input.CreatedBy },
+                { "CreatedAtStart", input.CreatedAtStart },
+                { "CreatedAtEnd", input.CreatedAtEnd },
+                { "LastUpdatedBy", input.LastUpdatedBy },
+                { "LastUpdatedAtStart", input.LastUpdatedAtStart },
+                { "LastUpdatedAtEnd", input.LastUpdatedAtEnd },
             };
 
             var departments = await _repository.FindPaginatedListAsync(

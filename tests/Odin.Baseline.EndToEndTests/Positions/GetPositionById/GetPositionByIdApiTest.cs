@@ -21,9 +21,11 @@ namespace Odin.Baseline.EndToEndTests.Positions.GetPositionById
         [Trait("E2E/Controllers", "Positions / [v1]GetPositionById")]
         public async Task GetPositionById()
         {
-            var positionsList = _fixture.GetValidPositionsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var positionsList = _fixture.GetValidPositionsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -44,9 +46,11 @@ namespace Odin.Baseline.EndToEndTests.Positions.GetPositionById
         [Trait("E2E/Controllers", "Positions / [v1]GetPositionById")]
         public async Task ErrorWhenNotFound()
         {
-            var positionsList = _fixture.GetValidPositionsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var positionsList = _fixture.GetValidPositionsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 

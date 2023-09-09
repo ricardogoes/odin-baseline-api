@@ -33,7 +33,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetEmployeesByCustomer
             {
                 Id = Guid.NewGuid(),
                 CustomerId = customerId ?? Guid.NewGuid(),
-                DepartmentId = departmentId ?? Guid.NewGuid(),
+                DepartmentId = departmentId,
                 FirstName = GetValidEmployeeFistName(),
                 LastName = GetValidEmployeeLastName(),
                 Document = GetValidEmployeeDocument(),

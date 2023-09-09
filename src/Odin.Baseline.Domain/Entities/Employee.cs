@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Domain.SeedWork;
+﻿using Odin.Baseline.Domain.DTO;
+using Odin.Baseline.Domain.SeedWork;
 using Odin.Baseline.Domain.Validations;
 using Odin.Baseline.Domain.ValueObjects;
 
@@ -8,7 +9,11 @@ namespace Odin.Baseline.Domain.Entities
     {
         public Guid CustomerId { get; private set; }
 
+        public CustomerData CustomerData { get; private set; }
+
         public Guid? DepartmentId { get; private set; }
+
+        public DepartmentData DepartmentData { get; private set; }
 
         public string FirstName { get; private set; }
 
@@ -123,6 +128,20 @@ namespace Odin.Baseline.Domain.Entities
                 actualPosition.UpdateFinishDate(DateTime.UtcNow, loggedUsername);
 
             LoadHistoricPosition(positionHistory);
+
+            Validate();
+        }
+
+        public void LoadCustomerData(CustomerData customerData)
+        {
+            CustomerData = customerData;
+            Validate();
+        }
+
+        public void LoadDepartmentData(DepartmentData departmentData)
+        {
+            DepartmentData = departmentData;
+            Validate();
         }
 
         public void LoadHistoricPosition(EmployeePositionHistory positionHistory)

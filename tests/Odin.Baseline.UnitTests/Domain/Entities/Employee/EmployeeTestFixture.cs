@@ -25,9 +25,9 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         public string GetValidEmployeeEmail()
             => Faker.Person.Email;
 
-        public DomainEntity.Employee GetValidEmployee(List<DomainEntity.EmployeePositionHistory> historicPositions = null)
+        public DomainEntity.Employee GetValidEmployee(Guid? customerId = null, Guid? departmentId = null, List<DomainEntity.EmployeePositionHistory>? historicPositions = null)
         {
-            var employee = new DomainEntity.Employee(Guid.NewGuid(), GetValidEmployeeFistName(), GetValidEmployeeLastName(), GetValidEmployeeDocument(), GetValidEmployeeEmail(), Guid.NewGuid());
+            var employee = new DomainEntity.Employee(customerId ?? Guid.NewGuid(), GetValidEmployeeFistName(), GetValidEmployeeLastName(), GetValidEmployeeDocument(), GetValidEmployeeEmail(), departmentId);
             employee.Create();
 
             if (historicPositions is not null)

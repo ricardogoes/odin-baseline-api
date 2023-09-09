@@ -34,7 +34,7 @@ namespace Odin.Baseline.UnitTests.Application.Positions.UpdatePosition
             _repositoryMock.Setup(x => x.FindByIdAsync(examplePosition.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(examplePosition);
 
-            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Position>()))
+            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Position>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(examplePosition));
 
             var useCase = new App.UpdatePosition(_unitOfWorkMock.Object, _repositoryMock.Object);
@@ -45,7 +45,7 @@ namespace Odin.Baseline.UnitTests.Application.Positions.UpdatePosition
             output.BaseSalary.Should().Be(input.BaseSalary);
 
             _repositoryMock.Verify(x => x.FindByIdAsync(examplePosition.Id, It.IsAny<CancellationToken>()), Times.Once);
-            _repositoryMock.Verify(x => x.UpdateAsync(examplePosition), Times.Once);
+            _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Position>(), It.IsAny<CancellationToken>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 

@@ -13,10 +13,10 @@ namespace Odin.Baseline.EndToEndTests.Departments.CreateDepartment
             : base()
         { }
 
-        public CreateDepartmentInput GetValidInput()
+        public CreateDepartmentInput GetValidInput(Guid? customerId = null)
             => new()
             {
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId ?? Guid.NewGuid(),
                 Name = GetValidName(),
                 LoggedUsername = GetValidUsername()
             };

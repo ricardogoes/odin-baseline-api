@@ -21,9 +21,11 @@ namespace Odin.Baseline.EndToEndTests.Positions.ChangeStatusPosition
         [Trait("E2E/Controllers", "Positions / [v1]ChangeStatusPosition")]
         public async Task ActivatePosition()
         {
-            var positionsList = _fixture.GetValidPositionsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var positionsList = _fixture.GetValidPositionsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -46,9 +48,11 @@ namespace Odin.Baseline.EndToEndTests.Positions.ChangeStatusPosition
         [Trait("E2E/Controllers", "Positions / [v1]ChangeStatusPosition")]
         public async Task DeactivatePosition()
         {
-            var positionsList = _fixture.GetValidPositionsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var positionsList = _fixture.GetValidPositionsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -107,9 +111,11 @@ namespace Odin.Baseline.EndToEndTests.Positions.ChangeStatusPosition
         [Trait("E2E/Controllers", "Positions / [v1]ChangeStatusPosition")]
         public async Task ErrorWhenNotFound()
         {
-            var positionsList = _fixture.GetValidPositionsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var positionsList = _fixture.GetValidPositionsModelList(customer.Id, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 

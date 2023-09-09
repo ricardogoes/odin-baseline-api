@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Domain.Entities;
+﻿using Odin.Baseline.Domain.DTO;
+using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Infra.Data.EF.Models;
 
 namespace Odin.Baseline.Infra.Data.EF.Mappers
@@ -26,7 +27,9 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
         public static Department ToDepartment(this DepartmentModel model)
         {
             var department = new Department(model.Id, model.CustomerId, model.Name, isActive: model.IsActive);            
+            
             department.SetAuditLog(model.CreatedAt, model.CreatedBy, model.LastUpdatedAt, model.LastUpdatedBy);
+            department.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer.Name));
 
             return department;
         }

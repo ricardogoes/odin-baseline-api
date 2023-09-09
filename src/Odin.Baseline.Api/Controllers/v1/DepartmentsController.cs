@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Odin.Baseline.Api.Helpers;
 using Odin.Baseline.Api.Models;
 using Odin.Baseline.Application.Departments.ChangeStatusDepartment;
 using Odin.Baseline.Application.Departments.Common;
@@ -10,6 +11,7 @@ using Odin.Baseline.Application.Departments.UpdateDepartment;
 using Odin.Baseline.Application.Employees.Common;
 using Odin.Baseline.Application.Employees.GetEmployees;
 using Odin.Baseline.Domain.CustomExceptions;
+using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Enums;
 
 namespace Odin.Baseline.Api.Controllers.v1
@@ -111,23 +113,36 @@ namespace Odin.Baseline.Api.Controllers.v1
             [FromQuery(Name = "last_name")] string? lastName = null,
             [FromQuery(Name = "document")] string? document = null,
             [FromQuery(Name = "email")] string? email = null,
-            [FromQuery(Name = "is_active")] bool? isActive = null)
+            [FromQuery(Name = "is_active")] bool? isActive = null,
+            [FromQuery(Name = "created_by")] string? createdBy = null,
+            [FromQuery(Name = "last_updated_by")] string? lastUpdatedBy = null,
+            [FromQuery(Name = "created_at_start")] DateTime? createdAtStart = null,
+            [FromQuery(Name = "created_at_end")] DateTime? createdAtEnd = null,
+            [FromQuery(Name = "last_updated_at_start")] DateTime? LastUpdatedAtStart = null,
+            [FromQuery(Name = "last_updated_at_end")] DateTime? LastUpdatedAtEnd = null)
         {
             if (id == Guid.Empty)
                 throw new BadRequestException("Invalid request");
 
             var input = new GetEmployeesInput
-            {
-                DepartmentId = id,
-                FirstName = firstName ?? "",
-                LastName = lastName ?? "",
-                Document = document ?? "",
-                Email = email ?? "",
-                IsActive = isActive,
-                PageNumber = pageNumber ?? 1,
-                PageSize = pageSize ?? 10,
-                Sort = sort
-            };
+             (
+                 page: pageNumber ?? 1,
+                 pageSize: pageSize ?? 5,
+                 sort: Utils.GetSortParam(sort),
+                 customerId: null,
+                 departmentId: id,
+                 firstName: firstName ?? "",
+                 lastName: lastName ?? "",
+                 document: document ?? "",
+                 email: email ?? "",
+                 isActive: isActive,
+                 createdBy: createdBy,
+                 createdAtStart: createdAtStart,
+                 createdAtEnd: createdAtEnd,
+                 lastUpdatedBy: lastUpdatedBy,
+                 lastUpdatedAtStart: LastUpdatedAtStart,
+                 lastUpdatedAtEnd: LastUpdatedAtEnd
+             ); ;
 
             var paginatedEmployees = await _mediator.Send(input, cancellationToken);
             return Ok(new PaginatedApiResponse<EmployeeOutput>(paginatedEmployees));

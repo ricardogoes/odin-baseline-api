@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Domain.Entities;
+﻿using Odin.Baseline.Domain.DTO;
+using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Infra.Data.EF.Models;
 
 namespace Odin.Baseline.Infra.Data.EF.Mappers
@@ -27,7 +28,9 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
         public static Position ToPosition(this PositionModel model)
         {
             var position = new Position(model.Id, model.CustomerId, model.Name, model.BaseSalary, isActive: model.IsActive);            
+
             position.SetAuditLog(model.CreatedAt, model.CreatedBy, model.LastUpdatedAt, model.LastUpdatedBy);
+            position.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer.Name));
 
             return position;
         }

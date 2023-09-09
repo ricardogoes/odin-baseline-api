@@ -32,7 +32,7 @@ namespace Odin.Baseline.UnitTests.Application.Departments.ChangeStatusDepartment
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validDepartment);
 
-            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Department>()))
+            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Department>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(validDepartment));
 
             var useCase = new App.ChangeStatusDepartment(_unitOfWorkMock.Object, _repositoryMock.Object);
@@ -42,7 +42,7 @@ namespace Odin.Baseline.UnitTests.Application.Departments.ChangeStatusDepartment
             output.IsActive.Should().BeTrue();
             
             _repositoryMock.Verify(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
-            _repositoryMock.Verify(x => x.UpdateAsync(validDepartment), Times.Once);
+            _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Department>(), It.IsAny<CancellationToken>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -56,7 +56,7 @@ namespace Odin.Baseline.UnitTests.Application.Departments.ChangeStatusDepartment
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validDepartment);
 
-            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Department>()))
+            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Department>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(validDepartment));
 
             var useCase = new App.ChangeStatusDepartment(_unitOfWorkMock.Object, _repositoryMock.Object);
@@ -66,7 +66,7 @@ namespace Odin.Baseline.UnitTests.Application.Departments.ChangeStatusDepartment
             output.IsActive.Should().BeFalse();
 
             _repositoryMock.Verify(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
-            _repositoryMock.Verify(x => x.UpdateAsync(validDepartment), Times.Once);
+            _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Department>(), It.IsAny<CancellationToken>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 

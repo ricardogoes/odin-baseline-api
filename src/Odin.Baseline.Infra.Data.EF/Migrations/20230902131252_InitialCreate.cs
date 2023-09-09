@@ -19,7 +19,7 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     document = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     street_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    street_number = table.Column<int>(type: "integer", nullable: false),
+                    street_number = table.Column<int>(type: "integer", nullable: true),
                     complement = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     neighborhood = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     zip_code = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
@@ -42,7 +42,6 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    Document = table.Column<string>(type: "text", nullable: true),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_by = table.Column<string>(type: "text", nullable: false),
@@ -67,7 +66,7 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    base_salary = table.Column<decimal>(type: "numeric(2)", precision: 2, nullable: false),
+                    base_salary = table.Column<decimal>(type: "numeric(2)", precision: 2, nullable: true),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_by = table.Column<string>(type: "text", nullable: false),
@@ -96,7 +95,7 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                     document = table.Column<string>(type: "text", precision: 2, nullable: false),
                     email = table.Column<string>(type: "text", precision: 2, nullable: false),
                     street_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    street_number = table.Column<int>(type: "integer", nullable: false),
+                    street_number = table.Column<int>(type: "integer", nullable: true),
                     complement = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     neighborhood = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     zip_code = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
@@ -133,6 +132,8 @@ namespace Odin.Baseline.Infra.Data.EF.Migrations
                     employee_id = table.Column<Guid>(type: "uuid", nullable: false),
                     position_id = table.Column<Guid>(type: "uuid", nullable: false),
                     salary = table.Column<decimal>(type: "numeric(2)", precision: 2, nullable: false),
+                    start_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    finish_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     is_actual = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>

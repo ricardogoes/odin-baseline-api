@@ -18,6 +18,8 @@ namespace Odin.Baseline.Application.Employees.GetEmployees
         {
             var filters = new Dictionary<string, object>
             {
+                { "CustomerId", input.CustomerId },
+                { "DepartmentId", input.DepartmentId },
                 { "FirstName", input.FirstName },
                 { "LastName", input.LastName },
                 { "Document", input.Document },

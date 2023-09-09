@@ -20,12 +20,12 @@ namespace Odin.Baseline.EndToEndTests.Positions.Common
             return department;
         }
 
-        public PositionModel GetValidPositionModel()
+        public PositionModel GetValidPositionModel(Guid? customerId = null)
         {
             var customer = new PositionModel
             {
                 Id = Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId ?? Guid.NewGuid(),
                 Name = GetValidName(),
                 BaseSalary = 10_000,
                 IsActive = GetRandomBoolean(),
@@ -42,8 +42,8 @@ namespace Odin.Baseline.EndToEndTests.Positions.Common
             => Enumerable.Range(1, length)
                 .Select(_ => GetValidPosition()).ToList();
 
-        public List<PositionModel> GetValidPositionsModelList(int length = 10)
+        public List<PositionModel> GetValidPositionsModelList(Guid? customerId = null, int length = 10)
             => Enumerable.Range(1, length)
-                .Select(_ => GetValidPositionModel()).ToList();
+                .Select(_ => GetValidPositionModel(customerId)).ToList();
     }
 }

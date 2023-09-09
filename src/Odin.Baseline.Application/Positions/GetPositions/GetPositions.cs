@@ -18,6 +18,7 @@ namespace Odin.Baseline.Application.Positions.GetPositions
         {
             var filters = new Dictionary<string, object>
             {
+                { "CustomerId", input.CustomerId },
                 { "Name", input.Name },
                 { "IsActive", input.IsActive },
             };

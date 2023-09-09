@@ -1,4 +1,5 @@
 ﻿using Bogus.Extensions.Brazil;
+using Odin.Baseline.Domain.DTO;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.ValueObjects;
 using Odin.Baseline.Infra.Data.EF.Models;
@@ -21,11 +22,11 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             return customer;
         }
 
-        public CustomerModel GetValidCustomerModel()
+        public CustomerModel GetValidCustomerModel(Guid? id = null)
         {
             return new CustomerModel
             {
-                Id = Guid.NewGuid(),
+                Id = id ?? Guid.NewGuid(),
                 Name = Faker.Company.CompanyName(1),
                 Document = Faker.Company.Cnpj(),
                 IsActive = true,
@@ -81,10 +82,12 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
 
         public DepartmentModel GetValidDepartmentModel()
         {
+            var customerId = Guid.NewGuid();
             return new DepartmentModel
             {
                 Id = Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId,
+                Customer = GetValidCustomerModel(customerId),
                 Name = Faker.Company.CompanyName(1),
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
@@ -103,10 +106,12 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
 
         public PositionModel GetValidPositionModel()
         {
+            var customerId = Guid.NewGuid();
             return new PositionModel
             {
                 Id = Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId,
+                Customer = GetValidCustomerModel(customerId),
                 Name = Faker.Company.CompanyName(1),
                 BaseSalary = 1_000,
                 IsActive = true,
@@ -126,10 +131,12 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
 
         public EmployeeModel GetValidEmployeeModel()
         {
+            var customerId = Guid.NewGuid();
             return new EmployeeModel
             {
                 Id = Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId,
+                Customer = GetValidCustomerModel(customerId),
                 FirstName = Faker.Person.FirstName,
                 LastName = Faker.Person.LastName,
                 Document = Faker.Person.Cpf(),
@@ -151,10 +158,12 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
 
         public EmployeeModel GetValidEmployeeModelWithoutAddress()
         {
+            var customerId = Guid.NewGuid();
             return new EmployeeModel
             {
                 Id = Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId,
+                Customer = GetValidCustomerModel(customerId),
                 FirstName = Faker.Person.FirstName,
                 LastName = Faker.Person.LastName,
                 Document = Faker.Person.Cpf(),

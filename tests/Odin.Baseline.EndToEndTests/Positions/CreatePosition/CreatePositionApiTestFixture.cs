@@ -13,10 +13,10 @@ namespace Odin.Baseline.EndToEndTests.Positions.CreatePosition
             : base()
         { }
 
-        public CreatePositionInput GetValidInput()
+        public CreatePositionInput GetValidInput(Guid? customerId = null)
             => new()
             {
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId ?? Guid.NewGuid(),
                 Name = GetValidName(),
                 LoggedUsername = GetValidUsername()
             };

@@ -22,15 +22,17 @@ namespace Odin.Baseline.EndToEndTests.Departments.UpdateDepartment
         [Trait("E2E/Controllers", "Departments / [v1]UpdateDepartment")]
         public async Task UpdateValidDepartment()
         {
-            var departmentsList = _fixture.GetValidDepartmentsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var departmentsList = _fixture.GetValidDepartmentsModelList(customer.Id, length: 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(departmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var departmentToUpdate = departmentsList[10];
 
-            var input = _fixture.GetValidInput(departmentToUpdate.Id) ;
+            var input = _fixture.GetValidInput(id: departmentToUpdate.Id, customerId: customer.Id) ;
 
             var (response, output) = await _fixture.ApiClient.PutAsync<DepartmentOutput>($"/v1/departments/{departmentToUpdate.Id}", input);
 
@@ -48,7 +50,7 @@ namespace Odin.Baseline.EndToEndTests.Departments.UpdateDepartment
         public async Task ErrorWhenInvalidIds()
         {
 
-            var departmentsList = _fixture.GetValidDepartmentsModelList(20);
+            var departmentsList = _fixture.GetValidDepartmentsModelList(length: 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
             await dbContext.AddRangeAsync(departmentsList);
@@ -77,9 +79,11 @@ namespace Odin.Baseline.EndToEndTests.Departments.UpdateDepartment
         )]
         public async Task ErrorWhenCantInstantiateDepartment(UpdateDepartmentInput input, string expectedDetail)
         {
-            var departmentsList = _fixture.GetValidDepartmentsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var departmentsList = _fixture.GetValidDepartmentsModelList(customer.Id, length: 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(departmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -101,7 +105,7 @@ namespace Odin.Baseline.EndToEndTests.Departments.UpdateDepartment
         [Trait("E2E/Controllers", "Departments / [v1]UpdateDepartment")]
         public async Task ErrorWhenNotFound()
         {
-            var departmentsList = _fixture.GetValidDepartmentsModelList(20);
+            var departmentsList = _fixture.GetValidDepartmentsModelList(length: 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
             await dbContext.AddRangeAsync(departmentsList);

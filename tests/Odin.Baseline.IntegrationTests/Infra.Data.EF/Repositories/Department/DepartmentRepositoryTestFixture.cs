@@ -13,12 +13,12 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
             : base()
         { }
 
-        public string GetValidName()
+        public string GetValidDepartmentName()
             => Faker.Commerce.Department();
 
-        public DomainEntity.Department GetValidDepartment()
+        public DomainEntity.Department GetValidDepartment(Guid? customerId =  null)
         {
-            var department = new DomainEntity.Department(Guid.NewGuid(), GetValidName(), isActive: true);
+            var department = new DomainEntity.Department(customerId ?? Guid.NewGuid(), GetValidDepartmentName(), isActive: true);
             department.Create("unit.testing");
 
             return department;
@@ -30,7 +30,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
             {
                 Id = Guid.NewGuid(),
                 CustomerId = customerId ?? Guid.NewGuid(),
-                Name = GetValidName(),
+                Name = GetValidDepartmentName(),
                 IsActive = true,
                 CreatedAt = DateTime.Now,
                 CreatedBy = "unit.test",

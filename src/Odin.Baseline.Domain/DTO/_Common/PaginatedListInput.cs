@@ -11,14 +11,14 @@
         {
             PageNumber = 1;
             PageSize = 10;
-            Sort = "lastUpdatedBy desc";
+            Sort = "lastUpdatedAt desc";
         }
 
         public PaginatedListInput(int pageNumber, int pageSize, string sort)
         {
             PageNumber = pageNumber < 1 ? 1 : pageNumber;
             PageSize = pageSize;
-            Sort = sort;
+            Sort = sort ?? "lastUpdatedAt desc";
         }
     }
 }

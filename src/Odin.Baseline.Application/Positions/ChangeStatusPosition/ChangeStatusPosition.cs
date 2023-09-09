@@ -31,10 +31,10 @@ namespace Odin.Baseline.Application.Positions.ChangeStatusPosition
                     break;
             }
 
-            await _repository.UpdateAsync(position);
+            var positionUpdated = await _repository.UpdateAsync(position, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            return PositionOutput.FromPosition(position);
+            return PositionOutput.FromPosition(positionUpdated);
         }
     }
 }

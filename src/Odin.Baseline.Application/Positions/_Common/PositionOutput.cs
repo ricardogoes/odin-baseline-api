@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Domain.Entities;
+﻿using Odin.Baseline.Domain.DTO;
+using Odin.Baseline.Domain.Entities;
 
 namespace Odin.Baseline.Application.Positions.Common
 {
@@ -13,6 +14,8 @@ namespace Odin.Baseline.Application.Positions.Common
         public DateTime LastUpdatedAt { get; set; }
         public string LastUpdatedBy { get; set; }
 
+        public CustomerData Customer { get; set; }
+
         public static PositionOutput FromPosition(Position position)
         {
             return new PositionOutput
@@ -24,8 +27,9 @@ namespace Odin.Baseline.Application.Positions.Common
                 CreatedAt = position.CreatedAt,
                 CreatedBy = position.CreatedBy,
                 LastUpdatedAt = position.LastUpdatedAt,
-                LastUpdatedBy = position.LastUpdatedBy
+                LastUpdatedBy = position.LastUpdatedBy,
 
+                Customer = position.CustomerData
             };
         }
 

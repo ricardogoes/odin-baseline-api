@@ -40,7 +40,7 @@ namespace Odin.Baseline.UnitTests.Application.Departments.GetDepartments
                 .Returns(() => Task.FromResult(expectedDepartments));
 
             var useCase = new App.GetDepartments(_repositoryMock.Object);
-            var departments = await useCase.Handle(new App.GetDepartmentsInput(1, 10, "name", Guid.NewGuid(), "Unit Testing", true), new CancellationToken());
+            var departments = await useCase.Handle(new App.GetDepartmentsInput(1, 10, "name", Guid.NewGuid(), "Unit Testing", true, "", null, null, "", null, null), new CancellationToken());
 
             departments.TotalItems.Should().Be(4);
         }

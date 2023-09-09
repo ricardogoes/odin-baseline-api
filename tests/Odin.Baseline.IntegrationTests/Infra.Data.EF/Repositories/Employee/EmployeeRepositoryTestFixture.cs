@@ -28,9 +28,9 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         public string GetValidEmployeeEmail()
             => Faker.Person.Email;
 
-        public DomainEntity.Employee GetValidEmployee()
+        public DomainEntity.Employee GetValidEmployee(Guid? customerId = null)
         {
-            var employee = new DomainEntity.Employee(Guid.NewGuid(), GetValidEmployeeFistName(), GetValidEmployeeLastName(), GetValidEmployeeDocument(), GetValidEmployeeEmail(), isActive: true);
+            var employee = new DomainEntity.Employee(customerId ?? Guid.NewGuid(), GetValidEmployeeFistName(), GetValidEmployeeLastName(), GetValidEmployeeDocument(), GetValidEmployeeEmail(), isActive: true);
             employee.Create("unit.testing");
 
             return employee;
@@ -42,7 +42,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
             {
                 Id = Guid.NewGuid(),
                 CustomerId = customerId ?? Guid.NewGuid(),
-                DepartmentId = departmentId ?? Guid.NewGuid(),
+                DepartmentId = departmentId,
                 FirstName = GetValidEmployeeFistName(),
                 LastName = GetValidEmployeeLastName(),
                 Document = GetValidEmployeeDocument(),

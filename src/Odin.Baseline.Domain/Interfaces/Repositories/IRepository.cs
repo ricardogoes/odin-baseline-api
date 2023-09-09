@@ -5,9 +5,9 @@ namespace Odin.Baseline.Domain.Interfaces.Repositories
 {
     public interface IRepository<T> where T : Entity
     {
-        Task InsertAsync(T entity, CancellationToken cancellationToken) ;
+        Task<T> InsertAsync(T entity, CancellationToken cancellationToken) ;
 
-        Task UpdateAsync(T entity);
+        Task<T> UpdateAsync(T entity, CancellationToken cancellationToken);
 
         Task DeleteAsync(T entity);
 

@@ -22,17 +22,19 @@ namespace Odin.Baseline.EndToEndTests.Employees.UpdateEmployee
         [Trait("E2E/Controllers", "Employees / [v1]UpdateEmployee")]
         public async Task UpdateValidEmployee()
         {
-            var customerId = Guid.NewGuid();
-            var departmentId = Guid.NewGuid();
-            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customerId }, new List<Guid> { departmentId }, 20);
+            var customer = _fixture.GetValidCustomerModel();
+            var department = _fixture.GetValidDepartmentModel(customer.Id);
+            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customer.Id }, new List<Guid> { department.Id }, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
+            await dbContext.AddAsync(department);
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var employeeToUpdate = employeesList[10];
 
-            var input = _fixture.GetValidUpdateEmployeeInput(employeeToUpdate.Id) ;
+            var input = _fixture.GetValidUpdateEmployeeInput(employeeToUpdate.Id, customer.Id, department.Id) ;
 
             var (response, output) = await _fixture.ApiClient.PutAsync<EmployeeOutput>($"/v1/employees/{employeeToUpdate.Id}", input);
 
@@ -53,11 +55,13 @@ namespace Odin.Baseline.EndToEndTests.Employees.UpdateEmployee
         public async Task ErrorWhenInvalidIds()
         {
 
-            var customerId = Guid.NewGuid();
-            var departmentId = Guid.NewGuid();
-            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customerId }, new List<Guid> { departmentId }, 20);
+            var customer = _fixture.GetValidCustomerModel();
+            var department = _fixture.GetValidDepartmentModel(customer.Id);
+            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customer.Id }, new List<Guid> { department.Id }, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
+            await dbContext.AddAsync(department);
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -84,11 +88,13 @@ namespace Odin.Baseline.EndToEndTests.Employees.UpdateEmployee
         )]
         public async Task ErrorWhenCantInstantiateEmployee(UpdateEmployeeInput input, string expectedDetail)
         {
-            var customerId = Guid.NewGuid();
-            var departmentId = Guid.NewGuid();
-            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customerId }, new List<Guid> { departmentId }, 20);
+            var customer = _fixture.GetValidCustomerModel();
+            var department = _fixture.GetValidDepartmentModel(customer.Id);
+            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customer.Id }, new List<Guid> { department.Id }, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
+            await dbContext.AddAsync(department);
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -110,11 +116,13 @@ namespace Odin.Baseline.EndToEndTests.Employees.UpdateEmployee
         [Trait("E2E/Controllers", "Employees / [v1]UpdateEmployee")]
         public async Task ErrorWhenNotFound()
         {
-            var customerId = Guid.NewGuid();
-            var departmentId = Guid.NewGuid();
-            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customerId }, new List<Guid> { departmentId }, 20);
+            var customer = _fixture.GetValidCustomerModel();
+            var department = _fixture.GetValidDepartmentModel(customer.Id);
+            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customer.Id }, new List<Guid> { department.Id }, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
+            await dbContext.AddAsync(department);
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -136,11 +144,13 @@ namespace Odin.Baseline.EndToEndTests.Employees.UpdateEmployee
         [Trait("E2E/Controllers", "Employees / [v1]UpdateEmployee")]
         public async Task ThrowErrorWithDuplicatedDocument()
         {
-            var customerId = Guid.NewGuid();
-            var departmentId = Guid.NewGuid();
-            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customerId }, new List<Guid> { departmentId }, 20);
+            var customer = _fixture.GetValidCustomerModel();
+            var department = _fixture.GetValidDepartmentModel(customer.Id);
+            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customer.Id }, new List<Guid> { department.Id }, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
+            await dbContext.AddAsync(department);
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 

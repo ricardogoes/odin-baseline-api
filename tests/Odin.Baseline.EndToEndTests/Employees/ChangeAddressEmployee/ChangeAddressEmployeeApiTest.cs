@@ -22,11 +22,14 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeAddressEmployee
         [Trait("E2E/Controllers", "Employees / [v1]ChangeAddressEmployee")]
         public async Task ActivateEmployee()
         {
-            var customerId = Guid.NewGuid();
-            var departmentId = Guid.NewGuid();
-            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customerId }, new List<Guid> { departmentId }, 20);
+            var customer = _fixture.GetValidCustomerModel();
+            var department = _fixture.GetValidDepartmentModel();
+
+            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customer.Id }, new List<Guid> { department.Id }, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
+            await dbContext.AddAsync(department);
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -108,11 +111,13 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeAddressEmployee
         )]
         public async Task ErrorWhenCantInstantiateAddress(ChangeAddressEmployeeInput input, string expectedDetail)
         {
-            var customerId = Guid.NewGuid();
-            var departmentId = Guid.NewGuid();
-            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customerId }, new List<Guid> { departmentId }, 20);
+            var customer = _fixture.GetValidCustomerModel();
+            var department = _fixture.GetValidDepartmentModel();
+            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customer.Id }, new List<Guid> { department.Id }, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
+            await dbContext.AddAsync(department);
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 

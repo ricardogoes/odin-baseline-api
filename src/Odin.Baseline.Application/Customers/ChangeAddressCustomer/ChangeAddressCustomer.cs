@@ -23,7 +23,7 @@ namespace Odin.Baseline.Application.Customers.ChangeAddressCustomer
 
             customer.ChangeAddress(address);
 
-            await _repository.UpdateAsync(customer);
+            await _repository.UpdateAsync(customer, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return CustomerOutput.FromCustomer(customer);

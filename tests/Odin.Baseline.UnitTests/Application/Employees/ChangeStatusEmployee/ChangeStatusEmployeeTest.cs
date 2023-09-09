@@ -32,7 +32,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);
 
-            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Employee>()))
+            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(validEmployee));
 
             var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
@@ -42,7 +42,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             output.IsActive.Should().BeTrue();
             
             _repositoryMock.Verify(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
-            _repositoryMock.Verify(x => x.UpdateAsync(validEmployee), Times.Once);
+            _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -56,7 +56,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);
 
-            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Employee>()))
+            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(validEmployee));
 
             var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
@@ -66,7 +66,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             output.IsActive.Should().BeFalse();
 
             _repositoryMock.Verify(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
-            _repositoryMock.Verify(x => x.UpdateAsync(validEmployee), Times.Once);
+            _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -80,7 +80,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);
 
-            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Employee>()))
+            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(validEmployee));
 
             var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
@@ -89,7 +89,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             output.Should().NotBeNull();
 
             _repositoryMock.Verify(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
-            _repositoryMock.Verify(x => x.UpdateAsync(validEmployee), Times.Once);
+            _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 

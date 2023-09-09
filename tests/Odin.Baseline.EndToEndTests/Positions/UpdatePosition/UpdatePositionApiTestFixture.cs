@@ -13,11 +13,11 @@ namespace Odin.Baseline.EndToEndTests.Positions.UpdatePosition
             : base()
         { }
 
-        public UpdatePositionInput GetValidInput(Guid id)
+        public UpdatePositionInput GetValidInput(Guid id, Guid? customerId = null)
             => new()
             {
                 Id = id,
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId ?? Guid.NewGuid(),
                 Name = GetValidName(),
                 BaseSalary = 10_000,
                 LoggedUsername = GetValidUsername()

@@ -123,8 +123,12 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
         public async void ValidateWhenValid()
         {
             var validEmployee = _fixture.GetValidEmployee();
+            
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);
+
+            _repositoryMock.Setup(s => s.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(validEmployee));
 
             var input = _fixture.GetValidInputAddress();
             var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);

@@ -22,7 +22,12 @@ namespace Odin.Baseline.EndToEndTests.Departments.CreateDepartment
         [Trait("E2E/Controllers", "Departments / [v1]CreateDepartment")]
         public async Task InsertValidDepartment()
         {
-            var input = _fixture.GetValidInput();
+            var customer = _fixture.GetValidCustomerModel();
+            var dbContext = _fixture.CreateDbContext();
+            await dbContext.AddAsync(customer);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+
+            var input = _fixture.GetValidInput(customer.Id);
 
             var (response, output) = await _fixture.ApiClient.PostAsync<DepartmentOutput>("/v1/departments", input);
 

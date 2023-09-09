@@ -13,11 +13,11 @@ namespace Odin.Baseline.EndToEndTests.Departments.UpdateDepartment
             : base()
         { }
 
-        public UpdateDepartmentInput GetValidInput(Guid id)
+        public UpdateDepartmentInput GetValidInput(Guid id, Guid? customerId = null)
             => new()
             {
                 Id = id,
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId ?? Guid.NewGuid(),
                 Name = GetValidName(),
                 LoggedUsername = GetValidUsername()
             };

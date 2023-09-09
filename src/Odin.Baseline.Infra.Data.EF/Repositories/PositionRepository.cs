@@ -19,18 +19,28 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
         public PositionRepository(OdinBaselineDbContext dbContext)
             =>  _dbContext = dbContext;
 
-        public async Task InsertAsync(Position position, CancellationToken cancellationToken)
-            => await _positions.AddAsync(position.ToPositionModel(), cancellationToken);
+        public async Task<Position> InsertAsync(Position position, CancellationToken cancellationToken)
+        {            
+            var positionInserted = await _positions.AddAsync(position.ToPositionModel(), cancellationToken);
+            positionInserted.Reference("Customer").Load();
 
-        public async Task UpdateAsync(Position position)
-            => await Task.FromResult(_positions.Update(position.ToPositionModel()));
+            return positionInserted.Entity.ToPosition();
+        }
+
+        public async Task<Position> UpdateAsync(Position position, CancellationToken cancellationToken)
+        {
+            var positionUpdated = await Task.FromResult(_positions.Update(position.ToPositionModel()));
+            positionUpdated.Reference("Customer").Load();
+
+            return positionUpdated.Entity.ToPosition();
+        }
 
         public async Task DeleteAsync(Position position)
             => await Task.FromResult(_positions.Remove(position.ToPositionModel()));
 
         public async Task<Position> FindByIdAsync(Guid id, CancellationToken cancellationToken) 
         {
-            var model = await _positions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            var model = await _positions.Include(x => x.Customer).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             NotFoundException.ThrowIfNull(model, $"Position with Id '{id}' not found.");
 
             return model.ToPosition(); 
@@ -41,7 +51,9 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
             var filtersExpression = ExpressionsFactory<PositionModel>.BuildFilterExpression(filters);
             var expression = ExpressionsFactory<PositionModel>.BuildQueryableExpression(filtersExpression);
 
-            var data = expression != null ? await _positions.AsNoTracking().Where(expression).ToListAsync(cancellationToken) : await _positions.ToListAsync(cancellationToken);
+            var data = expression != null 
+                ? await _positions.Where(expression).Include(x => x.Customer).ToListAsync(cancellationToken) 
+                : await _positions.Include(x => x.Customer).ToListAsync(cancellationToken);
 
             var sortedData = SortHelper.ApplySort(data, sort);
 

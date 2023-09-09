@@ -51,7 +51,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployees
                 .Returns(() => Task.FromResult(expectedEmployees));
 
             var useCase = new App.GetEmployees(_repositoryMock.Object);
-            var employees = await useCase.Handle(new App.GetEmployeesInput(1, 10, "name", Guid.Empty, Guid.Empty, "", "", "", "", true), new CancellationToken());
+            var employees = await useCase.Handle(new App.GetEmployeesInput(1, 10, "name", Guid.Empty, Guid.Empty, "", "", "", "", true, "", null, null, "", null, null), new CancellationToken());
 
             employees.Should().NotBeNull();
             employees.TotalItems.Should().Be(15);
@@ -81,7 +81,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployees
                 .Returns(() => Task.FromResult(expectedEmployees));
 
             var useCase = new App.GetEmployees(_repositoryMock.Object);
-            var employees = await useCase.Handle(new App.GetEmployeesInput(1, 10, "name", Guid.Empty, Guid.Empty, "", "", "", "", true), new CancellationToken());
+            var employees = await useCase.Handle(new App.GetEmployeesInput(1, 10, "name", Guid.Empty, Guid.Empty, "", "", "", "", true, "", null, null, "", null, null), new CancellationToken());
 
             employees.Should().NotBeNull();
             employees.TotalItems.Should().Be(4);

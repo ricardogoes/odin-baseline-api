@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Domain.Entities;
+﻿using Odin.Baseline.Domain.DTO;
+using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.ValueObjects;
 
 namespace Odin.Baseline.Application.Employees.Common
@@ -18,12 +19,14 @@ namespace Odin.Baseline.Application.Employees.Common
         public string LastUpdatedBy { get; set; }
 
         public IReadOnlyList<EmployeePositionHistory> PositionsHistory { get; set; }
+        public CustomerData Customer { get; set; }
+        public DepartmentData Department { get; set; }
 
         public static EmployeeOutput FromEmployee(Employee employee)
         {
             return new EmployeeOutput
             {
-                Id = employee.Id,
+                Id = employee.Id,                
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
                 Document = employee.Document,
@@ -34,7 +37,10 @@ namespace Odin.Baseline.Application.Employees.Common
                 CreatedBy = employee.CreatedBy,
                 LastUpdatedAt = employee.LastUpdatedAt,
                 LastUpdatedBy = employee.LastUpdatedBy,
-                PositionsHistory = employee.HistoricPositions
+                PositionsHistory = employee.HistoricPositions,
+
+                Customer = employee.CustomerData,
+                Department = employee.DepartmentData,
             };
         }
 

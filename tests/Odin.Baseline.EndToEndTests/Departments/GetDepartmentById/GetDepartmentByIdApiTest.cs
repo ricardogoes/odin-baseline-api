@@ -21,9 +21,11 @@ namespace Odin.Baseline.EndToEndTests.Departments.GetDepartmentById
         [Trait("E2E/Controllers", "Departments / [v1]GetDepartmentById")]
         public async Task GetDepartmentById()
         {
-            var departmentsList = _fixture.GetValidDepartmentsModelList(20);
+            var customer = _fixture.GetValidCustomerModel();
+            var departmentsList = _fixture.GetValidDepartmentsModelList(customer.Id, length: 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(departmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -44,7 +46,7 @@ namespace Odin.Baseline.EndToEndTests.Departments.GetDepartmentById
         [Trait("E2E/Controllers", "Departments / [v1]GetDepartmentById")]
         public async Task ErrorWhenNotFound()
         {
-            var departmentsList = _fixture.GetValidDepartmentsModelList(20);
+            var departmentsList = _fixture.GetValidDepartmentsModelList(length: 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
             await dbContext.AddRangeAsync(departmentsList);

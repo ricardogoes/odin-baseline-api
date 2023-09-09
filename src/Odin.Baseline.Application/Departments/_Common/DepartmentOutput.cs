@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Domain.Entities;
+﻿using Odin.Baseline.Domain.DTO;
+using Odin.Baseline.Domain.Entities;
 
 namespace Odin.Baseline.Application.Departments.Common
 {
@@ -12,6 +13,8 @@ namespace Odin.Baseline.Application.Departments.Common
         public DateTime LastUpdatedAt { get; set; }
         public string LastUpdatedBy { get; set; }
 
+        public CustomerData Customer { get; set; }
+
         public static DepartmentOutput FromDepartment(Department department)
         {
             return new DepartmentOutput
@@ -22,8 +25,9 @@ namespace Odin.Baseline.Application.Departments.Common
                 CreatedAt = department.CreatedAt,
                 CreatedBy = department.CreatedBy,
                 LastUpdatedAt = department.LastUpdatedAt,
-                LastUpdatedBy = department.LastUpdatedBy
+                LastUpdatedBy = department.LastUpdatedBy,
 
+                Customer = department.CustomerData
             };
         }
 

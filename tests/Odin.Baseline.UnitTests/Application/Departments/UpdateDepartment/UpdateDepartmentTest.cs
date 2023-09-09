@@ -34,7 +34,7 @@ namespace Odin.Baseline.UnitTests.Application.Departments.UpdateDepartment
             _repositoryMock.Setup(x => x.FindByIdAsync(exampleDepartment.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(exampleDepartment);
 
-            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Department>()))
+            _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Department>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(exampleDepartment));
 
             var useCase = new App.UpdateDepartment(_unitOfWorkMock.Object, _repositoryMock.Object);
@@ -44,7 +44,7 @@ namespace Odin.Baseline.UnitTests.Application.Departments.UpdateDepartment
             output.Name.Should().Be(input.Name);
 
             _repositoryMock.Verify(x => x.FindByIdAsync(exampleDepartment.Id, It.IsAny<CancellationToken>()), Times.Once);
-            _repositoryMock.Verify(x => x.UpdateAsync(exampleDepartment), Times.Once);
+            _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Department>(), It.IsAny<CancellationToken>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 

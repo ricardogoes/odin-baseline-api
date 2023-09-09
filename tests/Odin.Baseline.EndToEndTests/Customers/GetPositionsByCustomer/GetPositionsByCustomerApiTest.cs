@@ -43,10 +43,10 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetPositionsByCustomer
 
             output.Should().NotBeNull();
             output.PageNumber.Should().Be(1);
-            output.PageSize.Should().Be(10);
-            output.TotalRecords.Should().Be(positionsList.Count);
+            output.PageSize.Should().Be(5);
+            output.TotalRecords.Should().Be(positionsList.Count/2);
             output.TotalPages.Should().Be(2);
-            output.Items.Should().HaveCount(10);
+            output.Items.Should().HaveCount(5);
         }
 
         [Fact(DisplayName = "Should throw an error when customerId is empty")]
@@ -89,7 +89,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetPositionsByCustomer
             var customersList = _fixture.GetValidCustomersModelList(2);
             var customersIds = customersList.Select(x => x.Id).ToList();
 
-            var positionsList = _fixture.GetValidPositionsModelList(customersIds, quantityToGenerate/2);
+            var positionsList = _fixture.GetValidPositionsModelList(customersIds, quantityToGenerate);
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
             await dbContext.AddRangeAsync(customersList);
@@ -131,21 +131,22 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetPositionsByCustomer
         [InlineData("Invalid", 1, 5, 0, 0)]
         public async Task SearchByName(string search, int page, int pageSize, int expectedQuantityItemsReturned, int expectedQuantityTotalItems)
         {
-            var customerId = Guid.NewGuid();
+            var customer = _fixture.GetValidCustomerModel();
             
             var positions = new List<PositionModel>()
             {
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 01", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 02", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 03", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 04", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 05", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Depto 01", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Depto 02", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Depto 03", BaseSalary = 5_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 01", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 02", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 03", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 04", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 05", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 01", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 02", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 03", BaseSalary = 5_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
             };
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positions);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -156,7 +157,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetPositionsByCustomer
                 Name = search
             };
 
-            var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<PositionOutput>>($"/v1/customers/{customerId}/positions", input);
+            var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<PositionOutput>>($"/v1/customers/{customer.Id}/positions", input);
 
             response.Should().NotBeNull();
             response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
@@ -182,21 +183,22 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetPositionsByCustomer
         [InlineData(false, 1, 5, 3, 3)]
         public async Task SearchByStatus(bool search, int page, int pageSize, int expectedQuantityItemsReturned, int expectedQuantityTotalItems)
         {
-            var customerId = Guid.NewGuid();
+            var customer = _fixture.GetValidCustomerModel();
 
             var positions = new List<PositionModel>()
             {
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 01", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 02", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 03", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 04", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 05", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Depto 01", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Depto 02", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Depto 03", BaseSalary = 5_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 01", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 02", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 03", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 04", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 05", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 01", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 02", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 03", BaseSalary = 5_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
             };
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positions);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -207,7 +209,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetPositionsByCustomer
                 IsActive = search
             };
 
-            var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<PositionOutput>>($"/v1/customers/{customerId}/positions", input);
+            var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<PositionOutput>>($"/v1/customers/{customer.Id}/positions", input);
 
             response.Should().NotBeNull();
             response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
@@ -231,20 +233,21 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetPositionsByCustomer
         [Trait("E2E/Controllers", "Customers / [v1]GetPositionsByCustomer")]
         public async Task ListOrdered()
         {
-            var customerId = Guid.NewGuid();
+            var customer = _fixture.GetValidCustomerModel();
             var positions = new List<PositionModel>()
             {
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 04", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 05", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 03", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 01", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Position 02", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Pstion 11", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Pstion 12", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new PositionModel { Id = Guid.NewGuid(), CustomerId = customerId, Name = "Pstion 23", BaseSalary = 5_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 04", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 05", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 03", BaseSalary = 10_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 01", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Position 02", BaseSalary = 10_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Pstion 11", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Pstion 12", BaseSalary = 5_000, IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
+                new PositionModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Pstion 23", BaseSalary = 5_000, IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
             };
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
+            await dbContext.AddAsync(customer);
             await dbContext.AddRangeAsync(positions);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
@@ -255,7 +258,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetPositionsByCustomer
                 Sort = "name"
             };
 
-            var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<PositionOutput>>($"/v1/customers/{customerId}/positions", input);
+            var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<PositionOutput>>($"/v1/customers/{customer.Id}/positions", input);
 
             response.Should().NotBeNull();
             response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);

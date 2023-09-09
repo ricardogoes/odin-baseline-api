@@ -24,10 +24,10 @@ namespace Odin.Baseline.Application.Employees.ChangeAddressEmployee
 
             employee.ChangeAddress(address);
 
-            await _repository.UpdateAsync(employee);
+            var employeeUpdated = await _repository.UpdateAsync(employee, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            return EmployeeOutput.FromEmployee(employee);
+            return EmployeeOutput.FromEmployee(employeeUpdated);
         }
     }
 }

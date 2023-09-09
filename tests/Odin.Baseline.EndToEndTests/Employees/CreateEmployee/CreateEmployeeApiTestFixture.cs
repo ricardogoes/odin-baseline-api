@@ -13,11 +13,11 @@ namespace Odin.Baseline.EndToEndTests.Employees.CreateEmployee
             : base()
         { }
 
-        public CreateEmployeeInput GetValidCreateEmployeeInput()
+        public CreateEmployeeInput GetValidCreateEmployeeInput(Guid? customerId = null, Guid? departmentId = null)
             => new()
             {
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
+                CustomerId = customerId ?? Guid.NewGuid(),
+                DepartmentId = departmentId,
                 FirstName = GetValidEmployeeFirstName(),
                 LastName = GetValidEmployeeLastName(),
                 Document = GetValidEmployeeDocument(),

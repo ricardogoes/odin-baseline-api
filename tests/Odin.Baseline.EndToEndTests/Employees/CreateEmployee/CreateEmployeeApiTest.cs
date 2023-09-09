@@ -22,7 +22,42 @@ namespace Odin.Baseline.EndToEndTests.Employees.CreateEmployee
         [Trait("E2E/Controllers", "Employees / [v1]CreateEmployee")]
         public async Task InsertValidEmployee()
         {
-            var input = _fixture.GetValidCreateEmployeeInput();
+            var dbContext = _fixture.CreateDbContext();
+            
+            var customer = _fixture.GetValidCustomerModel();
+            var department = _fixture.GetValidDepartmentModel(customer.Id);
+
+            await dbContext.AddAsync(customer);
+            await dbContext.AddAsync(department);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+
+            var input = _fixture.GetValidCreateEmployeeInput(customer.Id, department.Id);
+
+            var (response, output) = await _fixture.ApiClient.PostAsync<EmployeeOutput>("/v1/employees", input);
+
+            response.Should().NotBeNull();
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            output.FirstName.Should().Be(input.FirstName);
+            output.LastName.Should().Be(input.LastName);
+            output.Email.Should().Be(input.Email);
+            output.Document.Should().Be(input.Document);
+            output.IsActive.Should().BeTrue();
+            output.CreatedAt.Should().NotBeSameDateAs(default);
+        }
+
+        [Fact(DisplayName = "Should insert a valid employee without department")]
+        [Trait("E2E/Controllers", "Employees / [v1]CreateEmployee")]
+        public async Task InsertValidEmployeeWithoutDepartment()
+        {
+            var dbContext = _fixture.CreateDbContext();
+
+            var customer = _fixture.GetValidCustomerModel();
+
+            await dbContext.AddAsync(customer);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+
+            var input = _fixture.GetValidCreateEmployeeInput(customer.Id);
 
             var (response, output) = await _fixture.ApiClient.PostAsync<EmployeeOutput>("/v1/employees", input);
 
@@ -41,11 +76,13 @@ namespace Odin.Baseline.EndToEndTests.Employees.CreateEmployee
         [Trait("E2E/Controllers", "Employees / [v1]CreateEmployee")]
         public async Task ThrowErrorWithDuplicatedDocument()
         {
-            var customerId = Guid.NewGuid();
-            var departmentId = Guid.NewGuid();
-            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customerId }, new List<Guid> { departmentId }, 20);
+            var customer = _fixture.GetValidCustomerModel();
+            var department = _fixture.GetValidDepartmentModel(customer.Id);
+            var employeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customer.Id }, new List<Guid> { department.Id }, 20);
 
             var dbContext = _fixture.CreateDbContext(preserveData: true);
+            await dbContext.AddAsync(customer);
+            await dbContext.AddAsync(department);
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 

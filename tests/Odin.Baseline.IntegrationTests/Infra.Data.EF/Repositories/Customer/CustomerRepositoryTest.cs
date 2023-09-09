@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
+using Moq;
 using Odin.Baseline.Application.Customers.GetCustomers;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Infra.Data.EF.Mappers;
 using Odin.Baseline.Infra.Data.EF.Repositories;
+using DomainEntity = Odin.Baseline.Domain.Entities;
 
 namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
 {
@@ -103,7 +105,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
             var customerRepository = new CustomerRepository(dbContext);
             var unitOfWork = new UnitOfWork(dbContext);
 
-            await customerRepository.UpdateAsync(exampleCustomer);
+            await customerRepository.UpdateAsync(exampleCustomer, It.IsAny<CancellationToken>());
             await unitOfWork.CommitAsync(CancellationToken.None);
 
             var dbCustomer = await customerRepository.FindByIdAsync(exampleCustomer.Id, CancellationToken.None);

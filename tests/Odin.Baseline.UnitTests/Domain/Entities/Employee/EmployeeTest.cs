@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Odin.Baseline.Domain.CustomExceptions;
+using Odin.Baseline.Domain.DTO;
 using Odin.Baseline.Domain.Entities;
 using DomainEntity = Odin.Baseline.Domain.Entities;
 
@@ -298,8 +299,37 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             employee.HistoricPositions.Should().HaveCount(0);
         }
 
+        [Fact(DisplayName = "LoadCustomerData() should load data of the customer related with employee")]
+        [Trait("Domain", "Entities / Employee")]
+        public void CustomerLoad()
+        {
+            var customer = _fixture.GetValidCustomer();
+            var employee = _fixture.GetValidEmployee(customer.Id);
+
+            employee.LoadCustomerData(new CustomerData(customer.Id, customer.Name));
+
+            employee.CustomerData.Should().NotBeNull();
+            employee.CustomerData.Id.Should().Be(customer.Id);
+            employee.CustomerData.Name.Should().Be(customer.Name);
+        }
+
+        [Fact(DisplayName = "LoadDepartmentData() should load data of the department related with employee")]
+        [Trait("Domain", "Entities / Employee")]
+        public void DepartmentLoad()
+        {
+            var customer = _fixture.GetValidCustomer();
+            var department = _fixture.GetValidDepartment(customer.Id);
+            var employee = _fixture.GetValidEmployee(customer.Id, department.Id);
+
+            employee.LoadDepartmentData(new DepartmentData(department.Id, department.Name));
+
+            employee.DepartmentData.Should().NotBeNull();
+            employee.DepartmentData.Id.Should().Be(department.Id);
+            employee.DepartmentData.Name.Should().Be(department.Name);
+        }
+
         [Fact(DisplayName = "SetAuditLog() should set auditLog")]
-        [Trait("Domain", "Entities / Customer")]
+        [Trait("Domain", "Entities / Employee")]
         public void AuditLog()
         {
             var employee = _fixture.GetValidEmployee();

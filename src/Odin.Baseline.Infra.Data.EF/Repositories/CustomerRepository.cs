@@ -7,7 +7,6 @@ using Odin.Baseline.Infra.Data.EF.Expressions;
 using Odin.Baseline.Infra.Data.EF.Helpers;
 using Odin.Baseline.Infra.Data.EF.Mappers;
 using Odin.Baseline.Infra.Data.EF.Models;
-using System.Threading;
 
 namespace Odin.Baseline.Infra.Data.EF.Repositories
 {
@@ -22,11 +21,19 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task InsertAsync(Customer customer, CancellationToken cancellationToken)
-            => await _customers.AddAsync(customer.ToCustomerModel(), cancellationToken);
+        public async Task<Customer> InsertAsync(Customer customer, CancellationToken cancellationToken)
+        {
+            await _customers.AddAsync(customer.ToCustomerModel(), cancellationToken);
 
-        public async Task UpdateAsync(Customer customer)
-            => await Task.FromResult(_customers.Update(customer.ToCustomerModel()));
+            return customer;
+
+        }
+
+        public async Task<Customer> UpdateAsync(Customer customer, CancellationToken cancellationToken)
+        {
+            await Task.FromResult(_customers.Update(customer.ToCustomerModel()));
+            return customer;
+        }
 
         public async Task DeleteAsync(Customer customer)
             => await Task.FromResult(_customers.Remove(customer.ToCustomerModel()));

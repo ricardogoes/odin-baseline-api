@@ -16,9 +16,9 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
         public string GetValidName()
             => Faker.Commerce.Department();
 
-        public DomainEntity.Position GetValidPosition()
+        public DomainEntity.Position GetValidPosition(Guid? customerId = null)
         {
-            var position = new DomainEntity.Position(Guid.NewGuid(), GetValidName(), 10_000, isActive: true);
+            var position = new DomainEntity.Position(customerId ?? Guid.NewGuid(), GetValidName(), 10_000, isActive: true);
             position.Create("unit.testing");
 
             return position;

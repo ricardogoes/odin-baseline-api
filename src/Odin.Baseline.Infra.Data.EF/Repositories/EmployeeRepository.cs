@@ -14,19 +14,22 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
     {
         private readonly OdinBaselineDbContext _dbContext;
 
+        private DbSet<DepartmentModel> _departments => _dbContext.Set<DepartmentModel>();
         private DbSet<EmployeeModel> _employees => _dbContext.Set<EmployeeModel>();
         private DbSet<EmployeePositionHistoryModel> _employeesPositionsHistory => _dbContext.Set<EmployeePositionHistoryModel>();
 
         public EmployeeRepository(OdinBaselineDbContext dbContext)
             => _dbContext = dbContext;
 
-        public async Task InsertAsync(Employee employee, CancellationToken cancellationToken)
+        public async Task<Employee> InsertAsync(Employee employee, CancellationToken cancellationToken)
         {
-            await _employees.AddAsync(employee.ToEmployeeModel(), cancellationToken);
+            var employeeInserted = await _employees.AddAsync(employee.ToEmployeeModel(), cancellationToken);
+            employeeInserted.Reference("Customer").Load();
+            employeeInserted.Reference("Department").Load();
 
             if (employee.HistoricPositions.Any())
             {
-                var historicPositions = employee.HistoricPositions
+                var historicPositionsToInsert = employee.HistoricPositions
                     .Select(positionHistoric => new EmployeePositionHistoryModel 
                     { 
                         EmployeeId = employee.Id, 
@@ -37,18 +40,25 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
                         IsActual = positionHistoric.IsActual
                     });
 
-                await _employeesPositionsHistory.AddRangeAsync(historicPositions);
+                await _employeesPositionsHistory.AddRangeAsync(historicPositionsToInsert);
+                employeeInserted.Collection(x => x.HistoricPositions).Load();
             }
+
+            return employeeInserted.Entity.ToEmployee();
         }
 
-        public async Task UpdateAsync(Employee employee)
+        public async Task<Employee> UpdateAsync(Employee employee, CancellationToken cancellationToken)
         {
-            _employees.Update(employee.ToEmployeeModel());
+            var employeeUpdated = _employees.Update(employee.ToEmployeeModel());
+
+            employeeUpdated.Reference("Customer").Load();
+            employeeUpdated.Reference("Department").Load();
+
             _employeesPositionsHistory.RemoveRange(_employeesPositionsHistory.Where(x => x.EmployeeId == employee.Id));
             
             if (employee.HistoricPositions.Any())
             {
-                var historicPositions = employee.HistoricPositions
+                var historicPositionsToInsert = employee.HistoricPositions
                     .Select(positionHistoric => new EmployeePositionHistoryModel
                     {
                         EmployeeId = employee.Id,
@@ -59,8 +69,12 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
                         IsActual = positionHistoric.IsActual
                     });
 
-                await _employeesPositionsHistory.AddRangeAsync(historicPositions);
+                await _employeesPositionsHistory.AddRangeAsync(historicPositionsToInsert);
+                employeeUpdated.Collection(x => x.HistoricPositions).Load();
             }
+
+
+            return employeeUpdated.Entity.ToEmployee();
         }
 
         public Task DeleteAsync(Employee employee)
@@ -73,7 +87,8 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
 
         public async Task<Employee> FindByIdAsync(Guid id, CancellationToken cancellationToken) 
         {
-            var model = await _employees.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            var model = await _employees.Include(x => x.Customer).Include(x => x.Department).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+
             NotFoundException.ThrowIfNull(model, $"Employee with Id '{id}' not found.");
 
             var employee = model.ToEmployee();
@@ -93,9 +108,11 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
             var filtersExpression = ExpressionsFactory<EmployeeModel>.BuildFilterExpression(filters);
             var expression = ExpressionsFactory<EmployeeModel>.BuildQueryableExpression(filtersExpression);
 
-            var employees = expression != null ? await _employees.AsNoTracking().Where(expression).ToListAsync(cancellationToken) : await _employees.ToListAsync(cancellationToken);
+            var employees = expression != null
+                ? await _employees.Where(expression).Include(x => x.Customer).Include(x => x.Department).ToListAsync(cancellationToken)
+                : await _employees.Include(x => x.Customer).Include(x => x.Department).ToListAsync(cancellationToken);
 
-            var sortedEmployees = SortHelper.ApplySort(employees, sort);
+            var sortedEmployees = SortHelper.ApplySort(employees, sort).ToEmployee();
 
             var employeesIds = sortedEmployees.Select(employee => employee.Id).ToList();
             
@@ -104,8 +121,7 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
 
             relationsByEmployeeIdGroup.ForEach(relationGroup => 
             {
-                var employeeModel = sortedEmployees.FirstOrDefault(employee => employee.Id == relationGroup.Key);
-                var employee = employeeModel.ToEmployee();
+                var employee = sortedEmployees.FirstOrDefault(employee => employee.Id == relationGroup.Key);
                 
                 if (employee is null) 
                     return;
@@ -119,16 +135,24 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
                 Items = sortedEmployees
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
-                    .ToEmployee()
             };
         }
 
         public async Task<Employee> FindByDocumentAsync(string document, CancellationToken cancellationToken)
         {
-            var model = await _employees.AsNoTracking().FirstOrDefaultAsync(x => x.Document == document, cancellationToken);
+            var model = await _employees.Include(x => x.Customer).Include(x => x.Department).AsNoTracking().FirstOrDefaultAsync(x => x.Document == document, cancellationToken);
             NotFoundException.ThrowIfNull(model, $"Employee with Document '{document}' not found.");
 
-            return model.ToEmployee();
+            var employee = model.ToEmployee();
+
+            var historicPositions = (await _employeesPositionsHistory
+                .Where(x => x.EmployeeId == employee.Id)
+                .ToListAsync(cancellationToken))
+                .ToEmployeePositionHistory();
+
+            historicPositions.ForEach(employee.LoadHistoricPosition);
+
+            return employee;
         }
     }
 }

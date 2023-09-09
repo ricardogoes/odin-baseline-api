@@ -31,10 +31,10 @@ namespace Odin.Baseline.Application.Departments.ChangeStatusDepartment
                     break;
             }
 
-            await _repository.UpdateAsync(department);
+            var departmentUpdated = await _repository.UpdateAsync(department, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            return DepartmentOutput.FromDepartment(department);
+            return DepartmentOutput.FromDepartment(departmentUpdated);
         }
     }
 }

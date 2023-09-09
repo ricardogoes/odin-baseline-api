@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Domain.SeedWork;
+﻿using Odin.Baseline.Domain.DTO;
+using Odin.Baseline.Domain.SeedWork;
 using Odin.Baseline.Domain.Validations;
 
 namespace Odin.Baseline.Domain.Entities
@@ -6,6 +7,8 @@ namespace Odin.Baseline.Domain.Entities
     public class Department : Entity
     {
         public Guid CustomerId { get; private set; }
+        public CustomerData CustomerData { get; private set; }
+
         public string Name { get; set; }
         public bool IsActive { get; set; }
 
@@ -76,6 +79,12 @@ namespace Odin.Baseline.Domain.Entities
             LastUpdatedAt = DateTime.UtcNow;
             LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
 
+            Validate();
+        }
+
+        public void LoadCustomerData(CustomerData customerData)
+        {
+            CustomerData = customerData;
             Validate();
         }
 

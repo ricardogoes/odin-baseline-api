@@ -29,7 +29,7 @@ namespace Odin.Baseline.Application.Customers.UpdateCustomer
             if (!isDocumentUnique)
                 throw new EntityValidationException("Document must be unique");
 
-            await _repository.UpdateAsync(customer);
+            await _repository.UpdateAsync(customer, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return CustomerOutput.FromCustomer(customer);

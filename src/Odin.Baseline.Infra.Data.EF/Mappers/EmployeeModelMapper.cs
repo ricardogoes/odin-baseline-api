@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Domain.Entities;
+﻿using Odin.Baseline.Domain.DTO;
+using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.ValueObjects;
 using Odin.Baseline.Infra.Data.EF.Models;
 
@@ -45,6 +46,21 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
             {
                 var address = new Address(model.StreetName, model.StreetNumber ?? 0, model.Complement, model.Neighborhood, model.ZipCode, model.City, model.State);
                 employee.ChangeAddress(address);
+            }
+
+            employee.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer.Name));
+
+            if(model.DepartmentId.HasValue && model.DepartmentId.Value != Guid.Empty)
+            {
+                employee.LoadDepartmentData(new DepartmentData(model.DepartmentId.Value, model.Department.Name));
+            }
+
+            if(model.HistoricPositions is not null && model.HistoricPositions.Any())
+            {
+                foreach(var historicPositionModel in model.HistoricPositions)
+                {
+                    employee.LoadHistoricPosition(historicPositionModel.ToEmployeePositionHistory());
+                }
             }
 
             employee.SetAuditLog(model.CreatedAt, model.CreatedBy, model.LastUpdatedAt, model.LastUpdatedBy);

@@ -26,5 +26,7 @@
         public Guid? DepartmentId { get; set; }
         public DepartmentModel Department { get; set; }
 
+        public ICollection<EmployeePositionHistoryModel> HistoricPositions { get; set; }
+
     }
 }

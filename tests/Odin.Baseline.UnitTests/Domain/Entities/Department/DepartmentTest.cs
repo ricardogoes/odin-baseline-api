@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Odin.Baseline.Domain.CustomExceptions;
+using Odin.Baseline.Domain.DTO;
 using DomainEntity = Odin.Baseline.Domain.Entities;
 
 namespace Odin.Baseline.UnitTests.Domain.Entities.Department
@@ -144,8 +145,22 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Department
                 .WithMessage("Name should not be empty or null");
         }
 
+        [Fact(DisplayName = "LoadCustomerData() should load data of the customer related with department")]
+        [Trait("Domain", "Entities / Department")]
+        public void CustomerLoad()
+        {
+            var customer = _fixture.GetValidCustomer();
+            var department = _fixture.GetValidDepartment(customer.Id);
+
+            department.LoadCustomerData(new CustomerData(customer.Id, customer.Name));
+
+            department.CustomerData.Should().NotBeNull();
+            department.CustomerData.Id.Should().Be(customer.Id);
+            department.CustomerData.Name.Should().Be(customer.Name);
+        }
+
         [Fact(DisplayName = "SetAuditLog() should set auditLog")]
-        [Trait("Domain", "Entities / Customer")]
+        [Trait("Domain", "Entities / Department")]
         public void AuditLog()
         {
             var department = _fixture.GetValidDepartment();

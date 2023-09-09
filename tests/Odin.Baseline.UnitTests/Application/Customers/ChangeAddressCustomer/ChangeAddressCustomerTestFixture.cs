@@ -98,7 +98,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.ChangeAddressCustomer
             {
                 CustomerId = Guid.NewGuid(),
                 StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
+                StreetNumber = 196,
                 Complement = Faker.Address.SecondaryAddress(),
                 Neighborhood = Faker.Address.CardinalDirection(),
                 ZipCode = string.Empty,

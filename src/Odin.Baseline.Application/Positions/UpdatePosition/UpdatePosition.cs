@@ -21,10 +21,10 @@ namespace Odin.Baseline.Application.Positions.UpdatePosition
             var position = await _repository.FindByIdAsync(input.Id, cancellationToken);
             position.Update(input.Name, input.CustomerId, input.BaseSalary, input.LoggedUsername);
 
-            await _repository.UpdateAsync(position);
+            var positionUpdated = await _repository.UpdateAsync(position, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            return PositionOutput.FromPosition(position);
+            return PositionOutput.FromPosition(positionUpdated);
         }
     }
 }
