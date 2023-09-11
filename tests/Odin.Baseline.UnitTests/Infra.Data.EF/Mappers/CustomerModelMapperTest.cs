@@ -107,12 +107,6 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             }
         }
 
-
-
-
-
-
-
         [Fact(DisplayName = "ToCustomer() should map an CustomerModel to Customer with address")]
         [Trait("Infra.Data.EF", "Mappers / CustomerModelMapper")]
         public void MapCustomerModelToCustomerWithAddress()
