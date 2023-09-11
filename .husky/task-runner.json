@@ -27,7 +27,16 @@
       "command": "dotnet",
       "args": [
         "test",
-        "tests/Odin.Auth.UnitTests/Odin.Auth.UnitTests.csproj"
+        "tests/Odin.Baseline.UnitTests/Odin.Baseline.UnitTests.csproj"
+      ]
+    },
+    {
+      "name": "integration-testing",
+      "group": "pre-commit",
+      "command": "dotnet",
+      "args": [
+        "test",
+        "tests/Odin.Baseline.IntegrationTests/Odin.Baseline.IntegrationTests.csproj"
       ]
     }
   ]

@@ -21,4 +21,5 @@
 
 # dotnet husky run --name warning-check
 dotnet husky run --name unit-testing
+dotnet husky run --name integration-testing
 dotnet husky run --name commit-message-linter
