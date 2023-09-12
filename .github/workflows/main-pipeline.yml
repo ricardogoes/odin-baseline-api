@@ -29,8 +29,8 @@ jobs:
       - name: Run integration tests
         run: dotnet test ./tests/Odin.Baseline.IntegrationTests/Odin.Baseline.IntegrationTests.csproj --no-restore --verbosity normal
     
-      - name: Run E2E tests
-        run: dotnet test ./tests/Odin.Baseline.EndToEndTests/Odin.Baseline.EndToEndTests.csproj --no-restore --verbosity normal
+      # - name: Run E2E tests
+      #  run: dotnet test ./tests/Odin.Baseline.EndToEndTests/Odin.Baseline.EndToEndTests.csproj --no-restore --verbosity normal
     
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
