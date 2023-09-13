@@ -25,7 +25,4 @@ jobs:
               
       - name: Run unit tests
         run: dotnet test ./tests/Odin.Baseline.UnitTests/Odin.Baseline.UnitTests.csproj --no-restore --verbosity normal
-        
-      - name: Run integration tests
-        run: dotnet test ./tests/Odin.Baseline.IntegrationTests/Odin.Baseline.IntegrationTests.csproj --no-restore --verbosity normal
     

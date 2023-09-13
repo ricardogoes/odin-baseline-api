@@ -6,7 +6,7 @@ using Odin.Baseline.Infra.Data.EF.Mappers;
 using Odin.Baseline.Infra.Data.EF.Models;
 using Odin.Baseline.Infra.Data.EF.Repositories;
 
-namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
+namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
 {
     [Collection(nameof(EmployeeRepositoryTestFixtureCollection))]
     public class EmployeeRepositoryTest
@@ -19,7 +19,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "InsertAsync() should insert a valid employee")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task InsertValidEmployee()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -48,7 +48,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "InsertAsync() should insert a valid employee with historic positions")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task InsertValidEmployeeAndHistoricPositions()
         {
             var dbContext = _fixture.CreateDbContext(true);
@@ -97,7 +97,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "FindByIdAsync() should get a employee by a valid Id")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task Get()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -128,7 +128,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "FindByIdAsync() should throw an error on FindByIdAsync when employee not found")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task GetThrowIfNotFound()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -146,7 +146,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "UpdateAsync() should update a employee")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task Update()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -184,7 +184,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "UpdateAsync() should update a valid employee with historic positions")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task UpdateValidEmployeeAndHistoricPositions()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -242,7 +242,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "DeleteAsync() should delete a employee")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task Delete()
         {
             var dbContext = _fixture.CreateDbContext(true);
@@ -266,7 +266,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should get paginated list of employees with filtered data")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task SearchRetursListAndTotalFiltered()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -320,7 +320,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should get paginated list of employees with historic positions and filtered data")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task SearchRetursCompleteAndTotalFiltered()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -389,7 +389,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should get paginated list of employees with no filtered data")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task SearchRetursListAndTotal()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -438,7 +438,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should return a empty list when database is clean")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task SearchRetursEmptyWhenPersistenceIsEmpty()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -465,7 +465,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "FindByDocumentAsync() should get a employee by a valid document")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task GetByDocument()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -494,7 +494,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
         }
 
         [Fact(DisplayName = "FindByDocumentAsync() should throw an error when employee not found")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / EmployeeRepository")]
+        [Trait("Infra.Data.EF", "Repositories / EmployeeRepository")]
         public async Task GetThrowIfDocumentNotFound()
         {
             var dbContext = _fixture.CreateDbContext();

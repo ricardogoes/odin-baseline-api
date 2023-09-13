@@ -5,7 +5,7 @@ using Odin.Baseline.Infra.Data.EF.Mappers;
 using Odin.Baseline.Infra.Data.EF.Models;
 using Odin.Baseline.Infra.Data.EF.Repositories;
 
-namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
+namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
 {
     [Collection(nameof(PositionRepositoryTestFixtureCollection))]
     public class PositionRepositoryTest
@@ -18,7 +18,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
         }
 
         [Fact(DisplayName = "InsertAsync() should insert a valid position")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / PositionRepository")]
+        [Trait("Infra.Data.EF", "Repositories / PositionRepository")]
         public async Task InsertValidPosition()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -47,7 +47,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
 
 
         [Fact(DisplayName = "FindByIdAsync() should get a position by a valid Id")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / PositionRepository")]
+        [Trait("Infra.Data.EF", "Repositories / PositionRepository")]
         public async Task Get()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -77,7 +77,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
         }
 
         [Fact(DisplayName = "FindByIdAsync() should throw an error on FindByIdAsync when position not found")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / PositionRepository")]
+        [Trait("Infra.Data.EF", "Repositories / PositionRepository")]
         public async Task GetThrowIfNotFound()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -95,7 +95,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
         }
 
         [Fact(DisplayName = "UpdateAsync() should update a position")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / PositionRepository")]
+        [Trait("Infra.Data.EF", "Repositories / PositionRepository")]
         public async Task Update()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -131,7 +131,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
         }
 
         [Fact(DisplayName = "DeleteAsync() should delete a position")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / PositionRepository")]
+        [Trait("Infra.Data.EF", "Repositories / PositionRepository")]
         public async Task Delete()
         {
             var dbContext = _fixture.CreateDbContext(true);
@@ -155,7 +155,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should get paginated list of positions with filtered data")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / PositionRepository")]
+        [Trait("Infra.Data.EF", "Repositories / PositionRepository")]
         public async Task SearchRetursListAndTotalFiltered()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -201,7 +201,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should get paginated list of positions with no filtered data")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / PositionRepository")]
+        [Trait("Infra.Data.EF", "Repositories / PositionRepository")]
         public async Task SearchRetursListAndTotal()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -242,7 +242,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should return a empty list when database is clean")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / PositionRepository")]
+        [Trait("Infra.Data.EF", "Repositories / PositionRepository")]
         public async Task SearchRetursEmptyWhenPersistenceIsEmpty()
         {
             var dbContext = _fixture.CreateDbContext();

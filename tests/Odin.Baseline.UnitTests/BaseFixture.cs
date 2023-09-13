@@ -1,8 +1,10 @@
 ﻿using Bogus;
 using Bogus.Extensions.Brazil;
+using Microsoft.EntityFrameworkCore;
 using Odin.Baseline.Domain.Entities;
-using Odin.Baseline.Domain.SeedWork;
 using Odin.Baseline.Domain.ValueObjects;
+using Odin.Baseline.Infra.Data.EF;
+using Odin.Baseline.Infra.Data.EF.Models;
 
 namespace Odin.Baseline.UnitTests
 {
@@ -12,6 +14,20 @@ namespace Odin.Baseline.UnitTests
 
         protected BaseFixture()
             => Faker = new Faker("pt_BR");
+
+        public OdinBaselineDbContext CreateDbContext(bool preserveData = false)
+        {
+            var context = new OdinBaselineDbContext(
+                new DbContextOptionsBuilder<OdinBaselineDbContext>()
+                .UseInMemoryDatabase("integration-tests-db")
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                .Options
+            );
+
+            if (preserveData == false)
+                context.Database.EnsureDeleted();
+            return context;
+        }
 
         public string GetValidUsername()
             => $"{Faker.Name.FirstName().ToLower()}.{Faker.Name.LastName().ToLower()}";
@@ -32,6 +48,23 @@ namespace Odin.Baseline.UnitTests
         {
             var customer = new Customer(GetValidCustomerName(), GetValidCustomerDocument());
             customer.Create();
+            return customer;
+        }
+
+        public CustomerModel GetValidCustomerModel()
+        {
+            var customer = new CustomerModel
+            {
+                Id = Guid.NewGuid(),
+                Name = GetValidCustomerName(),
+                Document = GetValidCustomerDocument(),
+                IsActive = true,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "unit.test",
+                LastUpdatedAt = DateTime.Now,
+                LastUpdatedBy = "unit.test"
+            };
+
             return customer;
         }
 

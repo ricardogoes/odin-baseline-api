@@ -1,10 +1,9 @@
 ﻿using Bogus;
 using Bogus.Extensions.Brazil;
-using FluentAssertions;
 using Odin.Baseline.Infra.Data.EF.Models;
 using DomainEntity = Odin.Baseline.Domain.Entities;
 
-namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Employee
+namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
 {
     [CollectionDefinition(nameof(EmployeeRepositoryTestFixtureCollection))]
     public class EmployeeRepositoryTestFixtureCollection : ICollectionFixture<EmployeeRepositoryTestFixture>

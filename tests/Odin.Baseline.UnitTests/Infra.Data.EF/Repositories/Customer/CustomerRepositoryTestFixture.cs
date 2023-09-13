@@ -1,8 +1,7 @@
-﻿using Bogus.Extensions.Brazil;
-using Odin.Baseline.Infra.Data.EF.Models;
+﻿using Odin.Baseline.Infra.Data.EF.Models;
 using DomainEntity = Odin.Baseline.Domain.Entities;
 
-namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
+namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Customer
 {
     [CollectionDefinition(nameof(CustomerRepositoryTestFixtureCollection))]
     public class CustomerRepositoryTestFixtureCollection : ICollectionFixture<CustomerRepositoryTestFixture>
