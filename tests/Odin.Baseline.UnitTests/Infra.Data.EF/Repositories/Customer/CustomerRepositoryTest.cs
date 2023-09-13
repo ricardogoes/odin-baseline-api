@@ -4,9 +4,8 @@ using Odin.Baseline.Application.Customers.GetCustomers;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Infra.Data.EF.Mappers;
 using Odin.Baseline.Infra.Data.EF.Repositories;
-using DomainEntity = Odin.Baseline.Domain.Entities;
 
-namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
+namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Customer
 {
     [Collection(nameof(CustomerRepositoryTestFixtureCollection))]
     public class CustomerRepositoryTest
@@ -19,7 +18,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
         }
 
         [Fact(DisplayName = "InsertAsync() should insert a valid customer")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / CustomerRepository")]
+        [Trait("Infra.Data.EF", "Repositories / CustomerRepository")]
         public async Task InsertValidCustomer()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -43,7 +42,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
 
 
         [Fact(DisplayName = "FindByIdAsync() should get a customer by a valid Id")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / CustomerRepository")]
+        [Trait("Infra.Data.EF", "Repositories / CustomerRepository")]
         public async Task Get()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -68,7 +67,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
         }
 
         [Fact(DisplayName = "FindByIdAsync() should throw an error on FindByIdAsync when customer not found")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / CustomerRepository")]
+        [Trait("Infra.Data.EF", "Repositories / CustomerRepository")]
         public async Task GetThrowIfNotFound()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -86,7 +85,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
         }
 
         [Fact(DisplayName = "UpdateAsync() should update a customer")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / CustomerRepository")]
+        [Trait("Infra.Data.EF", "Repositories / CustomerRepository")]
         public async Task Update()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -117,7 +116,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
         }
 
         [Fact(DisplayName = "DeleteAsync() should delete a customer")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / CustomerRepository")]
+        [Trait("Infra.Data.EF", "Repositories / CustomerRepository")]
         public async Task Delete()
         {
             var dbContext = _fixture.CreateDbContext(true);
@@ -141,7 +140,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should get paginated list of customers with filtered data")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / CustomerRepository")]
+        [Trait("Infra.Data.EF", "Repositories / CustomerRepository")]
         public async Task SearchRetursListAndTotalFiltered()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -179,7 +178,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should get paginated list of customers with no filtered data")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / CustomerRepository")]
+        [Trait("Infra.Data.EF", "Repositories / CustomerRepository")]
         public async Task SearchRetursListAndTotal()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -217,7 +216,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should return a empty list when database is clean")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / CustomerRepository")]
+        [Trait("Infra.Data.EF", "Repositories / CustomerRepository")]
         public async Task SearchRetursEmptyWhenPersistenceIsEmpty()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -239,7 +238,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
         }
 
         [Fact(DisplayName = "FindByDocumentAsync() should get a customer by a valid document")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / CustomerRepository")]
+        [Trait("Infra.Data.EF", "Repositories / CustomerRepository")]
         public async Task GetByDocument()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -264,11 +263,11 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Customer
         }
 
         [Fact(DisplayName = "FindByDocumentAsync() should throw an error when customer not found")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / CustomerRepository")]
+        [Trait("Infra.Data.EF", "Repositories / CustomerRepository")]
         public async Task GetThrowIfDocumentNotFound()
         {
             var dbContext = _fixture.CreateDbContext();
-            var document = _fixture.GetValidDocument();
+            var document = _fixture.GetValidCustomerDocument();
 
             await dbContext.AddRangeAsync(_fixture.GetValidCustomersModelList(15));
             await dbContext.SaveChangesAsync(CancellationToken.None);

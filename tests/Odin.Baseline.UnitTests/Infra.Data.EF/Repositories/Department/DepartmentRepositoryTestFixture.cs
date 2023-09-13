@@ -1,7 +1,7 @@
 ﻿using Odin.Baseline.Infra.Data.EF.Models;
 using DomainEntity = Odin.Baseline.Domain.Entities;
 
-namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
+namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Department
 {
     [CollectionDefinition(nameof(DepartmentRepositoryTestFixtureCollection))]
     public class DepartmentRepositoryTestFixtureCollection : ICollectionFixture<DepartmentRepositoryTestFixture>
@@ -12,17 +12,6 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         public DepartmentRepositoryTestFixture()
             : base()
         { }
-
-        public string GetValidDepartmentName()
-            => Faker.Commerce.Department();
-
-        public DomainEntity.Department GetValidDepartment(Guid? customerId =  null)
-        {
-            var department = new DomainEntity.Department(customerId ?? Guid.NewGuid(), GetValidDepartmentName(), isActive: true);
-            department.Create("unit.testing");
-
-            return department;
-        }
 
         public DepartmentModel GetValidDepartmentModel(Guid? customerId = null)
         {

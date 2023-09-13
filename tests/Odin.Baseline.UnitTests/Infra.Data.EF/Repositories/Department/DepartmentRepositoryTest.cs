@@ -5,7 +5,7 @@ using Odin.Baseline.Infra.Data.EF.Mappers;
 using Odin.Baseline.Infra.Data.EF.Models;
 using Odin.Baseline.Infra.Data.EF.Repositories;
 
-namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
+namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Department
 {
     [Collection(nameof(DepartmentRepositoryTestFixtureCollection))]
     public class DepartmentRepositoryTest
@@ -18,7 +18,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         }
 
         [Fact(DisplayName = "InsertAsync() should insert a valid department")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / DepartmentRepository")]
+        [Trait("Infra.Data.EF", "Repositories / DepartmentRepository")]
         public async Task InsertValidDepartment()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -46,7 +46,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
 
 
         [Fact(DisplayName = "FindByIdAsync() should get a department by a valid Id")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / DepartmentRepository")]
+        [Trait("Infra.Data.EF", "Repositories / DepartmentRepository")]
         public async Task Get()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -74,7 +74,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         }
 
         [Fact(DisplayName = "FindByIdAsync() should throw an error on FindByIdAsync when department not found")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / DepartmentRepository")]
+        [Trait("Infra.Data.EF", "Repositories / DepartmentRepository")]
         public async Task GetThrowIfNotFound()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -92,7 +92,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         }
 
         [Fact(DisplayName = "UpdateAsync() should update a department")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / DepartmentRepository")]
+        [Trait("Infra.Data.EF", "Repositories / DepartmentRepository")]
         public async Task Update()
         {
             var dbContext = _fixture.CreateDbContext(true);
@@ -127,7 +127,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         }
 
         [Fact(DisplayName = "DeleteAsync() should delete a department")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / DepartmentRepository")]
+        [Trait("Infra.Data.EF", "Repositories / DepartmentRepository")]
         public async Task Delete()
         {
             var dbContext = _fixture.CreateDbContext(true);
@@ -151,7 +151,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should get paginated list of departments with filtered data")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / DepartmentRepository")]
+        [Trait("Infra.Data.EF", "Repositories / DepartmentRepository")]
         public async Task SearchRetursListAndTotalFiltered()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -195,7 +195,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should get paginated list of departments with no filtered data")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / DepartmentRepository")]
+        [Trait("Infra.Data.EF", "Repositories / DepartmentRepository")]
         public async Task SearchRetursListAndTotal()
         {
             var dbContext = _fixture.CreateDbContext();
@@ -236,7 +236,7 @@ namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Department
         }
 
         [Fact(DisplayName = "FindPaginatedListAsync() should return a empty list when database is clean")]
-        [Trait("Integration/Infra.Data.EF", "Repositories / DepartmentRepository")]
+        [Trait("Infra.Data.EF", "Repositories / DepartmentRepository")]
         public async Task SearchRetursEmptyWhenPersistenceIsEmpty()
         {
             var dbContext = _fixture.CreateDbContext();

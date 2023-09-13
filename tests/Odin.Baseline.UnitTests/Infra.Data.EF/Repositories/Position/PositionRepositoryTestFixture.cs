@@ -1,7 +1,7 @@
 ﻿using Odin.Baseline.Infra.Data.EF.Models;
 using DomainEntity = Odin.Baseline.Domain.Entities;
 
-namespace Odin.Baseline.IntegrationTests.Infra.Data.EF.Repositories.Position
+namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
 {
     [CollectionDefinition(nameof(PositionRepositoryTestFixtureCollection))]
     public class PositionRepositoryTestFixtureCollection : ICollectionFixture<PositionRepositoryTestFixture>
