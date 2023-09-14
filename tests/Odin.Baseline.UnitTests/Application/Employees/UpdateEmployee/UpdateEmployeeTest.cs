@@ -87,7 +87,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.UpdateEmployee
         public async Task ThrowWhenCantUpdateEmployee(App.UpdateEmployeeInput input, string expectedExceptionMessage)
         {
             var validEmployee = _fixture.GetValidEmployee();
-            input.Id = validEmployee.Id;
+            input.ChangeId(validEmployee.Id);
 
             _repositoryMock.Setup(x => x.FindByIdAsync(validEmployee.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);
@@ -109,7 +109,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.UpdateEmployee
             var input = _fixture.GetValidUpdateEmployeeInput();
 
             var validEmployee = _fixture.GetValidEmployee();
-            input.Id = validEmployee.Id;
+            input.ChangeId(validEmployee.Id);
 
             _repositoryMock.Setup(x => x.FindByIdAsync(validEmployee.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);

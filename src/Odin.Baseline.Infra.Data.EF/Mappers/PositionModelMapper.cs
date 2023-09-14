@@ -9,17 +9,17 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
         public static PositionModel ToPositionModel(this Position position)
         {
             return new PositionModel
-            {
-                Id = position.Id,
-                CustomerId = position.CustomerId,
-                Name = position.Name,
-                BaseSalary = position.BaseSalary,
-                IsActive = position.IsActive,
-                CreatedAt = position.CreatedAt,
-                CreatedBy = position.CreatedBy,
-                LastUpdatedAt = position.LastUpdatedAt,
-                LastUpdatedBy = position.LastUpdatedBy
-            };
+            (
+                id: position.Id,
+                customerId: position.CustomerId,
+                name: position.Name,
+                baseSalary: position.BaseSalary,
+                isActive: position.IsActive,
+                createdAt: position.CreatedAt ?? default,
+                createdBy: position.CreatedBy ?? "",
+                lastUpdatedAt: position.LastUpdatedAt ?? default,
+                lastUpdatedBy: position.LastUpdatedBy ?? ""
+            );
         }
 
         public static IEnumerable<PositionModel> ToPositionModel(this IEnumerable<Position> positions)
@@ -30,7 +30,7 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
             var position = new Position(model.Id, model.CustomerId, model.Name, model.BaseSalary, isActive: model.IsActive);            
 
             position.SetAuditLog(model.CreatedAt, model.CreatedBy, model.LastUpdatedAt, model.LastUpdatedBy);
-            position.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer.Name));
+            position.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer!.Name));
 
             return position;
         }

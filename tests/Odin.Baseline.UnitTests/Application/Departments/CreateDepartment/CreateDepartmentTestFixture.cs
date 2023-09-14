@@ -13,35 +13,35 @@ namespace Odin.Baseline.UnitTests.Application.Departments.CreateDepartment
             : base() { }
 
         public CreateDepartmentInput GetValidCreateDepartmentInput()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                Name = GetValidName(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                Guid.NewGuid(),
+                GetValidName(),
+                GetValidUsername()
+            );
 
         public CreateDepartmentInput GetCreateDepartmentInputWithEmptyCustomerId()
-            => new()
-            {
-                CustomerId = Guid.Empty,
-                Name = GetValidName(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                Guid.Empty,
+                GetValidName(),
+                GetValidUsername()
+            );
 
         public CreateDepartmentInput GetCreateDepartmentInputWithEmptyName()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                Name = "",
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                Guid.NewGuid(),
+                "",
+                GetValidUsername()
+            );
 
         public CreateDepartmentInput GetCreateDepartmentInputWithEmptyLoggedUsername()
-           => new()
-           {
-               CustomerId = Guid.NewGuid(),
-               Name = GetValidName(),
-               LoggedUsername = ""
-           };
+           => new
+           (
+               Guid.NewGuid(),
+               GetValidName(),
+               ""
+           );
     }
 }

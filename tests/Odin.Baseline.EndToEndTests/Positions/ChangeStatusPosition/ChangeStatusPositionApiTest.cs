@@ -29,7 +29,7 @@ namespace Odin.Baseline.EndToEndTests.Positions.ChangeStatusPosition
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var positionToChangeStatus = positionsList.Where(x => !x.IsActive).FirstOrDefault();
+            var positionToChangeStatus = positionsList.Where(x => !x.IsActive).First();
 
             var input = _fixture.GetValidInputToActivate(positionToChangeStatus.Id) ;
 
@@ -56,7 +56,7 @@ namespace Odin.Baseline.EndToEndTests.Positions.ChangeStatusPosition
             await dbContext.AddRangeAsync(positionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var positionToChangeStatus = positionsList.Where(x => x.IsActive).FirstOrDefault();
+            var positionToChangeStatus = positionsList.Where(x => x.IsActive).First();
 
             var input = _fixture.GetValidInputToDeactivate(positionToChangeStatus.Id);
 

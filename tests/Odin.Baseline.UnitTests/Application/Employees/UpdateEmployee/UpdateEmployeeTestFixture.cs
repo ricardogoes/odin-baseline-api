@@ -13,96 +13,94 @@ namespace Odin.Baseline.UnitTests.Application.Employees.UpdateEmployee
             : base() { }
 
         public UpdateEmployeeInput GetValidUpdateEmployeeInput(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = GetValidFirstName(),
-                LastName = GetValidLastName(),
-                Document = GetValidDocument(),
-                Email = GetValidEmail(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id:  id ?? Guid.NewGuid(),
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: GetValidFirstName(),
+                lastName: GetValidLastName(),
+                document: GetValidDocument(),
+                email: GetValidEmail(),
+                loggedUsername: GetValidUsername()
+            );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithEmptyFirstName(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = "",
-                LastName = GetValidLastName(),
-                Document = GetValidDocument(),
-                Email = GetValidEmail(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id:  id ?? Guid.NewGuid(),
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: "",
+                lastName: GetValidLastName(),
+                document: GetValidDocument(),
+                email: GetValidEmail(),
+                loggedUsername: GetValidUsername()
+            );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithEmptyLastName(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = GetValidFirstName(),
-                LastName = "",
-                Document = GetValidDocument(),
-                Email = GetValidEmail(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id:  id ?? Guid.NewGuid(),
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: GetValidFirstName(),
+                lastName: "",
+                document: GetValidDocument(),
+                email: GetValidEmail(),
+                loggedUsername: GetValidUsername()
+            );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithEmptyDocument(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = GetValidFirstName(),
-                LastName = GetValidLastName(),
-                Document = "",
-                Email = GetValidEmail(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id ?? Guid.NewGuid(),
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: GetValidFirstName(),
+                lastName: GetValidLastName(),
+                document: "",
+                email: GetValidEmail(),
+                loggedUsername: GetValidUsername()
+            );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithInvalidDocument(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = GetValidFirstName(),
-                LastName = GetValidLastName(),
-                Document = GetInvalidDocument(),
-                Email = GetValidEmail(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id:  id ?? Guid.NewGuid(),
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: GetValidFirstName(),
+                lastName: GetValidLastName(),
+                document: GetInvalidDocument(),
+                email: GetValidEmail(),
+                loggedUsername: GetValidUsername()
+            );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithInvalidEmail(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = GetValidFirstName(),
-                LastName = GetValidLastName(),
-                Document = GetValidDocument(),
-                Email = "",
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id:  id ?? Guid.NewGuid(),
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: GetValidFirstName(),
+                lastName: GetValidLastName(),
+                document: GetValidDocument(),
+                email: "",
+                loggedUsername: GetValidUsername()
+            );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithEmptyLoggedUsername(Guid? id = null)
-           => new()
-           {
-               Id = id ?? Guid.NewGuid(),
-               CustomerId = Guid.NewGuid(),
-               DepartmentId = Guid.NewGuid(),
-               FirstName = GetValidFirstName(),
-               LastName = GetInvalidDocument(),
-               Document = GetValidDocument(),
-               Email = GetValidEmail(),
-               LoggedUsername = ""
-           };
+           => new
+           (
+               id:  id ?? Guid.NewGuid(),
+               customerId: Guid.NewGuid(),
+               departmentId: Guid.NewGuid(),
+               firstName: GetValidFirstName(),
+               lastName: GetInvalidDocument(),
+               document: GetValidDocument(),
+               email: GetValidEmail(),
+               loggedUsername: ""
+           );
     }
-
-
 }

@@ -13,7 +13,7 @@ namespace Odin.Baseline.Domain.Interfaces.Repositories
 
         Task<T> FindByIdAsync(Guid id, CancellationToken cancellationToken);
 
-        Task<PaginatedListOutput<T>> FindPaginatedListAsync(Dictionary<string, object> filters, int pageNumber, int pageSize, string sort, CancellationToken cancellationToken);
+        Task<PaginatedListOutput<T>> FindPaginatedListAsync(Dictionary<string, object?> filters, int pageNumber, int pageSize, string sort, CancellationToken cancellationToken);
 
         //Task<IEnumerable<Guid>> FindListIdsByIdsAsync(List<Guid> ids, CancellationToken cancellationToken);
 

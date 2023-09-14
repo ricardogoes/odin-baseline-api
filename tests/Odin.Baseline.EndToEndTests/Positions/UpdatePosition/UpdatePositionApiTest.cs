@@ -90,7 +90,7 @@ namespace Odin.Baseline.EndToEndTests.Positions.UpdatePosition
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var positionToUpdate = positionsList[10];
-            input.Id = positionToUpdate.Id;
+            input.ChangeId(positionToUpdate.Id);
 
             var (response, output) = await _fixture.ApiClient.PutAsync<ProblemDetails>($"/v1/positions/{input.Id}", input);
 

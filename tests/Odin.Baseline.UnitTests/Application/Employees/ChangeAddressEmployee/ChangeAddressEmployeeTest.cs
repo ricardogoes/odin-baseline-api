@@ -137,7 +137,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
 
             output.Should().NotBeNull();
             output.Address.Should().NotBeNull();
-            output.Address.StreetName.Should().Be(input.StreetName);
+            output.Address!.StreetName.Should().Be(input.StreetName);
             output.Address.StreetNumber.Should().Be(input.StreetNumber);
             output.Address.Complement.Should().Be(input.Complement);
             output.Address.Neighborhood.Should().Be(input.Neighborhood);

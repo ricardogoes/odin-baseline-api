@@ -16,7 +16,7 @@ namespace Odin.Baseline.Api.Configurations
         {
             services.AddDbContext<OdinBaselineDbContext>(options =>
             {
-                options.UseNpgsql(appSettings.ConnectionStrings.OdinBaselineDB);
+                options.UseNpgsql(appSettings.ConnectionStrings!.OdinBaselineDB);
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 

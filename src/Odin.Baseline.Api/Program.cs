@@ -22,18 +22,9 @@ builder.Services.AddCors(options =>
     });
 });
 
-var appSettings = new AppSettings
-{
-    AWSCognitoSettings = new AWSCognitoSettings
-    {
-        CognitoAuthorityUrl = Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__CognitoAuthorityUrl")
-    },
-    ConnectionStrings = new ConnectionStrings
-    {
-        OdinBaselineDB = Environment.GetEnvironmentVariable("OdinSettings__ConnectionStrings__OdinBaselineDB")
-    },
-    CancellationTokenTimeout = builder.Configuration.GetSection("CancellationTokenTimeout").Get<int>()
-};
+var cognitoSettings = new AWSCognitoSettings(Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__CognitoAuthorityUrl")!);
+var connectionString = new ConnectionStrings(Environment.GetEnvironmentVariable("OdinSettings__ConnectionStrings__OdinBaselineDB")!);
+var appSettings = new AppSettings(cognitoSettings, connectionString, builder.Configuration.GetSection("CancellationTokenTimeout").Get<int>());
 
 builder.Services
     .AddControllers(options =>

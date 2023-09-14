@@ -13,40 +13,40 @@ namespace Odin.Baseline.UnitTests.Application.Departments.UpdateDepartment
             : base() { }
 
         public UpdateDepartmentInput GetValidUpdateDepartmentInput(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
-                Name = GetValidName(),             
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                Guid.NewGuid(),
+                GetValidName(),             
+                GetValidUsername()
+            );
 
         public UpdateDepartmentInput GetUpdateDepartmentInputWithEmptyCustomerId(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.Empty,
-                Name = GetValidName(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                Guid.Empty,
+                GetValidName(),
+                GetValidUsername()
+            );
 
         public UpdateDepartmentInput GetUpdateDepartmentInputWithEmptyName(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
-                Name = "",
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                Guid.NewGuid(),
+                "",
+                GetValidUsername()
+            );
 
         public UpdateDepartmentInput GetUpdateDepartmentInputWithEmptyLoggedUsername(Guid? id = null)
-           => new()
-           {
-               Id = id ?? Guid.NewGuid(),
-               CustomerId = Guid.NewGuid(),
-               Name = GetValidName(),
-               LoggedUsername = ""
-           };
+           => new
+           (
+               id ?? Guid.NewGuid(),
+               Guid.NewGuid(),
+               GetValidName(),
+               ""
+           );
     }
 
 

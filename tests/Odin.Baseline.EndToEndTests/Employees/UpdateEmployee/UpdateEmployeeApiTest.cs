@@ -99,7 +99,7 @@ namespace Odin.Baseline.EndToEndTests.Employees.UpdateEmployee
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var employeeToUpdate = employeesList[10];
-            input.Id = employeeToUpdate.Id;
+            input.ChangeId(employeeToUpdate.Id);
 
             var (response, output) = await _fixture.ApiClient.PutAsync<ProblemDetails>($"/v1/employees/{input.Id}", input);
 
@@ -156,7 +156,7 @@ namespace Odin.Baseline.EndToEndTests.Employees.UpdateEmployee
 
             var employeeToUpdate = employeesList[10];
             var input = _fixture.GetValidUpdateEmployeeInput(employeeToUpdate.Id);
-            input.Document = employeesList[2].Document;
+            input.ChangeDocument(employeesList[2].Document);
 
             var (response, output) = await _fixture.ApiClient.PutAsync<ProblemDetails>($"/v1/employees/{input.Id}", input);
 

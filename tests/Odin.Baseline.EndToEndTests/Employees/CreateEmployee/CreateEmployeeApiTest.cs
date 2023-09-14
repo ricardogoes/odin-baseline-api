@@ -87,7 +87,7 @@ namespace Odin.Baseline.EndToEndTests.Employees.CreateEmployee
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var input = _fixture.GetValidCreateEmployeeInput();
-            input.Document = employeesList.FirstOrDefault().Document;
+            input.ChangeDocument(employeesList.First().Document);
 
             var (response, output) = await _fixture.ApiClient.PostAsync<ProblemDetails>($"/v1/employees", input);
 

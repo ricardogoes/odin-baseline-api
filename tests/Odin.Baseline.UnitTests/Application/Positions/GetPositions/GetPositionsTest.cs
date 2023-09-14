@@ -25,22 +25,22 @@ namespace Odin.Baseline.UnitTests.Application.Positions.GetPositions
         public async Task GetPositions()
         {
             var expectedPositions = new PaginatedListOutput<Position>
-            {
-                TotalItems = 4,
-                Items = new List<Position>
+            (
+                totalItems: 4,
+                items: new List<Position>
                 {
                     new Position(Guid.NewGuid(), _fixture.GetValidName(), _fixture.GetValidBaseSalary()),
                     new Position(Guid.NewGuid(), _fixture.GetValidName(), _fixture.GetValidBaseSalary()),
                     new Position(Guid.NewGuid(), _fixture.GetValidName(), _fixture.GetValidBaseSalary()),
                     new Position(Guid.NewGuid(), _fixture.GetValidName(), _fixture.GetValidBaseSalary())
                 }
-            };
+            );
 
-            _repositoryMock.Setup(s => s.FindPaginatedListAsync(It.IsAny<Dictionary<string, object>>(), 1, 10, "name", new CancellationToken()))
+            _repositoryMock.Setup(s => s.FindPaginatedListAsync(It.IsAny<Dictionary<string, object?>>(), 1, 10, "name", new CancellationToken()))
                 .Returns(() => Task.FromResult(expectedPositions));
 
             var useCase = new App.GetPositions(_repositoryMock.Object);
-            var positions = await useCase.Handle(new App.GetPositionsInput(1, 10, "name", Guid.NewGuid(), "Unit Testing", true, "", null, null, "", null, null), new CancellationToken());
+            var positions = await useCase.Handle(new App.GetPositionsInput(1, 10, Guid.NewGuid(), "name", "Unit Testing", true, "", null, null, "", null, null), new CancellationToken());
 
             positions.TotalItems.Should().Be(4);
         }

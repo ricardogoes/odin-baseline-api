@@ -9,23 +9,23 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
         public static CustomerModel ToCustomerModel(this Customer customer)
         {
             return new CustomerModel
-            {
-                Id = customer.Id,
-                Name = customer.Name,
-                Document = customer.Document,
-                StreetName = customer.Address?.StreetName,
-                StreetNumber = customer.Address?.StreetNumber,
-                Complement = customer.Address?.Complement,
-                Neighborhood = customer.Address?.Neighborhood,
-                ZipCode = customer.Address?.ZipCode,
-                City = customer.Address?.City,
-                State = customer.Address?.State,
-                IsActive = customer.IsActive,
-                CreatedAt = customer.CreatedAt,
-                CreatedBy = customer.CreatedBy,
-                LastUpdatedAt = customer.LastUpdatedAt,
-                LastUpdatedBy = customer.LastUpdatedBy
-            };
+            (
+                customer.Id,
+                customer.Name,
+                customer.Document,
+                customer.Address?.StreetName,
+                customer.Address?.StreetNumber,
+                customer.Address?.Complement,
+                customer.Address?.Neighborhood,
+                customer.Address?.ZipCode,
+                customer.Address?.City,
+                customer.Address?.State,
+                customer.IsActive,
+                customer.CreatedAt ?? default,
+                customer.CreatedBy ?? "",
+                customer.LastUpdatedAt ?? default,
+                customer.LastUpdatedBy ?? ""
+            );
         }
 
         public static IEnumerable<CustomerModel> ToCustomerModel(this IEnumerable<Customer> customers)
@@ -37,7 +37,7 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
             
             if(!string.IsNullOrWhiteSpace(model.StreetName))
             { 
-                var address = new Address(model.StreetName, model.StreetNumber ?? 0, model.Complement, model.Neighborhood, model.ZipCode, model.City, model.State);
+                var address = new Address(model.StreetName, model.StreetNumber ?? 0, model.Complement ?? "", model.Neighborhood!, model.ZipCode!, model.City!, model.State!);
                 customer.ChangeAddress(address);
             }
 

@@ -155,7 +155,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Department
             department.LoadCustomerData(new CustomerData(customer.Id, customer.Name));
 
             department.CustomerData.Should().NotBeNull();
-            department.CustomerData.Id.Should().Be(customer.Id);
+            department.CustomerData!.Id.Should().Be(customer.Id);
             department.CustomerData.Name.Should().Be(customer.Name);
         }
 

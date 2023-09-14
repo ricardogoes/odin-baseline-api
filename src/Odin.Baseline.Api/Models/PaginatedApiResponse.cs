@@ -12,7 +12,7 @@ namespace Odin.Baseline.Api.Models
 
         public int TotalRecords { get; set; }
 
-        public IEnumerable<TItemData> Items { get; set; }
+        public IEnumerable<TItemData> Items { get; set; } = Enumerable.Empty<TItemData>();
 
         public PaginatedApiResponse()
         { }

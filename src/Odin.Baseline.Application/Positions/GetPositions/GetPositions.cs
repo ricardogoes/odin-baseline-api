@@ -16,7 +16,7 @@ namespace Odin.Baseline.Application.Positions.GetPositions
 
         public async Task<PaginatedListOutput<PositionOutput>> Handle(GetPositionsInput input, CancellationToken cancellationToken)
         {
-            var filters = new Dictionary<string, object>
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", input.CustomerId },
                 { "Name", input.Name },
@@ -24,17 +24,17 @@ namespace Odin.Baseline.Application.Positions.GetPositions
             };
 
             var positions = await _repository.FindPaginatedListAsync(
-                filters, input.PageNumber, input.PageSize, input.Sort,
+                filters, input.PageNumber, input.PageSize, input.Sort!,
                 cancellationToken: cancellationToken);
 
             return new PaginatedListOutput<PositionOutput>
-            {
-                PageNumber = input.PageNumber,
-                PageSize = input.PageSize,
-                TotalPages = PaginatedListHelper.GetTotalPages(positions.TotalItems, input.PageSize),
-                TotalItems = positions.TotalItems,
-                Items = PositionOutput.FromPosition(positions.Items)
-            };
+            (
+                pageNumber: input.PageNumber,
+                pageSize: input.PageSize,
+                totalPages: PaginatedListHelper.GetTotalPages(positions.TotalItems, input.PageSize),
+                totalItems: positions.TotalItems,
+                items: PositionOutput.FromPosition(positions.Items)
+            );
         }
     }
 }

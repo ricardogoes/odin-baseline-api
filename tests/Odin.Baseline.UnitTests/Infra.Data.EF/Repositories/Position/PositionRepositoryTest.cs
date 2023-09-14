@@ -171,8 +171,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
             await dbContext.AddRangeAsync(examplePositionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetPositionsInput(1, 20, sort: "name", customerId: customer1.Id, name: "", isActive: true, "", null, null, "", null, null);
-            var filters = new Dictionary<string, object>
+            var searchInput = new GetPositionsInput(1, 20, customerId: customer1.Id, sort: "name", name: "", isActive: true, "", null, null, "", null, null);
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", searchInput.CustomerId },
                 { "Name", searchInput.Name },
@@ -180,7 +180,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
             };
 
             var positionRepository = new PositionRepository(dbContext);
-            var output = await positionRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await positionRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
@@ -214,8 +214,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
             await dbContext.AddRangeAsync(examplePositionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetPositionsInput(1, 20, sort: "name", customerId: Guid.Empty, name: "", isActive: null, "", null, null, "", null, null);
-            var filters = new Dictionary<string, object>
+            var searchInput = new GetPositionsInput(1, 20, customerId: Guid.Empty, sort: "name", name: "", isActive: null, "", null, null, "", null, null);
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", searchInput.CustomerId },
                 { "Name", searchInput.Name },
@@ -223,7 +223,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
             };
 
             var positionRepository = new PositionRepository(dbContext);
-            var output = await positionRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await positionRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
@@ -247,15 +247,15 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
         {
             var dbContext = _fixture.CreateDbContext();
             var positionRepository = new PositionRepository(dbContext);
-            var searchInput = new GetPositionsInput(1, 20, sort: "", customerId: Guid.Empty, name: "", isActive: true, "", null, null, "", null, null);
-            var filters = new Dictionary<string, object>
+            var searchInput = new GetPositionsInput(1, 20, customerId: Guid.Empty, sort: "", name: "", isActive: true, "", null, null, "", null, null);
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", searchInput.CustomerId },
                 { "Name", searchInput.Name },                
                 { "IsActive", searchInput.IsActive },
             };
 
-            var output = await positionRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await positionRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();

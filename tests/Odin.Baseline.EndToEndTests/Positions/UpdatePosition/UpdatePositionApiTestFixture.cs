@@ -14,54 +14,54 @@ namespace Odin.Baseline.EndToEndTests.Positions.UpdatePosition
         { }
 
         public UpdatePositionInput GetValidInput(Guid id, Guid? customerId = null)
-            => new()
-            {
-                Id = id,
-                CustomerId = customerId ?? Guid.NewGuid(),
-                Name = GetValidName(),
-                BaseSalary = 10_000,
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id,
+                customerId: customerId ?? Guid.NewGuid(),
+                name: GetValidName(),
+                baseSalary: 10_000,
+                loggedUsername: GetValidUsername()
+            );
 
         public UpdatePositionInput GetInputWithIdEmpty()
-            => new()
-            {
-                Id = Guid.Empty,
-                CustomerId = Guid.NewGuid(),
-                Name = GetValidName(),
-                BaseSalary = 10_000,
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: Guid.Empty,
+                customerId: Guid.NewGuid(),
+                name: GetValidName(),
+                baseSalary: 10_000,
+                loggedUsername: GetValidUsername()
+            );
 
 
         public UpdatePositionInput GetInputWithNameEmpty(Guid id)
-            => new()
-            {
-                Id = id,
-                CustomerId = Guid.NewGuid(),
-                Name = "",
-                BaseSalary = 10_000,
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id,
+                customerId: Guid.NewGuid(),
+                name: "",
+                baseSalary: 10_000,
+                loggedUsername: GetValidUsername()
+            );
 
         public UpdatePositionInput GetInputWithCustomerIdEmpty(Guid id)
-            => new()
-            {
-                Id = id,
-                CustomerId = Guid.Empty,
-                Name = "",
-                BaseSalary = 10_000,
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id,
+                customerId: Guid.Empty,
+                name: "",
+                baseSalary: 10_000,
+                loggedUsername: GetValidUsername()
+            );
 
         public UpdatePositionInput GetInputWithUsernameEmpty(Guid id)
-            => new()
-            {
-                Id = id,
-                CustomerId = Guid.NewGuid(),
-                Name = GetValidName(),
-                BaseSalary = 10_000,
-                LoggedUsername = ""
-            };
+            => new
+            (
+                id: id,
+                customerId: Guid.NewGuid(),
+                name: GetValidName(),
+                baseSalary: 10_000,
+                loggedUsername: ""
+            );
     }
 }

@@ -88,7 +88,7 @@ namespace Odin.Baseline.EndToEndTests.Departments.UpdateDepartment
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var departmentToUpdate = departmentsList[10];
-            input.Id = departmentToUpdate.Id;
+            input.ChangeId(departmentToUpdate.Id);
 
             var (response, output) = await _fixture.ApiClient.PutAsync<ProblemDetails>($"/v1/departments/{input.Id}", input);
 

@@ -85,7 +85,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.UpdateCustomer
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var customerToUpdate = customersList[10];
-            input.Id = customerToUpdate.Id;
+            input.ChangeId(customerToUpdate.Id);
 
             var (response, output) = await _fixture.ApiClient.PutAsync<ProblemDetails>($"/v1/customers/{input.Id}", input);
 
@@ -134,7 +134,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.UpdateCustomer
 
             var customerToUpdate = customersList[10];
             var input = _fixture.GetValidInput(customerToUpdate.Id);
-            input.Document = customersList[2].Document;
+            input.ChangeDocument(customersList[2].Document);
 
             var (response, output) = await _fixture.ApiClient.PutAsync<ProblemDetails>($"/v1/customers/{input.Id}", input);
 

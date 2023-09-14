@@ -7,7 +7,7 @@ namespace Odin.Baseline.Domain.Entities
     public class Position : Entity
     {
         public Guid CustomerId { get; private set; }
-        public CustomerData CustomerData { get; private set; }
+        public CustomerData? CustomerData { get; private set; }
         public string Name { get; private set; }
         public decimal? BaseSalary { get; private set; }
         public bool IsActive { get; private set; }

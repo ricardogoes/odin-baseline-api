@@ -14,14 +14,14 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
     {
         private readonly OdinBaselineDbContext _dbContext;
 
-        private DbSet<PositionModel> _positions => _dbContext.Set<PositionModel>();
+        private DbSet<PositionModel> Positions => _dbContext.Set<PositionModel>();
 
         public PositionRepository(OdinBaselineDbContext dbContext)
             =>  _dbContext = dbContext;
 
         public async Task<Position> InsertAsync(Position position, CancellationToken cancellationToken)
         {            
-            var positionInserted = await _positions.AddAsync(position.ToPositionModel(), cancellationToken);
+            var positionInserted = await Positions.AddAsync(position.ToPositionModel(), cancellationToken);
             positionInserted.Reference("Customer").Load();
 
             return positionInserted.Entity.ToPosition();
@@ -29,42 +29,42 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
 
         public async Task<Position> UpdateAsync(Position position, CancellationToken cancellationToken)
         {
-            var positionUpdated = await Task.FromResult(_positions.Update(position.ToPositionModel()));
+            var positionUpdated = await Task.FromResult(Positions.Update(position.ToPositionModel()));
             positionUpdated.Reference("Customer").Load();
 
             return positionUpdated.Entity.ToPosition();
         }
 
         public async Task DeleteAsync(Position position)
-            => await Task.FromResult(_positions.Remove(position.ToPositionModel()));
+            => await Task.FromResult(Positions.Remove(position.ToPositionModel()));
 
         public async Task<Position> FindByIdAsync(Guid id, CancellationToken cancellationToken) 
         {
-            var model = await _positions.Include(x => x.Customer).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            var model = await Positions.Include(x => x.Customer).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             NotFoundException.ThrowIfNull(model, $"Position with Id '{id}' not found.");
 
-            return model.ToPosition(); 
+            return model!.ToPosition(); 
         }
 
-        public async Task<PaginatedListOutput<Position>> FindPaginatedListAsync(Dictionary<string, object> filters, int pageNumber, int pageSize, string sort, CancellationToken cancellationToken) 
+        public async Task<PaginatedListOutput<Position>> FindPaginatedListAsync(Dictionary<string, object?> filters, int pageNumber, int pageSize, string sort, CancellationToken cancellationToken) 
         {
             var filtersExpression = ExpressionsFactory<PositionModel>.BuildFilterExpression(filters);
             var expression = ExpressionsFactory<PositionModel>.BuildQueryableExpression(filtersExpression);
 
             var data = expression != null 
-                ? await _positions.Where(expression).Include(x => x.Customer).ToListAsync(cancellationToken) 
-                : await _positions.Include(x => x.Customer).ToListAsync(cancellationToken);
+                ? await Positions.Where(expression).Include(x => x.Customer).ToListAsync(cancellationToken) 
+                : await Positions.Include(x => x.Customer).ToListAsync(cancellationToken);
 
             var sortedData = SortHelper.ApplySort(data, sort);
 
             return new PaginatedListOutput<Position>
-            {
-                TotalItems = sortedData.Count(),
-                Items = sortedData
+            (
+                totalItems: sortedData.Count(),
+                items: sortedData
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToPosition()
-            };
+            );
         }
     }
 }

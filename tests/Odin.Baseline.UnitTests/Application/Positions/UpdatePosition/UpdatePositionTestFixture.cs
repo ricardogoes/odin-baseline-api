@@ -13,44 +13,44 @@ namespace Odin.Baseline.UnitTests.Application.Positions.UpdatePosition
             : base() { }
 
         public UpdatePositionInput GetValidUpdatePositionInput(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
-                Name = GetValidName(),
-                BaseSalary = GetValidBaseSalary(),                
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                Guid.NewGuid(),
+                GetValidName(),
+                GetValidBaseSalary(),                
+                GetValidUsername()
+            );
 
         public UpdatePositionInput GetUpdatePositionInputWithEmptyCustomerId(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.Empty,
-                Name = GetValidName(),
-                BaseSalary = GetValidBaseSalary(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                Guid.Empty,
+                GetValidName(),
+                GetValidBaseSalary(),
+                GetValidUsername()
+            );
 
         public UpdatePositionInput GetUpdatePositionInputWithEmptyName(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
-                Name = "",
-                BaseSalary = GetValidBaseSalary(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                Guid.NewGuid(),
+                "",
+                GetValidBaseSalary(),
+                GetValidUsername()
+            );
 
         public UpdatePositionInput GetUpdatePositionInputWithEmptyLoggedUsername(Guid? id = null)
-           => new()
-           {
-               Id = id ?? Guid.NewGuid(),
-               CustomerId = Guid.NewGuid(),
-               Name = GetValidName(),
-               BaseSalary = GetValidBaseSalary(),
-               LoggedUsername = ""
-           };
+           => new
+           (
+               id ?? Guid.NewGuid(),
+               Guid.NewGuid(),
+               GetValidName(),
+               GetValidBaseSalary(),
+               ""
+           );
     }
 
 

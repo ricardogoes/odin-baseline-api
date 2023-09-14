@@ -15,27 +15,27 @@ namespace Odin.Baseline.EndToEndTests.Positions.ChangeStatusPosition
         { }
 
         public ChangeStatusPositionInput GetValidInputToActivate(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = ChangeStatusAction.ACTIVATE,
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                ChangeStatusAction.ACTIVATE,
+                GetValidUsername()
+            );
 
         public ChangeStatusPositionInput GetValidInputToDeactivate(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = ChangeStatusAction.DEACTIVATE,
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                ChangeStatusAction.DEACTIVATE,
+                GetValidUsername()
+            );
 
         public ChangeStatusPositionInput GetInputWithInvalidAction(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = ChangeStatusAction.INVALID,
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                ChangeStatusAction.INVALID,
+                GetValidUsername()
+            );
     }
 }

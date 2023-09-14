@@ -53,19 +53,17 @@ namespace Odin.Baseline.UnitTests
 
         public CustomerModel GetValidCustomerModel()
         {
-            var customer = new CustomerModel
-            {
-                Id = Guid.NewGuid(),
-                Name = GetValidCustomerName(),
-                Document = GetValidCustomerDocument(),
-                IsActive = true,
-                CreatedAt = DateTime.Now,
-                CreatedBy = "unit.test",
-                LastUpdatedAt = DateTime.Now,
-                LastUpdatedBy = "unit.test"
-            };
-
-            return customer;
+            return new CustomerModel
+            (
+                id: Guid.NewGuid(),
+                name: GetValidCustomerName(),
+                document: GetValidCustomerDocument(),
+                isActive: true,
+                createdAt: DateTime.Now,
+                createdBy: "unit.test",
+                lastUpdatedAt: DateTime.Now,
+                lastUpdatedBy: "unit.test"
+            );
         }
 
         public Address GetValidAddress()

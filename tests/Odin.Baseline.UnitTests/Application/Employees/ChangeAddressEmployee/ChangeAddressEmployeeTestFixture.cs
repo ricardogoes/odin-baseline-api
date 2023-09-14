@@ -14,130 +14,122 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
 
         public ChangeAddressEmployeeInput GetValidInputAddress()
         {
-            var address = new ChangeAddressEmployeeInput
-            {
-                EmployeeId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressEmployeeInput
+            (
+                employeeId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city:Faker.Address.City(),
+                state:Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressEmployeeInput GetInputAddressWithEmployeeIdEmpty()
         {
-            var address = new ChangeAddressEmployeeInput
-            {
-                EmployeeId = Guid.Empty,
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressEmployeeInput
+            (
+                employeeId: Guid.Empty,
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city:Faker.Address.City(),
+                state:Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressEmployeeInput GetInputAddressWithStreetNameEmpty()
         {
-            var address = new ChangeAddressEmployeeInput
-            {
-                EmployeeId = Guid.NewGuid(),
-                StreetName = string.Empty,
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressEmployeeInput
+            (
+                employeeId: Guid.NewGuid(),
+                streetName: string.Empty,
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city:Faker.Address.City(),
+                state:Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressEmployeeInput GetInputAddressWithStreetNumberEmpty()
         {
-            var address = new ChangeAddressEmployeeInput
-            {
-                EmployeeId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = 0,
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressEmployeeInput
+            (
+                employeeId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: 0,
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city:Faker.Address.City(),
+                state:Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressEmployeeInput GetInputAddressWithNeighborhoodEmpty()
         {
-            var address = new ChangeAddressEmployeeInput
-            {
-                EmployeeId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = string.Empty,
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressEmployeeInput
+            (
+                employeeId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: string.Empty,
+                zipCode: Faker.Address.ZipCode(),
+                city:Faker.Address.City(),
+                state:Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressEmployeeInput GetInputAddressWithZipCodeEmpty()
         {
-            var address = new ChangeAddressEmployeeInput
-            {
-                EmployeeId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = string.Empty,
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressEmployeeInput
+            (
+                employeeId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: string.Empty,
+                city:Faker.Address.City(),
+                state:Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressEmployeeInput GetInputAddressWithCityEmpty()
         {
-            var address = new ChangeAddressEmployeeInput
-            {
-                EmployeeId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = string.Empty,
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressEmployeeInput
+            (
+                employeeId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city:string.Empty,
+                state:Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressEmployeeInput GetInputAddressWithStateEmpty()
         {
-            var address = new ChangeAddressEmployeeInput
-            {
-                EmployeeId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = string.Empty
-            };
-            return address;
+            return new ChangeAddressEmployeeInput
+            (
+                employeeId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city:Faker.Address.City(),
+                state:string.Empty
+            );
         }
     }
 }

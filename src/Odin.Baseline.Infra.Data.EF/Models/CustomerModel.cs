@@ -2,24 +2,62 @@
 {
     public class CustomerModel
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Document { get; set; }
-        public string StreetName { get; set; }
-        public int? StreetNumber { get; set; }
-        public string Complement { get; set; }
-        public string Neighborhood { get; set; }
-        public string ZipCode { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime LastUpdatedAt { get; set; }
-        public string LastUpdatedBy { get; set; }
+        public Guid Id { get; private set; }
+        public string Name { get; private set; }
+        public string Document { get; private set; }
+        public string? StreetName { get; private set; }
+        public int? StreetNumber { get; private set; }
+        public string? Complement { get; private set; }
+        public string? Neighborhood { get; private set; }
+        public string? ZipCode { get; private set; }
+        public string? City { get; private set; }
+        public string? State { get; private set; }
+        public bool IsActive { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public string CreatedBy { get; private set; }
+        public DateTime LastUpdatedAt { get; private set; }
+        public string LastUpdatedBy { get; private set; }
 
-        public ICollection<DepartmentModel> Departments { get; }
-        public ICollection<EmployeeModel> Employees { get; }
-        public ICollection<PositionModel> Positions { get; }
+        public ICollection<DepartmentModel> Departments { get; } = new List<DepartmentModel>();
+        public ICollection<EmployeeModel> Employees { get; } = new List<EmployeeModel>();
+        public ICollection<PositionModel> Positions { get; } = new List<PositionModel>();
+
+        public CustomerModel(Guid id, string name, string document, string? streetName, int? streetNumber, string? complement, string? neighborhood, string? zipCode, string? city, string? state,
+            bool isActive, DateTime createdAt, string createdBy, DateTime lastUpdatedAt, string lastUpdatedBy)
+        {
+            Id = id;
+            Name = name;
+            Document = document;
+            StreetName = streetName;
+            StreetNumber = streetNumber;
+            Complement = complement;
+            Neighborhood = neighborhood;
+            ZipCode = zipCode;
+            City = city;
+            State = state;
+            IsActive = isActive;
+            CreatedAt = createdAt;
+            CreatedBy = createdBy;
+            LastUpdatedAt = lastUpdatedAt;
+            LastUpdatedBy = lastUpdatedBy;
+        }
+
+        public CustomerModel(Guid id, string name, string document, bool isActive, 
+            DateTime createdAt, string createdBy, DateTime lastUpdatedAt, string lastUpdatedBy)
+        {
+            Id = id;
+            Name = name;
+            Document = document;
+            IsActive = isActive;
+            CreatedAt = createdAt;
+            CreatedBy = createdBy;
+            LastUpdatedAt = lastUpdatedAt;
+            LastUpdatedBy = lastUpdatedBy;
+        }
+
+        public void ChangeIsActive(bool isActive)
+        {
+            IsActive = isActive;
+        }
     }
 }

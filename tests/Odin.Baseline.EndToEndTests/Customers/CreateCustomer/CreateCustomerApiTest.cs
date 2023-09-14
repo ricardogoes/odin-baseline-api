@@ -46,7 +46,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.CreateCustomer
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var input = _fixture.GetValidInput();
-            input.Document = customersList.FirstOrDefault().Document;
+            input.ChangeDocument(customersList.FirstOrDefault()!.Document);
 
             var (response, output) = await _fixture.ApiClient.PostAsync<ProblemDetails>($"/v1/customers", input);
 

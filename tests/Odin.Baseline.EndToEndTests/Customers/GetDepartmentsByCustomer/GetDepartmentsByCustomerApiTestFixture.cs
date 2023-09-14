@@ -13,23 +13,6 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetDepartmentsByCustomer
             : base()
         { }
 
-        public DepartmentModel GetValidDepartmentModel(Guid? customerId = null)
-        {
-            var department = new DepartmentModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId ?? Guid.NewGuid(),
-                Name = GetValidName(),
-                IsActive = true,
-                CreatedAt = DateTime.Now,
-                CreatedBy = "unit.test",
-                LastUpdatedAt = DateTime.Now,
-                LastUpdatedBy = "unit.test"
-            };
-
-            return department;
-        }
-
         public List<DepartmentModel> GetValidDepartmentsModelList(List<Guid> customersIds, int length = 10)
         {
             var departments = new List<DepartmentModel>();

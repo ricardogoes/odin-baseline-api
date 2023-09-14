@@ -35,14 +35,17 @@ namespace Odin.Baseline.UnitTests.Application.Customers.CreateCustomer
             var input = _fixture.GetValidCreateCustomerInput();
             var customerToInsert = new Customer(input.Name, input.Document, isActive: true);
             var expectedCustomerInserted = new CustomerOutput
-            {
-                Id = Guid.NewGuid(),
-                Name = input.Name,
-                Document = input.Document,
-                IsActive = true,
-                CreatedBy = "unit.testing",
-                CreatedAt = DateTime.UtcNow
-            };
+            (
+                Guid.NewGuid(),
+                input.Name,
+                input.Document,
+                null,
+                true,
+                DateTime.UtcNow, 
+                "unit.testing",
+                DateTime.UtcNow,
+                "unit.testing"                
+            );
 
             _documentServiceMock.Setup(s => s.IsDocumentUnique(It.IsAny<EntityWithDocument>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(true));

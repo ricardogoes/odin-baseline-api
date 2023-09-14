@@ -13,45 +13,45 @@ namespace Odin.Baseline.UnitTests.Application.Customers.CreateCustomer
             : base() { }
 
         public CreateCustomerInput GetValidCreateCustomerInput()
-            => new()
-            {
-                Name = GetValidName(),
-                Document = GetValidDocument(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                GetValidCustomerName(),
+                GetValidCustomerDocument(),
+                GetValidUsername()
+            );
 
         public CreateCustomerInput GetCreateCustomerInputWithEmptyName()
-            => new()
-            {
-                Name = "",
-                Document = GetValidDocument(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                "",
+                GetValidCustomerDocument(),
+                GetValidUsername()
+            );
 
 
         public CreateCustomerInput GetCreateCustomerInputWithEmptyDocument()
-            => new()
-            {
-                Name = GetValidName(),
-                Document = "",
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                GetValidCustomerName(),
+                "",
+                GetValidUsername()
+            );
 
         public CreateCustomerInput GetCreateCustomerInputWithInvalidDocument()
-            => new()
-            {
-                Name = GetValidName(),
-                Document = GetInvalidDocument(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                GetValidCustomerName(),
+                "12.132.432/0002-12",
+                GetValidUsername()
+            );
 
         public CreateCustomerInput GetCreateCustomerInputWithEmptyLoggedUsername()
-           => new()
-           {
-               Name = GetValidName(),
-               Document = GetValidDocument(),
-               LoggedUsername = ""
-           };
+           => new
+           (
+               GetValidCustomerName(),
+               GetValidCustomerDocument(),
+               ""
+           );
     }
 
 

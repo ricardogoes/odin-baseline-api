@@ -1,5 +1,5 @@
-﻿using Odin.Baseline.Domain.Entities;
-using Odin.Baseline.EndToEndTests.Customers.Common;
+﻿using Odin.Baseline.EndToEndTests.Customers.Common;
+using Odin.Baseline.Infra.Data.EF.Models;
 
 namespace Odin.Baseline.EndToEndTests.Customers.GetCustomers
 {

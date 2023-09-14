@@ -4,32 +4,46 @@ using Odin.Baseline.Domain.ValueObjects;
 namespace Odin.Baseline.Application.Customers.Common
 {
     public class CustomerOutput
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Document { get; set; }
-        public Address Address { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime LastUpdatedAt { get; set; }
-        public string LastUpdatedBy { get; set; }
+    {        
+        public Guid Id { get; private set; }
+        public string Name { get; private set; }
+        public string Document { get; private set; }
+        public Address? Address { get; private set; }
+        public bool IsActive { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public string CreatedBy { get; private set; }
+        public DateTime LastUpdatedAt { get; private set; }
+        public string LastUpdatedBy { get; private set; }
+
+        public CustomerOutput(Guid id, string name, string document, Address? address, bool isActive, DateTime createdAt, string createdBy, DateTime lastUpdatedAt, string lastUpdatedBy)
+        {
+            Id = id;
+            Name = name;
+            Document = document;
+            Address = address;
+            IsActive = isActive;
+            CreatedAt = createdAt;
+            CreatedBy = createdBy;
+            LastUpdatedAt = lastUpdatedAt;
+            LastUpdatedBy = lastUpdatedBy;
+        }
+
 
         public static CustomerOutput FromCustomer(Customer customer)
         {
             return new CustomerOutput
-            {
-                Id = customer.Id,
-                Name = customer.Name,
-                Document = customer.Document,
-                Address = customer.Address,
-                IsActive = customer.IsActive,
-                CreatedAt = customer.CreatedAt,
-                CreatedBy = customer.CreatedBy,
-                LastUpdatedAt = customer.LastUpdatedAt,
-                LastUpdatedBy = customer.LastUpdatedBy
+            (
+                customer.Id,
+                customer.Name,
+                customer.Document,
+                customer.Address,
+                customer.IsActive,
+                customer.CreatedAt ?? default,
+                customer.CreatedBy ?? "",
+                customer.LastUpdatedAt ?? default,
+                customer.LastUpdatedBy ?? ""
 
-            };
+            );
         }
 
         public static IEnumerable<CustomerOutput> FromCustomer(IEnumerable<Customer> customers)

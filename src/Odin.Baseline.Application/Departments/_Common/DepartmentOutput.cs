@@ -4,31 +4,43 @@ using Odin.Baseline.Domain.Entities;
 namespace Odin.Baseline.Application.Departments.Common
 {
     public class DepartmentOutput
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime LastUpdatedAt { get; set; }
-        public string LastUpdatedBy { get; set; }
+    {       
+        public Guid Id { get; private set; }
+        public string Name { get; private set; }
+        public bool IsActive { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public string CreatedBy { get; private set; }
+        public DateTime LastUpdatedAt { get; private set; }
+        public string LastUpdatedBy { get; private set; }
 
-        public CustomerData Customer { get; set; }
+        public CustomerData? Customer { get; private set; }
+
+        public DepartmentOutput(Guid id, string name, bool isActive, DateTime createdAt, string createdBy, DateTime lastUpdatedAt, string lastUpdatedBy, CustomerData? customer = null)
+        {
+            Id = id;
+            Name = name;
+            IsActive = isActive;
+            CreatedAt = createdAt;
+            CreatedBy = createdBy;
+            LastUpdatedAt = lastUpdatedAt;
+            LastUpdatedBy = lastUpdatedBy;
+            Customer = customer;
+        }
 
         public static DepartmentOutput FromDepartment(Department department)
         {
             return new DepartmentOutput
-            {
-                Id = department.Id,
-                Name = department.Name,
-                IsActive = department.IsActive,
-                CreatedAt = department.CreatedAt,
-                CreatedBy = department.CreatedBy,
-                LastUpdatedAt = department.LastUpdatedAt,
-                LastUpdatedBy = department.LastUpdatedBy,
+            (
+                department.Id,
+                department.Name,
+                department.IsActive,
+                department.CreatedAt ?? default,
+                department.CreatedBy ?? "",
+                department.LastUpdatedAt ?? default,
+                department.LastUpdatedBy ?? "",
 
-                Customer = department.CustomerData
-            };
+                department.CustomerData
+            );
         }
 
         public static IEnumerable<DepartmentOutput> FromDepartment(IEnumerable<Department> departments)

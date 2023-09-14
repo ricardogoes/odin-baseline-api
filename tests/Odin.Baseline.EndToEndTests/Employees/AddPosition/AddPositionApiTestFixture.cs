@@ -15,72 +15,67 @@ namespace Odin.Baseline.EndToEndTests.Employees.AddPosition
 
         public AddPositionInput GetValidInput(Guid? id = null)
         {
-            var input = new AddPositionInput
-            {
-                EmployeeId = id ?? Guid.NewGuid(),
-                PositionId = Guid.NewGuid(),
-                Salary = 10_000,
-                StartDate = DateTime.Now,
-                FinishDate = null,
-                LoggedUsername = "unit.testing"
-            };
-            return input;
+            return new AddPositionInput
+            (
+                employeeId: id ?? Guid.NewGuid(),
+                positionId: Guid.NewGuid(),
+                salary: 10_000,
+                startDate: DateTime.Now,
+                finishDate: null,
+                loggedUsername: "unit.testing"
+            );
         }
 
         public AddPositionInput GetInputWithEmptyEmployeeId()
         {
-            var input = new AddPositionInput
-            {
-                EmployeeId = Guid.Empty,
-                PositionId = Guid.NewGuid(),
-                Salary = 10_000,
-                StartDate = DateTime.Now,
-                FinishDate = null,
-                LoggedUsername = "unit.testing"
-            };
-            return input;
+            return new AddPositionInput
+            (
+                employeeId: Guid.Empty,
+                positionId: Guid.NewGuid(),
+                salary: 10_000,
+                startDate: DateTime.Now,
+                finishDate: null,
+                loggedUsername: "unit.testing"
+            );
         }
 
         public AddPositionInput GetInputWithEmptyPositionId()
         {
-            var input = new AddPositionInput
-            {
-                EmployeeId = Guid.NewGuid(),
-                PositionId = Guid.Empty,
-                Salary = 10_000,
-                StartDate = DateTime.Now,
-                FinishDate = null,
-                LoggedUsername = "unit.testing"
-            };
-            return input;
+            return new AddPositionInput
+            (
+                employeeId: Guid.NewGuid(),
+                positionId: Guid.Empty,
+                salary: 10_000,
+                startDate: DateTime.Now,
+                finishDate: null,
+                loggedUsername: "unit.testing"
+            );
         }
 
         public AddPositionInput GetInputWithEmptySalary()
         {
-            var input = new AddPositionInput
-            {
-                EmployeeId = Guid.NewGuid(),
-                PositionId = Guid.NewGuid(),
-                Salary = 0,
-                StartDate = DateTime.Now,
-                FinishDate = null,
-                LoggedUsername = "unit.testing"
-            };
-            return input;
+            return new AddPositionInput
+            (
+                employeeId: Guid.NewGuid(),
+                positionId: Guid.NewGuid(),
+                salary: 0,
+                startDate: DateTime.Now,
+                finishDate: null,
+                loggedUsername: "unit.testing"
+            );
         }
 
         public AddPositionInput GetInputWithEmptyLoggerUsername()
         {
-            var input = new AddPositionInput
-            {
-                EmployeeId = Guid.NewGuid(),
-                PositionId = Guid.NewGuid(),
-                Salary = 10_000,
-                StartDate = DateTime.Now,
-                FinishDate = null,
-                LoggedUsername = ""
-            };
-            return input;
+            return new AddPositionInput
+            (
+                employeeId: Guid.NewGuid(),
+                positionId: Guid.NewGuid(),
+                salary: 10_000,
+                startDate: DateTime.Now,
+                finishDate: null,
+                loggedUsername: ""
+            );
         }
     }
 }

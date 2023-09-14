@@ -13,7 +13,7 @@ namespace Odin.Baseline.Infra.Data.EF.Expressions
             if (Cache.TryGetValue(key, out var cachedDelegate))
                 return expression;
 
-            Cache[key] = cachedDelegate;
+            Cache[key] = cachedDelegate!;
 
             return expression;
         }

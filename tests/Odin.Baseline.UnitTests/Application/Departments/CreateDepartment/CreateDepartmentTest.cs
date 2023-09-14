@@ -30,13 +30,15 @@ namespace Odin.Baseline.UnitTests.Application.Departments.CreateDepartment
             var input = _fixture.GetValidCreateDepartmentInput();
             var departmentToInsert = new Department(input.CustomerId, input.Name);
             var expectedDepartmentInserted = new DepartmentOutput
-            {
-                Id = Guid.NewGuid(),
-                Name = input.Name,
-                IsActive = true,
-                CreatedBy = "unit.testing",
-                CreatedAt = DateTime.UtcNow
-            };
+            (
+                Guid.NewGuid(),
+                input.Name,
+                true,
+                DateTime.UtcNow,
+                "unit.testing",
+                DateTime.UtcNow,
+                "unit.testing"
+            );
 
             _repositoryMock.Setup(s => s.InsertAsync(It.IsAny<Department>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(departmentToInsert));

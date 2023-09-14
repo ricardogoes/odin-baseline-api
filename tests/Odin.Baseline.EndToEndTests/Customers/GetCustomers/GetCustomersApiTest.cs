@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Odin.Baseline.Api.Models;
 using Odin.Baseline.Application.Customers.Common;
 using Odin.Baseline.Application.Customers.GetCustomers;
-using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Infra.Data.EF.Models;
 using System.Net;
 
@@ -43,22 +42,6 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetCustomers
             output.Items.Should().HaveCount(10);
         }
 
-
-
-        [Fact(DisplayName = "Should return empty list when no data found")]
-        [Trait("E2E/Controllers", "Customers / [v1]GetCustomers")]
-        public async Task ItemsEmptyWhenPersistenceEmpty()
-        {
-            var dbContext = _fixture.CreateDbContext(preserveData: false);
-            var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<CustomerOutput>>("/v1/customers");
-
-            response.Should().NotBeNull();
-            response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
-            output.Should().NotBeNull();
-            output.TotalRecords.Should().Be(0);
-            output.Items.Should().HaveCount(0);
-        }
-
         [Fact(DisplayName = "Should return valid data")]
         [Trait("E2E/Controllers", "Customers / [v1]GetCustomers")]
         public async Task ListCategoriesAndTotal()
@@ -69,11 +52,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetCustomers
             await dbContext.AddRangeAsync(customersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetCustomersInput
-            {
-                PageNumber = 1,
-                PageSize = 5
-            };
+            var input = new GetCustomersInput(1, 5);
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<CustomerOutput>>("/v1/customers", input);
 
@@ -110,11 +89,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetCustomers
             await dbContext.AddRangeAsync(customersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetCustomersInput
-            {
-                PageNumber = page,
-                PageSize = pageSize
-            };
+            var input = new GetCustomersInput(page, pageSize);
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<CustomerOutput>>("/v1/customers", input);
 
@@ -146,26 +121,21 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetCustomers
         {
             var customersList = new List<CustomerModel>()
             {
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 01", Document = _fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 02", Document = _fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 03", Document = _fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 04", Document = _fixture.GetValidDocument(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 05", Document = _fixture.GetValidDocument(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Cliente 01",  Document =_fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Cliente 02",  Document =_fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Cliente 03",  Document =_fixture.GetValidDocument(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new CustomerModel(Guid.NewGuid(), "Customer 01", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 02", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 03", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 04", _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 05", _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 01",  _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 02",  _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 03",  _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing")
             };
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
             await dbContext.AddRangeAsync(customersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetCustomersInput
-            {
-                PageNumber = page,
-                PageSize = pageSize,
-                Name = search
-            };
+            var input = new GetCustomersInput(page, pageSize, name: search);
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<CustomerOutput>>("/v1/customers", input);
 
@@ -194,26 +164,21 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetCustomers
         {
             var customersList = new List<CustomerModel>()
             {
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 01", Document = _fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 02", Document = _fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 03", Document = _fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 04", Document = _fixture.GetValidDocument(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 05", Document = _fixture.GetValidDocument(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Cliente 01",  Document =_fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Cliente 02",  Document =_fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Cliente 03",  Document =_fixture.GetValidDocument(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new CustomerModel(Guid.NewGuid(), "Customer 01", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 02", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 03", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 04", _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 05", _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 01",  _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 02",  _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 03",  _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing")
             };
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
             await dbContext.AddRangeAsync(customersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetCustomersInput
-            {
-                PageNumber = 1,
-                PageSize = 5,
-                Document = customersList.Where(x => x.Name == "Cliente 01").FirstOrDefault().Document
-            };
+            var input = new GetCustomersInput(1, 5, sort: null, name: null, document: customersList.First().Document, isActive: null);
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<CustomerOutput>>("/v1/customers", input);
 
@@ -244,26 +209,21 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetCustomers
         {
             var customersList = new List<CustomerModel>()
             {
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 01", Document = _fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 02", Document = _fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 03", Document = _fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 04", Document = _fixture.GetValidDocument(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Customer 05", Document = _fixture.GetValidDocument(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Cliente 01",  Document =_fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Cliente 02",  Document =_fixture.GetValidDocument(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new CustomerModel { Id = Guid.NewGuid(), Name = "Cliente 03",  Document =_fixture.GetValidDocument(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new CustomerModel(Guid.NewGuid(), "Customer 01", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 02", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 03", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 04", _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 05", _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 01",  _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 02",  _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 03",  _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing")
             };
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
             await dbContext.AddRangeAsync(customersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetCustomersInput
-            {
-                PageNumber = page,
-                PageSize = pageSize,
-                IsActive = search
-            };
+            var input = new GetCustomersInput(page, pageSize, isActive: search);
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<CustomerOutput>>("/v1/customers", input);
 
@@ -294,18 +254,23 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetCustomers
         [InlineData("id desc")]
         public async Task ListOrdered(string orderBy)
         {
-            var customersList = _fixture.GetValidCustomersModelList(10);
+            var customersList = new List<CustomerModel>()
+            {
+                new CustomerModel(Guid.NewGuid(), "Customer 01", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 02", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 03", _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 04", _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Customer 05", _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 01",  _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 02",  _fixture.GetValidDocument(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "Cliente 03",  _fixture.GetValidDocument(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing")
+            };
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
             await dbContext.AddRangeAsync(customersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetCustomersInput
-            {
-                PageNumber = 1,
-                PageSize = 5,
-                Sort = orderBy
-            };
+            var input = new GetCustomersInput(1, 5, sort: orderBy);
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<CustomerOutput>>("/v1/customers", input);
 

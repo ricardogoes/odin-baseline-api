@@ -17,7 +17,7 @@ namespace Odin.Baseline.UnitTests.Domain.ValuesObjects.Address
         public void Instantiate()
         {
             var validAddress = _fixture.GetValidAddress();
-            var address = new ValueObject.Address(validAddress.StreetName, validAddress.StreetNumber, validAddress.Complement, validAddress.Neighborhood, validAddress.ZipCode, validAddress.City, validAddress.State);
+            var address = new ValueObject.Address(validAddress.StreetName!, validAddress.StreetNumber, validAddress.Complement, validAddress.Neighborhood!, validAddress.ZipCode!, validAddress.City!, validAddress.State!);
 
             address.Should().NotBeNull();
             address.StreetName.Should().Be(validAddress.StreetName);
@@ -38,7 +38,7 @@ namespace Odin.Baseline.UnitTests.Domain.ValuesObjects.Address
         {
             var validAddress = _fixture.GetValidAddress();
 
-            Action action = () => new ValueObject.Address(name!, validAddress.StreetNumber, validAddress.Complement, validAddress.Neighborhood, validAddress.ZipCode, validAddress.City, validAddress.State);
+            Action action = () => new ValueObject.Address(name!, validAddress.StreetNumber, validAddress.Complement, validAddress.Neighborhood!, validAddress.ZipCode!, validAddress.City!, validAddress.State!);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -52,7 +52,7 @@ namespace Odin.Baseline.UnitTests.Domain.ValuesObjects.Address
         {
             var validAddress = _fixture.GetValidAddress();
 
-            Action action = () => new ValueObject.Address(validAddress.StreetName, number, validAddress.Complement, validAddress.Neighborhood, validAddress.ZipCode, validAddress.City, validAddress.State);
+            Action action = () => new ValueObject.Address(validAddress.StreetName!, number, validAddress.Complement, validAddress.Neighborhood!, validAddress.ZipCode!, validAddress.City!, validAddress.State!);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -68,7 +68,7 @@ namespace Odin.Baseline.UnitTests.Domain.ValuesObjects.Address
         {
             var validAddress = _fixture.GetValidAddress();
 
-            Action action = () => new ValueObject.Address(validAddress.StreetName, validAddress.StreetNumber, validAddress.Complement, name!, validAddress.ZipCode, validAddress.City, validAddress.State);
+            Action action = () => new ValueObject.Address(validAddress.StreetName!, validAddress.StreetNumber, validAddress.Complement, name!, validAddress.ZipCode!, validAddress.City!, validAddress.State!);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -84,7 +84,7 @@ namespace Odin.Baseline.UnitTests.Domain.ValuesObjects.Address
         {
             var validAddress = _fixture.GetValidAddress();
 
-            Action action = () => new ValueObject.Address(validAddress.StreetName, validAddress.StreetNumber, validAddress.Complement, validAddress.Neighborhood, name!, validAddress.City, validAddress.State);
+            Action action = () => new ValueObject.Address(validAddress.StreetName!, validAddress.StreetNumber, validAddress.Complement, validAddress.Neighborhood!, name!, validAddress.City!, validAddress.State!);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -100,7 +100,7 @@ namespace Odin.Baseline.UnitTests.Domain.ValuesObjects.Address
         {
             var validAddress = _fixture.GetValidAddress();
 
-            Action action = () => new ValueObject.Address(validAddress.StreetName, validAddress.StreetNumber, validAddress.Complement, validAddress.Neighborhood, validAddress.ZipCode, name!, validAddress.State);
+            Action action = () => new ValueObject.Address(validAddress.StreetName!, validAddress.StreetNumber, validAddress.Complement, validAddress.Neighborhood!, validAddress.ZipCode!, name!, validAddress.State!);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -116,7 +116,7 @@ namespace Odin.Baseline.UnitTests.Domain.ValuesObjects.Address
         {
             var validAddress = _fixture.GetValidAddress();
 
-            Action action = () => new ValueObject.Address(validAddress.StreetName, validAddress.StreetNumber, validAddress.Complement, validAddress.Neighborhood, validAddress.ZipCode, validAddress.City, name!);
+            Action action = () => new ValueObject.Address(validAddress.StreetName!, validAddress.StreetNumber, validAddress.Complement, validAddress.Neighborhood!, validAddress.ZipCode!, validAddress.City!, name!);
 
             action.Should()
                 .Throw<EntityValidationException>()

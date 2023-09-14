@@ -14,35 +14,35 @@ namespace Odin.Baseline.EndToEndTests.Departments.CreateDepartment
         { }
 
         public CreateDepartmentInput GetValidInput(Guid? customerId = null)
-            => new()
-            {
-                CustomerId = customerId ?? Guid.NewGuid(),
-                Name = GetValidName(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId ?? Guid.NewGuid(),
+                GetValidName(),
+                GetValidUsername()
+            );
 
         public CreateDepartmentInput GetInputWithCustomerIdEmpty()
-            => new()
-            {
-                CustomerId = Guid.Empty,
-                Name = GetValidName(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                Guid.Empty,
+                GetValidName(),
+                GetValidUsername()
+            );
 
         public CreateDepartmentInput GetInputWithNameEmpty()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                Name = "",
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                Guid.NewGuid(),
+                "",
+                GetValidUsername()
+            );
 
         public CreateDepartmentInput GetInputWithUsernameEmpty()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                Name = GetValidName(),
-                LoggedUsername = ""
-            };
+            => new
+            (
+                Guid.NewGuid(),
+                GetValidName(),
+                ""
+            );
     }
 }

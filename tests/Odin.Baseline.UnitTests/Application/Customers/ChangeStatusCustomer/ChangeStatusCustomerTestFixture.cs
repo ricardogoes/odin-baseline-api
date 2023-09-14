@@ -13,35 +13,35 @@ namespace Odin.Baseline.UnitTests.Application.Customers.ChangeStatusCustomer
             : base() { }
 
         public ChangeStatusCustomerInput GetValidChangeStatusCustomerInputToActivate(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
-                LoggedUsername = "unit.testing"
-            };
+            => new
+            (            
+                id ?? Guid.NewGuid(),
+                Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
+                "unit.testing"
+            );
 
         public ChangeStatusCustomerInput GetValidChangeStatusCustomerInputToDeactivate(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = Baseline.Domain.Enums.ChangeStatusAction.DEACTIVATE,
-                LoggedUsername = "unit.testing"
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                Baseline.Domain.Enums.ChangeStatusAction.DEACTIVATE,
+                "unit.testing"
+            );
 
         public ChangeStatusCustomerInput GetChangeStatusCustomerInputWithEmptyAction(Guid? id = null)
-          => new()
-          {
-              Id = id ?? Guid.NewGuid(),
-              Action = null,
-              LoggedUsername = "unit.testing"
-          };
+          => new
+          (
+              id ?? Guid.NewGuid(),
+              null,
+              "unit.testing"
+          );
 
         public ChangeStatusCustomerInput GetChangeStatusCustomerInputWithEmptyLoggedUsername(Guid? id = null)
-           => new()
-           {
-               Id = id ?? Guid.NewGuid(),
-               Action = Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
-               LoggedUsername = ""
-           };
+           => new
+           (
+               id ?? Guid.NewGuid(),
+               Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
+               ""
+           );
     }
 }

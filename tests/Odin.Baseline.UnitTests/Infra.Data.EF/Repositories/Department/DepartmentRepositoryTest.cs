@@ -166,8 +166,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Department
             await dbContext.AddRangeAsync(exampleDepartmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetDepartmentsInput(1, 20, sort: "name", customerId: customer1.Id, name: "", isActive: true, "", null, null, "", null, null);
-            var filters = new Dictionary<string, object>
+            var searchInput = new GetDepartmentsInput(1, 20, customerId: customer1.Id, sort: "name", name: "", isActive: true, "", null, null, "", null, null);
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", searchInput.CustomerId },
                 { "Name", searchInput.Name },
@@ -175,7 +175,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Department
             };
 
             var departmentRepository = new DepartmentRepository(dbContext);
-            var output = await departmentRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await departmentRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
@@ -209,8 +209,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Department
             await dbContext.AddRangeAsync(exampleDepartmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetDepartmentsInput(page: 1, pageSize: 20, sort: "name", customerId: Guid.Empty, name: "", isActive: null, "", null, null, "", null, null);
-            var filters = new Dictionary<string, object>
+            var searchInput = new GetDepartmentsInput(page: 1, pageSize: 20, customerId: Guid.Empty, sort: "name", name: "", isActive: null, "", null, null, "", null, null);
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", searchInput.CustomerId },
                 { "Name", searchInput.Name },
@@ -218,7 +218,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Department
             };
 
             var departmentRepository = new DepartmentRepository(dbContext);
-            var output = await departmentRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await departmentRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
@@ -241,15 +241,15 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Department
         {
             var dbContext = _fixture.CreateDbContext();
             var departmentRepository = new DepartmentRepository(dbContext);
-            var searchInput = new GetDepartmentsInput(page: 1, pageSize: 20, sort: "", customerId: Guid.Empty, name: "", isActive: null, "", null, null, "", null, null);
-            var filters = new Dictionary<string, object>
+            var searchInput = new GetDepartmentsInput(page: 1, pageSize: 20, customerId: Guid.Empty, sort: "", name: "", isActive: null, "", null, null, "", null, null);
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", searchInput.CustomerId },
                 { "Name", searchInput.Name },                
                 { "IsActive", searchInput.IsActive },
             };
 
-            var output = await departmentRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await departmentRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();

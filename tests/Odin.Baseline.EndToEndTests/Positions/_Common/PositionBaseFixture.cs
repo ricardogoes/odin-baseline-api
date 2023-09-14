@@ -6,12 +6,9 @@ namespace Odin.Baseline.EndToEndTests.Positions.Common
 {
     public class PositionBaseFixture : BaseFixture
     {
-        public string GetValidName()
+        public string GetValidPositionName()
            => Faker.Commerce.Department();
-
-        public string GetValidUsername()
-            => $"{Faker.Name.FirstName().ToLower()}.{Faker.Name.LastName().ToLower()}";
-
+               
         public Position GetValidPosition(Guid? id = null)
         {
             var department = new Position(id ?? Guid.NewGuid(), GetValidName(), baseSalary: 1_000, isActive: GetRandomBoolean());
@@ -22,20 +19,20 @@ namespace Odin.Baseline.EndToEndTests.Positions.Common
 
         public PositionModel GetValidPositionModel(Guid? customerId = null)
         {
-            var customer = new PositionModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId ?? Guid.NewGuid(),
-                Name = GetValidName(),
-                BaseSalary = 10_000,
-                IsActive = GetRandomBoolean(),
-                CreatedAt = DateTime.Now,
-                CreatedBy = "unit.test",
-                LastUpdatedAt = DateTime.Now,
-                LastUpdatedBy = "unit.test"
-            };
+            var position = new PositionModel
+            (
+                id: Guid.NewGuid(),
+                customerId: customerId ?? Guid.NewGuid(),
+                name: GetValidPositionName(),
+                baseSalary: 10_000,
+                isActive: GetRandomBoolean(),
+                createdAt: DateTime.Now,
+                createdBy: "unit.test",
+                lastUpdatedAt: DateTime.Now,
+                lastUpdatedBy: "unit.test"
+            );
 
-            return customer;
+            return position;
         }
 
         public List<Position> GetValidPositionsList(int length = 10)

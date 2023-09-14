@@ -14,58 +14,58 @@ namespace Odin.Baseline.EndToEndTests.Customers.UpdateCustomer
         { }
 
         public UpdateCustomerInput GetValidInput(Guid id)
-            => new()
-            {
-                Id = id,
-                Name = GetValidName(),
-                Document = GetValidDocument(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id,
+                name: GetValidName(),
+                document: GetValidDocument(),
+                loggedUsername:GetValidUsername()
+            );
 
         public UpdateCustomerInput GetInputWithIdEmpty()
-            => new()
-            {
-                Id = Guid.Empty,
-                Name = GetValidName(),
-                Document = GetValidDocument(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: Guid.Empty,
+                name: GetValidName(),
+                document: GetValidDocument(),
+                loggedUsername:GetValidUsername()
+            );
 
 
         public UpdateCustomerInput GetInputWithNameEmpty(Guid id)
-            => new()
-            {
-                Id = id,
-                Name = "",
-                Document = GetValidDocument(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id,
+                name: "",
+                document: GetValidDocument(),
+                loggedUsername:GetValidUsername()
+            );
 
         public UpdateCustomerInput GetInputWithDocumentEmpty(Guid id)
-            => new()
-            {
-                Id = id,
-                Name = GetValidName(),
-                Document = "",
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id,
+                name: GetValidName(),
+                document: "",
+                loggedUsername:GetValidUsername()
+            );
 
         public UpdateCustomerInput GetInputWithInvalidDocument(Guid id)
-            => new()
-            {
-                Id = id,
-                Name = GetValidName(),
-                Document = GetInvalidDocument(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id,
+                name: GetValidName(),
+                document: GetInvalidDocument(),
+                loggedUsername:GetValidUsername()
+            );
 
         public UpdateCustomerInput GetInputWithUsernameEmpty(Guid id)
-            => new()
-            {
-                Id = id,
-                Name = GetValidName(),
-                Document = GetValidDocument(),
-                LoggedUsername = ""
-            };
+            => new
+            (
+                id: id,
+                name: GetValidName(),
+                document: GetValidDocument(),
+                loggedUsername:""
+            );
     }
 }

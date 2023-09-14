@@ -13,88 +13,88 @@ namespace Odin.Baseline.UnitTests.Application.Employees.CreateEmployee
             : base() { }
 
         public CreateEmployeeInput GetValidCreateEmployeeInput()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = GetValidFirstName(),
-                LastName = GetValidLastName(),
-                Document = GetValidDocument(),
-                Email = GetValidEmail(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: GetValidFirstName(),
+                lastName: GetValidLastName(),
+                document: GetValidDocument(),
+                email: GetValidEmail(),
+                loggedUsername: GetValidUsername()
+            );
 
         public CreateEmployeeInput GetCreateEmployeeInputWithEmptyFirstName()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = "",
-                LastName = GetValidLastName(),
-                Document = GetValidDocument(),
-                Email = GetValidEmail(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: "",
+                lastName: GetValidLastName(),
+                document: GetValidDocument(),
+                email: GetValidEmail(),
+                loggedUsername: GetValidUsername()
+            );
 
         public CreateEmployeeInput GetCreateEmployeeInputWithEmptyLastName()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = GetValidFirstName(),
-                LastName = "",
-                Document = GetValidDocument(),
-                Email = GetValidEmail(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: GetValidFirstName(),
+                lastName: "",
+                document: GetValidDocument(),
+                email: GetValidEmail(),
+                loggedUsername: GetValidUsername()
+            );
 
         public CreateEmployeeInput GetCreateEmployeeInputWithEmptyDocument()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = GetValidFirstName(),
-                LastName = GetValidLastName(),
-                Document = "",
-                Email = GetValidEmail(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: GetValidFirstName(),
+                lastName: GetValidLastName(),
+                document: "",
+                email: GetValidEmail(),
+                loggedUsername: GetValidUsername()
+            );
 
         public CreateEmployeeInput GetCreateEmployeeInputWithInvalidDocument()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = GetValidFirstName(),
-                LastName = GetValidLastName(),
-                Document = GetInvalidDocument(),
-                Email = GetValidEmail(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: GetValidFirstName(),
+                lastName: GetValidLastName(),
+                document: GetInvalidDocument(),
+                email: GetValidEmail(),
+                loggedUsername: GetValidUsername()
+            );
 
         public CreateEmployeeInput GetCreateEmployeeInputWithInvalidEmail()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                DepartmentId = Guid.NewGuid(),
-                FirstName = GetValidFirstName(),
-                LastName = GetValidLastName(),
-                Document = GetValidDocument(),
-                Email = "",
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId: Guid.NewGuid(),
+                departmentId: Guid.NewGuid(),
+                firstName: GetValidFirstName(),
+                lastName: GetValidLastName(),
+                document: GetValidDocument(),
+                email: "",
+                loggedUsername: GetValidUsername()
+            );
 
         public CreateEmployeeInput GetCreateEmployeeInputWithEmptyLoggedUsername()
-           => new()
-           {
-               CustomerId = Guid.NewGuid(),
-               DepartmentId = Guid.NewGuid(),
-               FirstName = GetValidFirstName(),
-               LastName = GetInvalidDocument(),
-               Document = GetValidDocument(),
-               Email = GetValidEmail(),
-               LoggedUsername = ""
-           };
+           => new
+           (
+               customerId: Guid.NewGuid(),
+               departmentId: Guid.NewGuid(),
+               firstName: GetValidFirstName(),
+               lastName: GetInvalidDocument(),
+               document: GetValidDocument(),
+               email: GetValidEmail(),
+               loggedUsername: ""
+           );
     }
 
 

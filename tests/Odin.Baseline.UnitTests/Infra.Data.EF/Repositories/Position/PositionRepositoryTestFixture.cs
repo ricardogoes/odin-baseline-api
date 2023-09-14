@@ -26,20 +26,18 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
 
         public PositionModel GetValidPositionModel(Guid? customerId = null)
         {
-            var position = new PositionModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId ?? Guid.NewGuid(),
-                Name = GetValidName(),
-                BaseSalary = 10_000,
-                IsActive = true,
-                CreatedAt = DateTime.Now,
-                CreatedBy = "unit.test",
-                LastUpdatedAt = DateTime.Now,
-                LastUpdatedBy = "unit.test"
-            };
-
-            return position;
+            return new PositionModel
+            (
+                id: Guid.NewGuid(),
+                customerId: customerId ?? Guid.NewGuid(),
+                name: GetValidName(),
+                baseSalary: 10_000,
+                isActive: true,
+                createdAt: DateTime.Now,
+                createdBy: "unit.test",
+                lastUpdatedAt: DateTime.Now,
+                lastUpdatedBy: "unit.test"
+            );
         }
 
         public List<DomainEntity.Position> GetValidPositionsList(int length = 10)
