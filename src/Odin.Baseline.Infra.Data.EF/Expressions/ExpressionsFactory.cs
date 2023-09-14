@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Globalization;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Odin.Baseline.Infra.Data.EF.Expressions
@@ -73,13 +74,13 @@ namespace Odin.Baseline.Infra.Data.EF.Expressions
 
                 else if (!string.IsNullOrWhiteSpace(filters[key]?.ToString()) && 
                     filters[key] is DateTime && 
-                    DateTime.Parse(filters[key]!.ToString()!) != default &&
+                    DateTime.Parse(filters[key]!.ToString()!, new CultureInfo("en-US")) != default &&
                     key.Contains("Start"))
                     expressionsFilter.Add(new ExpressionFilter(key.Replace("Start", ""), ExpressionOperator.GreaterThanOrEqual, filters[key]!));
 
                 else if (!string.IsNullOrWhiteSpace(filters[key]?.ToString()) &&
                     filters[key] is DateTime &&
-                    DateTime.Parse(filters[key]!.ToString()!) != default &&
+                    DateTime.Parse(filters[key]!.ToString()!, new CultureInfo("en-US")) != default &&
                     key.Contains("End"))
                     expressionsFilter.Add(new ExpressionFilter(key.Replace("End", ""), ExpressionOperator.LessThanOrEqual, filters[key]!));
             }
