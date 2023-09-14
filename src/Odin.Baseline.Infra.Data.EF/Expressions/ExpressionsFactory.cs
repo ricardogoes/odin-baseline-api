@@ -74,13 +74,13 @@ namespace Odin.Baseline.Infra.Data.EF.Expressions
 
                 else if (!string.IsNullOrWhiteSpace(filters[key]?.ToString()) && 
                     filters[key] is DateTime && 
-                    DateTime.Parse(filters[key]!.ToString()!, new CultureInfo("en-US")) != default &&
+                    DateTime.Parse(filters[key]!.ToString()!, new CultureInfo("pt-BR")) != default &&
                     key.Contains("Start"))
                     expressionsFilter.Add(new ExpressionFilter(key.Replace("Start", ""), ExpressionOperator.GreaterThanOrEqual, filters[key]!));
 
                 else if (!string.IsNullOrWhiteSpace(filters[key]?.ToString()) &&
                     filters[key] is DateTime &&
-                    DateTime.Parse(filters[key]!.ToString()!, new CultureInfo("en-US")) != default &&
+                    DateTime.Parse(filters[key]!.ToString()!, new CultureInfo("pt-BR")) != default &&
                     key.Contains("End"))
                     expressionsFilter.Add(new ExpressionFilter(key.Replace("End", ""), ExpressionOperator.LessThanOrEqual, filters[key]!));
             }
