@@ -1,4 +1,5 @@
 ﻿using Odin.Baseline.Domain.CustomExceptions;
+using System.Globalization;
 using System.Net.Mail;
 
 namespace Odin.Baseline.Domain.Validations
@@ -26,7 +27,7 @@ namespace Odin.Baseline.Domain.Validations
                 throwError = true;
             else if (target is Guid && Guid.Parse(target.ToString()!) == Guid.Empty)
                 throwError = true;
-            else if (target is DateTime && DateTime.Parse(target.ToString()!) == default)
+            else if (target is DateTime && DateTime.Parse(target.ToString()!, new CultureInfo("en-US")) == default)
                 throwError = true;
 
             if (throwError)
