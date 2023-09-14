@@ -64,19 +64,17 @@ namespace Odin.Baseline.EndToEndTests
 
         public CustomerModel GetValidCustomerModel()
         {
-            var customer = new CustomerModel
-            {
-                Id = Guid.NewGuid(),
-                Name = GetValidName(),
-                Document = GetValidDocument(),
-                IsActive = true,
-                CreatedAt = DateTime.Now,
-                CreatedBy = "unit.test",
-                LastUpdatedAt = DateTime.Now,
-                LastUpdatedBy = "unit.test"
-            };
-
-            return customer;
+            return new CustomerModel
+            (
+                id: Guid.NewGuid(),
+                name: GetValidName(),
+                document: GetValidDocument(),
+                isActive: GetRandomBoolean(),
+                createdAt: DateTime.Now,
+                createdBy: "unit.test",
+                lastUpdatedAt: DateTime.Now,
+                lastUpdatedBy: "unit.test"
+            );
         }
 
         public string GetValidDepartmentName()
@@ -93,16 +91,16 @@ namespace Odin.Baseline.EndToEndTests
         public DepartmentModel GetValidDepartmentModel(Guid? customerId = null)
         {
             var customer = new DepartmentModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId ?? Guid.NewGuid(),
-                Name = GetValidDepartmentName(),
-                IsActive = GetRandomBoolean(),
-                CreatedAt = DateTime.Now,
-                CreatedBy = "unit.test",
-                LastUpdatedAt = DateTime.Now,
-                LastUpdatedBy = "unit.test"
-            };
+            (
+                id: Guid.NewGuid(),
+                customerId: customerId ?? Guid.NewGuid(),
+                name: GetValidDepartmentName(),
+                isActive: GetRandomBoolean(),
+                createdAt: DateTime.Now,
+                createdBy: "unit.test",
+                lastUpdatedAt: DateTime.Now,
+                lastUpdatedBy: "unit.test"
+            );
 
             return customer;
         }

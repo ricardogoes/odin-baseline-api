@@ -2,7 +2,6 @@
 using Odin.Baseline.Application.Common;
 using Odin.Baseline.Application.Customers.Common;
 using Odin.Baseline.Domain.DTO.Common;
-using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
 
 namespace Odin.Baseline.Application.Customers.GetCustomers
@@ -16,7 +15,7 @@ namespace Odin.Baseline.Application.Customers.GetCustomers
 
         public async Task<PaginatedListOutput<CustomerOutput>> Handle(GetCustomersInput input, CancellationToken cancellationToken)
         {
-            var filters = new Dictionary<string, object>
+            var filters = new Dictionary<string, object?>
             {
                 { "Name", input.Name },
                 { "Document", input.Document },
@@ -24,17 +23,17 @@ namespace Odin.Baseline.Application.Customers.GetCustomers
             };
 
             var customers = await _repository.FindPaginatedListAsync(
-                filters, input.PageNumber, input.PageSize, input.Sort,
+                filters, input.PageNumber, input.PageSize, input.Sort!,
                 cancellationToken: cancellationToken);
 
             return new PaginatedListOutput<CustomerOutput>
-            {
-                PageNumber = input.PageNumber,
-                PageSize = input.PageSize,
-                TotalPages = PaginatedListHelper.GetTotalPages(customers.TotalItems, input.PageSize),
-                TotalItems = customers.TotalItems,
-                Items = CustomerOutput.FromCustomer(customers.Items)
-            };
+            (
+                pageNumber: input.PageNumber,
+                pageSize: input.PageSize,
+                totalPages: PaginatedListHelper.GetTotalPages(customers.TotalItems, input.PageSize),
+                totalItems: customers.TotalItems,
+                items: CustomerOutput.FromCustomer(customers.Items)
+            );
         }
     }
 }

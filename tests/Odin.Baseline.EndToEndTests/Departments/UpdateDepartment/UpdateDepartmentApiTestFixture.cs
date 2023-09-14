@@ -14,49 +14,49 @@ namespace Odin.Baseline.EndToEndTests.Departments.UpdateDepartment
         { }
 
         public UpdateDepartmentInput GetValidInput(Guid id, Guid? customerId = null)
-            => new()
-            {
-                Id = id,
-                CustomerId = customerId ?? Guid.NewGuid(),
-                Name = GetValidName(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id,
+                customerId: customerId ?? Guid.NewGuid(),
+                name: GetValidName(),
+                loggedUsername:  GetValidUsername()
+            );
 
         public UpdateDepartmentInput GetInputWithIdEmpty()
-            => new()
-            {
-                Id = Guid.Empty,
-                CustomerId = Guid.NewGuid(),
-                Name = GetValidName(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: Guid.Empty,
+                customerId: Guid.NewGuid(),
+                name: GetValidName(),
+                loggedUsername:  GetValidUsername()
+            );
 
 
         public UpdateDepartmentInput GetInputWithNameEmpty(Guid id)
-            => new()
-            {
-                Id = id,
-                CustomerId = Guid.NewGuid(),
-                Name = "",
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id,
+                customerId: Guid.NewGuid(),
+                name: "",
+                loggedUsername:  GetValidUsername()
+            );
 
         public UpdateDepartmentInput GetInputWithCustomerIdEmpty(Guid id)
-            => new()
-            {
-                Id = id,
-                CustomerId = Guid.Empty,
-                Name = "",
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                id: id,
+                customerId: Guid.Empty,
+                name: "",
+                loggedUsername:  GetValidUsername()
+            );
 
         public UpdateDepartmentInput GetInputWithUsernameEmpty(Guid id)
-            => new()
-            {
-                Id = id,
-                CustomerId = Guid.NewGuid(),
-                Name = GetValidName(),
-                LoggedUsername = ""
-            };
+            => new
+            (
+                id: id,
+                customerId: Guid.NewGuid(),
+                name: GetValidName(),
+                loggedUsername:  ""
+            );
     }
 }

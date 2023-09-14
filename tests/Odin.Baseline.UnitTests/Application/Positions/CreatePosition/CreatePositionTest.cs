@@ -30,14 +30,16 @@ namespace Odin.Baseline.UnitTests.Application.Positions.CreatePosition
             var input = _fixture.GetValidCreatePositionInput();
             var positionToInsert = new Position(input.CustomerId, input.Name, input.BaseSalary);
             var expectedPositionInserted = new PositionOutput
-            {
-                Id = Guid.NewGuid(),
-                Name = input.Name,
-                BaseSalary = input.BaseSalary ?? 0,
-                IsActive = true,
-                CreatedBy = "unit.testing",
-                CreatedAt = DateTime.UtcNow
-            };
+            (
+                id: Guid.NewGuid(),
+                name: input.Name,
+                baseSalary: input.BaseSalary ?? 0,
+                isActive: true,
+                createdAt: DateTime.UtcNow,
+                createdBy: "unit.testing",
+                lastUpdatedAt: DateTime.UtcNow,
+                lastUpdatedBy: "unit.testing"
+            );
 
             _repositoryMock.Setup(s => s.InsertAsync(It.IsAny<Position>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(positionToInsert));

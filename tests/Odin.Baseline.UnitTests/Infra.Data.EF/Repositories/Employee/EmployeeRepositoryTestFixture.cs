@@ -37,23 +37,21 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
 
         public EmployeeModel GetValidEmployeeModel(Guid? customerId = null, Guid? departmentId = null)
         {
-            var employee = new EmployeeModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId ?? Guid.NewGuid(),
-                DepartmentId = departmentId,
-                FirstName = GetValidEmployeeFistName(),
-                LastName = GetValidEmployeeLastName(),
-                Document = GetValidEmployeeDocument(),
-                Email = GetValidEmployeeEmail(),
-                IsActive = true,
-                CreatedAt = DateTime.Now,
-                CreatedBy = "unit.test",
-                LastUpdatedAt = DateTime.Now,
-                LastUpdatedBy = "unit.test"
-            };
-
-            return employee;
+            return new EmployeeModel
+            (
+                id: Guid.NewGuid(),
+                customerId: customerId ?? Guid.NewGuid(),
+                departmentId: departmentId,
+                firstName: GetValidEmployeeFistName(),
+                lastName: GetValidEmployeeLastName(),
+                document: GetValidEmployeeDocument(),
+                email: GetValidEmployeeEmail(),
+                isActive: true,
+                createdAt: DateTime.Now,
+                createdBy: "unit.test",
+                lastUpdatedAt: DateTime.Now,
+                lastUpdatedBy: "unit.test"
+            );
         }
 
         public List<DomainEntity.Employee> GetValidEmployeesList(int length = 10)
@@ -86,9 +84,9 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var positionsHistory = new List<EmployeePositionHistoryModel>
             {
-                new EmployeePositionHistoryModel {EmployeeId = employeeId, PositionId = Guid.NewGuid(), Salary = 1_000, StartDate = DateTime.Now.AddMonths(-3), FinishDate = DateTime.Now.AddMonths(-2), IsActual = false },
-                new EmployeePositionHistoryModel {EmployeeId = employeeId, PositionId = Guid.NewGuid(), Salary = 2_000, StartDate = DateTime.Now.AddMonths(-2), FinishDate = DateTime.Now.AddMonths(-1), IsActual = false },
-                new EmployeePositionHistoryModel {EmployeeId = employeeId, PositionId = Guid.NewGuid(), Salary = 3_000, StartDate = DateTime.Now.AddMonths(-1), FinishDate = null, IsActual = true },
+                new EmployeePositionHistoryModel(employeeId,Guid.NewGuid(), 1_000, DateTime.Now.AddMonths(-3), DateTime.Now.AddMonths(-2), false),
+                new EmployeePositionHistoryModel(employeeId,Guid.NewGuid(), 2_000, DateTime.Now.AddMonths(-2), DateTime.Now.AddMonths(-1), false),
+                new EmployeePositionHistoryModel(employeeId,Guid.NewGuid(), 3_000, DateTime.Now.AddMonths(-1), null, true)
             };
 
             return positionsHistory;

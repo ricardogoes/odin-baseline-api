@@ -18,13 +18,13 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Helpers
         {
             var customers = new List<CustomerModel>
             {
-                new CustomerModel { Id = Guid.NewGuid(), Name = "A", Document = "123.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-5) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "D", Document = "323.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-3) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "F", Document = "523.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-4) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "E", Document = "423.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-2) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "C", Document = "223.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-1) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "B", Document = "923.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-8) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "H", Document = "723.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-7) },
+                new CustomerModel(Guid.NewGuid(), "A", "123.123.123-12", true, DateTime.Now.AddDays(-5), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "D", "323.123.123-12", true, DateTime.Now.AddDays(-3), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "F", "523.123.123-12", true, DateTime.Now.AddDays(-4), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "E", "423.123.123-12", true, DateTime.Now.AddDays(-2), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "C", "223.123.123-12", true, DateTime.Now.AddDays(-1), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "B", "923.123.123-12", true, DateTime.Now.AddDays(-8), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "H", "723.123.123-12", true, DateTime.Now.AddDays(-7), "unit.testing", DateTime.Now, "unit.testing")
             };
 
             var orderedList = SortHelper.ApplySort(customers, "name").ToList();
@@ -47,13 +47,13 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Helpers
         {
             var customers = new List<CustomerModel>
             {
-                new CustomerModel { Id = Guid.NewGuid(), Name = "A", Document = "123.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-5) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "D", Document = "323.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-3) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "F", Document = "523.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-4) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "E", Document = "423.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-2) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "C", Document = "223.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-1) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "B", Document = "923.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-8) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "H", Document = "723.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-7) },
+                new CustomerModel(Guid.NewGuid(), "A", "123.123.123-12", true, DateTime.Now.AddDays(-5), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "D", "323.123.123-12", true, DateTime.Now.AddDays(-3), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "F", "523.123.123-12", true, DateTime.Now.AddDays(-4), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "E", "423.123.123-12", true, DateTime.Now.AddDays(-2), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "C", "223.123.123-12", true, DateTime.Now.AddDays(-1), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "B", "923.123.123-12", true, DateTime.Now.AddDays(-8), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "H", "723.123.123-12", true, DateTime.Now.AddDays(-7), "unit.testing", DateTime.Now, "unit.testing")
             };
 
             var orderedList = SortHelper.ApplySort(customers, "name desc").ToList();
@@ -76,13 +76,13 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Helpers
         {
             var customers = new List<CustomerModel>
             {
-                new CustomerModel { Id = Guid.NewGuid(), Name = "A", Document = "123.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-5) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "D", Document = "323.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-3) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "F", Document = "523.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-4) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "E", Document = "423.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-2) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "C", Document = "223.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-1) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "B", Document = "923.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-8) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "H", Document = "723.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-7) },
+                new CustomerModel(Guid.NewGuid(), "A", "123.123.123-12", true, DateTime.Now.AddDays(-5), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "D", "323.123.123-12", true, DateTime.Now.AddDays(-3), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "F", "523.123.123-12", true, DateTime.Now.AddDays(-4), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "E", "423.123.123-12", true, DateTime.Now.AddDays(-2), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "C", "223.123.123-12", true, DateTime.Now.AddDays(-1), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "B", "923.123.123-12", true, DateTime.Now.AddDays(-8), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "H", "723.123.123-12", true, DateTime.Now.AddDays(-7), "unit.testing", DateTime.Now, "unit.testing")
             };
 
             var orderedList = SortHelper.ApplySort(customers, "createdAt").ToList();
@@ -105,13 +105,13 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Helpers
         {
             var customers = new List<CustomerModel>
             {
-                new CustomerModel { Id = Guid.NewGuid(), Name = "A", Document = "123.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-5) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "D", Document = "323.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-3) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "F", Document = "523.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-4) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "E", Document = "423.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-2) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "C", Document = "223.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-1) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "B", Document = "923.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-8) },
-                new CustomerModel { Id = Guid.NewGuid(), Name = "H", Document = "723.123.123-12", IsActive = true, CreatedAt = DateTime.Now.AddDays(-7) },
+                new CustomerModel(Guid.NewGuid(), "A", "123.123.123-12", true, DateTime.Now.AddDays(-5), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "D", "323.123.123-12", true, DateTime.Now.AddDays(-3), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "F", "523.123.123-12", true, DateTime.Now.AddDays(-4), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "E", "423.123.123-12", true, DateTime.Now.AddDays(-2), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "C", "223.123.123-12", true, DateTime.Now.AddDays(-1), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "B", "923.123.123-12", true, DateTime.Now.AddDays(-8), "unit.testing", DateTime.Now, "unit.testing"),
+                new CustomerModel(Guid.NewGuid(), "H", "723.123.123-12", true, DateTime.Now.AddDays(-7), "unit.testing", DateTime.Now, "unit.testing")
             };
 
             var orderedList = SortHelper.ApplySort(customers, "createdAt desc").ToList();

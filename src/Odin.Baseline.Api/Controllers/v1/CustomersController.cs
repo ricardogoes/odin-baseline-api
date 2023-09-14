@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Odin.Baseline.Api.Models;
 using Odin.Baseline.Api.Helpers;
+using Odin.Baseline.Api.Models;
 using Odin.Baseline.Application.Customers.ChangeAddressCustomer;
 using Odin.Baseline.Application.Customers.ChangeStatusCustomer;
 using Odin.Baseline.Application.Customers.Common;
@@ -18,10 +18,6 @@ using Odin.Baseline.Application.Positions.Common;
 using Odin.Baseline.Application.Positions.GetPositions;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Enums;
-using Odin.Baseline.Infra.Messaging.Extensions;
-using Microsoft.AspNetCore.Http.HttpResults;
-using System.Xml.Linq;
-using Odin.Baseline.Application.Departments.GetDepartmentById;
 
 namespace Odin.Baseline.Api.Controllers.v1
 {
@@ -51,14 +47,14 @@ namespace Odin.Baseline.Api.Controllers.v1
             [FromQuery(Name = "is_active")] bool? IsActive = null)
         {
             var input = new GetCustomersInput
-            {
-                PageNumber = PageNumber ?? 1,
-                PageSize = PageSize ?? 10,
-                Sort = Utils.GetSortParam(Sort),
-                Name = !string.IsNullOrWhiteSpace(Name) ? Name : "",
-                Document = !string.IsNullOrWhiteSpace(Document) ? Document : "",
-                IsActive = IsActive
-            };
+            (
+                page: PageNumber ?? 1,
+                pageSize: PageSize ?? 10,
+                sort: Utils.GetSortParam(Sort),
+                name: !string.IsNullOrWhiteSpace(Name) ? Name : "",
+                document: !string.IsNullOrWhiteSpace(Document) ? Document : "",
+                isActive: IsActive
+            );
 
             var paginatedCustomers = await _mediator.Send(input, cancellationToken);
 
@@ -86,7 +82,7 @@ namespace Odin.Baseline.Api.Controllers.v1
         public async Task<IActionResult> Create([FromBody] CreateCustomerInput input, CancellationToken cancellationToken)
         {
             //TODO: Alterar quando auth estiver implementado
-            input.LoggedUsername = "ricardo.goes";
+            input.ChangeLoggedUsername("ricardo.goes");
 
             var customerCreated = await _mediator.Send(input, cancellationToken);
 
@@ -107,7 +103,7 @@ namespace Odin.Baseline.Api.Controllers.v1
                 throw new BadRequestException("Invalid request");
 
             //TODO: Alterar quando auth estiver implementado
-            input.LoggedUsername = "ricardo.goes";
+            input.ChangeLoggedUsername("ricardo.goes");
 
             var customerUpdated = await _mediator.Send(input, cancellationToken);
 
@@ -127,11 +123,11 @@ namespace Odin.Baseline.Api.Controllers.v1
                 throw new BadRequestException("Invalid action. Only ACTIVATE or DEACTIVATE values are allowed");
 
             var customerUpdated = await _mediator.Send(new ChangeStatusCustomerInput
-            {
-                Id = id,
-                Action = (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
-                LoggedUsername = "ricardo.goes" // TODO: Alterar quando auth estiver implementado
-            }, cancellationToken);
+            (
+                id,
+                (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
+                "ricardo.goes" // TODO: Alterar quando auth estiver implementado
+            ), cancellationToken);
 
             return Ok(customerUpdated);
         }
@@ -175,7 +171,7 @@ namespace Odin.Baseline.Api.Controllers.v1
                 pageSize: pageSize ?? 5,
                 sort: Utils.GetSortParam(sort),
                 customerId: id,
-                name: name ?? "",
+                name: name,
                 isActive: isActive,
                 createdBy: createdBy,
                 createdAtStart: createdAtStart,
@@ -214,7 +210,7 @@ namespace Odin.Baseline.Api.Controllers.v1
                 pageSize: pageSize ?? 5,
                 sort: Utils.GetSortParam(sort),
                 customerId: id,
-                name: name ?? "",
+                name: name,
                 isActive: isActive,
                 createdBy: createdBy,
                 createdAtStart: createdAtStart,
@@ -258,10 +254,10 @@ namespace Odin.Baseline.Api.Controllers.v1
                 sort: Utils.GetSortParam(sort),
                 customerId: id,
                 departmentId: departmentId,
-                firstName: firstName ?? "",
-                lastName: lastName ?? "",
-                document: document ?? "",
-                email: email ?? "",
+                firstName: firstName,
+                lastName: lastName,
+                document: document,
+                email: email,
                 isActive: isActive,
                 createdBy: createdBy,
                 createdAtStart: createdAtStart,

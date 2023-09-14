@@ -14,7 +14,7 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
     {
         private readonly OdinBaselineDbContext _dbContext;
 
-        private DbSet<CustomerModel> _customers => _dbContext.Set<CustomerModel>();
+        private DbSet<CustomerModel> Customers => _dbContext.Set<CustomerModel>();
 
         public CustomerRepository(OdinBaselineDbContext dbContext)
         {
@@ -23,7 +23,7 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
 
         public async Task<Customer> InsertAsync(Customer customer, CancellationToken cancellationToken)
         {
-            await _customers.AddAsync(customer.ToCustomerModel(), cancellationToken);
+            await Customers.AddAsync(customer.ToCustomerModel(), cancellationToken);
 
             return customer;
 
@@ -31,46 +31,47 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
 
         public async Task<Customer> UpdateAsync(Customer customer, CancellationToken cancellationToken)
         {
-            await Task.FromResult(_customers.Update(customer.ToCustomerModel()));
+            await Task.FromResult(Customers.Update(customer.ToCustomerModel()));
             return customer;
         }
 
         public async Task DeleteAsync(Customer customer)
-            => await Task.FromResult(_customers.Remove(customer.ToCustomerModel()));
+            => await Task.FromResult(Customers.Remove(customer.ToCustomerModel()));
 
         public async Task<Customer> FindByIdAsync(Guid id, CancellationToken cancellationToken) 
         {
-            var model = await _customers.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            var model = await Customers.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+
             NotFoundException.ThrowIfNull(model, $"Customer with Id '{id}' not found.");
 
-            return model.ToCustomer(); 
+            return model!.ToCustomer(); 
         }
 
-        public async Task<PaginatedListOutput<Customer>> FindPaginatedListAsync(Dictionary<string, object> filters, int pageNumber, int pageSize, string sort, CancellationToken cancellationToken) 
+        public async Task<PaginatedListOutput<Customer>> FindPaginatedListAsync(Dictionary<string, object?> filters, int pageNumber, int pageSize, string sort, CancellationToken cancellationToken) 
         {
             var filtersExpression = ExpressionsFactory<CustomerModel>.BuildFilterExpression(filters);
             var expression = ExpressionsFactory<CustomerModel>.BuildQueryableExpression(filtersExpression);
 
-            var data = expression != null ? await _customers.AsNoTracking().Where(expression).ToListAsync(cancellationToken) : await _customers.ToListAsync(cancellationToken);
+            var data = expression != null ? await Customers.AsNoTracking().Where(expression).ToListAsync(cancellationToken) : await Customers.ToListAsync(cancellationToken);
 
-            var sortedData = SortHelper.ApplySort<CustomerModel>(data, sort);
+            var sortedData = SortHelper.ApplySort(data, sort);
 
             return new PaginatedListOutput<Customer>
-            {
-                TotalItems = sortedData.Count(),
-                Items = sortedData
+            (
+                totalItems: sortedData.Count(),
+                items: sortedData
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToCustomer()
-            };
+            );
         }
 
         public async Task<Customer> FindByDocumentAsync(string document, CancellationToken cancellationToken)
         {
-            var model = await _customers.AsNoTracking().SingleOrDefaultAsync(x => x.Document == document, cancellationToken);
+            var model = await Customers.AsNoTracking().SingleOrDefaultAsync(x => x.Document == document, cancellationToken);
             NotFoundException.ThrowIfNull(model, $"Customer with Document '{document}' not found.");
 
-            return model.ToCustomer();
+            return model!.ToCustomer();
         }
 
         /*public async Task<IEnumerable<Guid>> FindListIdsByIdsAsync(List<Guid> ids, CancellationToken cancellationToken)

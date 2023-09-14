@@ -13,35 +13,35 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             : base() { }
 
         public ChangeStatusEmployeeInput GetValidChangeStatusEmployeeInputToActivate(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
-                LoggedUsername = "unit.testing"
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
+                "unit.testing"
+            );
 
         public ChangeStatusEmployeeInput GetValidChangeStatusEmployeeInputToDeactivate(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = Baseline.Domain.Enums.ChangeStatusAction.DEACTIVATE,
-                LoggedUsername = "unit.testing"
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                Baseline.Domain.Enums.ChangeStatusAction.DEACTIVATE,
+                "unit.testing"
+            );
 
         public ChangeStatusEmployeeInput GetChangeStatusEmployeeInputWithEmptyAction(Guid? id = null)
-          => new()
-          {
-              Id = id ?? Guid.NewGuid(),
-              Action = null,
-              LoggedUsername = "unit.testing"
-          };
+          => new
+          (
+              id ?? Guid.NewGuid(),
+              null,
+              "unit.testing"
+          );
 
         public ChangeStatusEmployeeInput GetChangeStatusEmployeeInputWithEmptyLoggedUsername(Guid? id = null)
-           => new()
-           {
-               Id = id ?? Guid.NewGuid(),
-               Action = Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
-               LoggedUsername = ""
-           };
+           => new
+           (
+               id ?? Guid.NewGuid(),
+               Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
+               ""
+           );
     }
 }

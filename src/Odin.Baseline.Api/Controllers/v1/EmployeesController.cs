@@ -48,7 +48,7 @@ namespace Odin.Baseline.Api.Controllers.v1
         public async Task<IActionResult> Create([FromBody] CreateEmployeeInput input, CancellationToken cancellationToken)
         {
             //TODO: Alterar quando auth estiver implementado
-            input.LoggedUsername = "ricardo.goes";
+            input.ChangeLoggedUsername("ricardo.goes");
 
             var employeeCreated = await _mediator.Send(input, cancellationToken);
 
@@ -69,7 +69,7 @@ namespace Odin.Baseline.Api.Controllers.v1
                 throw new BadRequestException("Invalid request");
 
             //TODO: Alterar quando auth estiver implementado
-            input.LoggedUsername = "ricardo.goes";
+            input.ChangeLoggedUsername("ricardo.goes");
 
             var employeeUpdated = await _mediator.Send(input, cancellationToken);
 
@@ -89,11 +89,11 @@ namespace Odin.Baseline.Api.Controllers.v1
                 throw new BadRequestException("Invalid action. Only ACTIVATE or DEACTIVATE values are allowed");
 
             var employeeUpdated = await _mediator.Send(new ChangeStatusEmployeeInput
-            {
-                Id = id,
-                Action = (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
-                LoggedUsername = "ricardo.goes" // TODO: Alterar quando auth estiver implementado
-            }, cancellationToken);
+            (
+                id,
+                (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
+                "ricardo.goes" // TODO: Alterar quando auth estiver implementado
+            ), cancellationToken);
 
             return Ok(employeeUpdated);
         }

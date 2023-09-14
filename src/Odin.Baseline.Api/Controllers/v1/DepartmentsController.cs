@@ -51,7 +51,7 @@ namespace Odin.Baseline.Api.Controllers.v1
         public async Task<IActionResult> Create([FromBody] CreateDepartmentInput input, CancellationToken cancellationToken)
         {
             //TODO: Alterar quando auth estiver implementado
-            input.LoggedUsername = "ricardo.goes";
+            input.ChangeLoggedUsername("ricardo.goes");
 
             var departmentCreated = await _mediator.Send(input, cancellationToken);
 
@@ -72,7 +72,7 @@ namespace Odin.Baseline.Api.Controllers.v1
                 throw new BadRequestException("Invalid request");
 
             //TODO: Alterar quando auth estiver implementado
-            input.LoggedUsername = "ricardo.goes";
+            input.ChangeLoggedUsername("ricardo.goes");
 
             var departmentUpdated = await _mediator.Send(input, cancellationToken);
 
@@ -92,11 +92,11 @@ namespace Odin.Baseline.Api.Controllers.v1
                 throw new BadRequestException("Invalid action. Only ACTIVATE or DEACTIVATE values are allowed");
 
             var departmentUpdated = await _mediator.Send(new ChangeStatusDepartmentInput
-            {
-                Id = id,
-                Action = (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
-                LoggedUsername = "ricardo.goes" // TODO: Alterar quando auth estiver implementado
-            }, cancellationToken);
+            (
+                id,
+                (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
+                "ricardo.goes" // TODO: Alterar quando auth estiver implementado
+            ), cancellationToken);
 
             return Ok(departmentUpdated);
         }
@@ -131,10 +131,10 @@ namespace Odin.Baseline.Api.Controllers.v1
                  sort: Utils.GetSortParam(sort),
                  customerId: null,
                  departmentId: id,
-                 firstName: firstName ?? "",
-                 lastName: lastName ?? "",
-                 document: document ?? "",
-                 email: email ?? "",
+                 firstName: firstName,
+                 lastName: lastName,
+                 document: document,
+                 email: email,
                  isActive: isActive,
                  createdBy: createdBy,
                  createdAtStart: createdAtStart,

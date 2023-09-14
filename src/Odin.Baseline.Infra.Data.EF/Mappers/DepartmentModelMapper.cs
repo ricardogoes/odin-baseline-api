@@ -9,16 +9,16 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
         public static DepartmentModel ToDepartmentModel(this Department department)
         {
             return new DepartmentModel
-            {
-                Id = department.Id,
-                CustomerId = department.CustomerId,
-                Name = department.Name,
-                IsActive = department.IsActive,
-                CreatedAt = department.CreatedAt,
-                CreatedBy = department.CreatedBy,
-                LastUpdatedAt = department.LastUpdatedAt,
-                LastUpdatedBy = department.LastUpdatedBy
-            };
+            (
+                id: department.Id,
+                customerId: department.CustomerId,
+                name: department.Name,
+                isActive: department.IsActive,
+                createdAt: department.CreatedAt ?? default,
+                createdBy: department.CreatedBy ?? "",
+                lastUpdatedAt: department.LastUpdatedAt ?? default,
+                lastUpdatedBy: department.LastUpdatedBy ?? ""
+            );
         }
 
         public static IEnumerable<DepartmentModel> ToDepartmentModel(this IEnumerable<Department> departments)
@@ -29,7 +29,7 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
             var department = new Department(model.Id, model.CustomerId, model.Name, isActive: model.IsActive);            
             
             department.SetAuditLog(model.CreatedAt, model.CreatedBy, model.LastUpdatedAt, model.LastUpdatedBy);
-            department.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer.Name));
+            department.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer!.Name));
 
             return department;
         }

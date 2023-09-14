@@ -76,7 +76,7 @@ namespace Odin.Baseline.UnitTests.Application.Departments.UpdateDepartment
         public async Task ThrowWhenCantUpdateDepartment(App.UpdateDepartmentInput input, string expectedExceptionMessage)
         {
             var validDepartment = _fixture.GetValidDepartment();
-            input.Id = validDepartment.Id;
+            input.ChangeId(validDepartment.Id);
 
             _repositoryMock.Setup(x => x.FindByIdAsync(validDepartment.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validDepartment);

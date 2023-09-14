@@ -7,7 +7,7 @@ namespace Odin.Baseline.Domain.Entities
     public class Customer : EntityWithDocument
     {
         public string Name { get; private set; }
-        public Address Address { get; private set; }
+        public Address? Address { get; private set; }
         public bool IsActive { get; private set; }
 
         //TODO: Implementar loggedUsername
@@ -41,7 +41,7 @@ namespace Odin.Baseline.Domain.Entities
             Validate();
         }
 
-        public void Update(string newName, string newDocument = null, string loggedUsername = LOGGED_USERNAME)
+        public void Update(string newName, string? newDocument = null, string loggedUsername = LOGGED_USERNAME)
         {
             Name = newName;
             Document = newDocument ?? Document;

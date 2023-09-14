@@ -4,7 +4,7 @@ namespace Odin.Baseline.Api.Helpers
 {
     public class Utils
     {
-        public static string GetSortParam(string sort)
+        public static string? GetSortParam(string? sort)
         {
             if (string.IsNullOrWhiteSpace(sort))
                 return null;

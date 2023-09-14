@@ -7,19 +7,19 @@ namespace Odin.Baseline.Domain.ValueObjects
     public class Address : ValueObject
     {
 
-        public string StreetName { get; private set; }
-        public int StreetNumber { get; private set; }
-        public string Complement { get; private set; }
-        public string Neighborhood { get; private set; }
-        public string ZipCode { get; private set; }
-        public string City { get; private set; }
-        public string State { get; private set; }
+        public string? StreetName { get; private set; }
+        public int? StreetNumber { get; private set; }
+        public string? Complement { get; private set; }
+        public string? Neighborhood { get; private set; }
+        public string? ZipCode { get; private set; }
+        public string? City { get; private set; }
+        public string? State { get; private set; }
 
         public Address()
         { }
 
         [JsonConstructor]
-        public Address(string streetName, int streetNumber, string complement, string neighborhood, string zipCode, string city, string state)
+        public Address(string streetName, int? streetNumber, string? complement, string neighborhood, string zipCode, string city, string state)
         {
             StreetName = streetName;
             StreetNumber = streetNumber;

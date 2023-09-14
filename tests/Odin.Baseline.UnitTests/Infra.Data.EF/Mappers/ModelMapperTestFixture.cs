@@ -1,4 +1,5 @@
 ﻿using Bogus.Extensions.Brazil;
+using Castle.Core.Resource;
 using Odin.Baseline.Domain.DTO;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.ValueObjects;
@@ -15,62 +16,41 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         public ModelMapperTestFixture()
             : base() { }
 
-        public Customer GetValidCustomer()
-        {
-            var customer = new Customer(Faker.Company.CompanyName(1), Faker.Company.Cnpj(), isActive: true);
-            customer.Create();
-            return customer;
-        }
-
         public CustomerModel GetValidCustomerModel(Guid? id = null)
         {
             return new CustomerModel
-            {
-                Id = id ?? Guid.NewGuid(),
-                Name = Faker.Company.CompanyName(1),
-                Document = Faker.Company.Cnpj(),
-                IsActive = true,
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr(),
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "unit.testing",
-                LastUpdatedAt = DateTime.UtcNow,
-                LastUpdatedBy = "unit.testing"
-            };
+            (
+                id: id ?? Guid.NewGuid(),
+                name: Faker.Company.CompanyName(1),
+                document: Faker.Company.Cnpj(),
+                isActive: true,
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city: Faker.Address.City(),
+                state: Faker.Address.StateAbbr(),
+                createdAt: DateTime.UtcNow,
+                createdBy: "unit.testing",
+                lastUpdatedAt: DateTime.UtcNow,
+                lastUpdatedBy: "unit.testing"
+            );
         }
 
         public CustomerModel GetValidCustomerModelWithoutAddress()
         {
             return new CustomerModel
-            {
-                Id = Guid.NewGuid(),
-                Name = Faker.Company.CompanyName(1),
-                Document = Faker.Company.Cnpj(),
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "unit.testing",
-                LastUpdatedAt = DateTime.UtcNow,
-                LastUpdatedBy = "unit.testing"
-            };
-        }
-
-        public Address GetValidAddress()
-        {
-            var address = new Address(
-                Faker.Address.StreetName(),
-                int.Parse(Faker.Address.BuildingNumber()),
-                Faker.Address.SecondaryAddress(),
-                Faker.Address.CardinalDirection(),
-                Faker.Address.ZipCode(),
-                Faker.Address.City(),
-                Faker.Address.StateAbbr()
+            (
+                id: Guid.NewGuid(),
+                name: Faker.Company.CompanyName(1),
+                document: Faker.Company.Cnpj(),
+                isActive: true,
+                createdAt: DateTime.UtcNow,
+                createdBy: "unit.testing",
+                lastUpdatedAt: DateTime.UtcNow,
+                lastUpdatedBy: "unit.testing"
             );
-            return address;
         }
 
         public Department GetValidDepartment()
@@ -84,17 +64,17 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         {
             var customerId = Guid.NewGuid();
             return new DepartmentModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId,
-                Customer = GetValidCustomerModel(customerId),
-                Name = Faker.Company.CompanyName(1),
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "unit.testing",
-                LastUpdatedAt = DateTime.UtcNow,
-                LastUpdatedBy = "unit.testing"
-            };
+            (
+                id: Guid.NewGuid(),                
+                name: Faker.Company.CompanyName(1),
+                isActive: true,
+                createdAt: DateTime.UtcNow,
+                createdBy: "unit.testing",
+                lastUpdatedAt: DateTime.UtcNow,
+                lastUpdatedBy: "unit.testing",
+                customerId: customerId,
+                customerModel: GetValidCustomerModel(customerId)
+            );
         }
 
         public Position GetValidPosition()
@@ -108,18 +88,18 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         {
             var customerId = Guid.NewGuid();
             return new PositionModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId,
-                Customer = GetValidCustomerModel(customerId),
-                Name = Faker.Company.CompanyName(1),
-                BaseSalary = 1_000,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "unit.testing",
-                LastUpdatedAt = DateTime.UtcNow,
-                LastUpdatedBy = "unit.testing"
-            };
+            (
+                id: Guid.NewGuid(),                
+                name: Faker.Company.CompanyName(1),
+                baseSalary: 1_000,
+                isActive: true,
+                createdAt: DateTime.UtcNow,
+                createdBy: "unit.testing",
+                lastUpdatedAt: DateTime.UtcNow,
+                lastUpdatedBy: "unit.testing",
+                customerId: customerId,
+                customerModel: GetValidCustomerModel(customerId)
+            );
         }
 
         public Employee GetValidEmployee()
@@ -133,47 +113,49 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         {
             var customerId = Guid.NewGuid();
             return new EmployeeModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId,
-                Customer = GetValidCustomerModel(customerId),
-                FirstName = Faker.Person.FirstName,
-                LastName = Faker.Person.LastName,
-                Document = Faker.Person.Cpf(),
-                Email = Faker.Person.Email,
-                IsActive = true,
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr(),
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "unit.testing",
-                LastUpdatedAt = DateTime.UtcNow,
-                LastUpdatedBy = "unit.testing"
-            };
+            (
+                id: Guid.NewGuid(),
+                firstName: Faker.Person.FirstName,
+                lastName: Faker.Person.LastName,
+                document: Faker.Person.Cpf(),
+                email: Faker.Person.Email,
+                isActive: true,
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city: Faker.Address.City(),
+                state: Faker.Address.StateAbbr(),
+                createdAt: DateTime.UtcNow,
+                createdBy: "unit.testing",
+                lastUpdatedAt: DateTime.UtcNow,
+                lastUpdatedBy: "unit.testing",
+                customerId: customerId,
+                departmentId: null,
+                customerModel: GetValidCustomerModel(customerId)
+            );
         }
 
         public EmployeeModel GetValidEmployeeModelWithoutAddress()
         {
             var customerId = Guid.NewGuid();
             return new EmployeeModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId,
-                Customer = GetValidCustomerModel(customerId),
-                FirstName = Faker.Person.FirstName,
-                LastName = Faker.Person.LastName,
-                Document = Faker.Person.Cpf(),
-                Email = Faker.Person.Email,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "unit.testing",
-                LastUpdatedAt = DateTime.UtcNow,
-                LastUpdatedBy = "unit.testing"
-            };
+            (
+               id: Guid.NewGuid(),
+               firstName: Faker.Person.FirstName,
+               lastName: Faker.Person.LastName,
+               document: Faker.Person.Cpf(),
+               email: Faker.Person.Email,
+               isActive: true,
+               createdAt: DateTime.UtcNow,
+               createdBy: "unit.testing",
+               lastUpdatedAt: DateTime.UtcNow,
+               lastUpdatedBy: "unit.testing",
+               customerId: customerId,
+               departmentId: null,
+               customerModel: GetValidCustomerModel(customerId)
+           );
         }
 
         public EmployeePositionHistory GetValidEmployeePositionHistory()
@@ -186,14 +168,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         public EmployeePositionHistoryModel GetValidEmployeePositionHistoryModel()
         {
             return new EmployeePositionHistoryModel
-            {
-                EmployeeId = Guid.NewGuid(),
-                PositionId = Guid.NewGuid(),
-                Salary = 10_000,
-                StartDate = DateTime.Now,
-                FinishDate = DateTime.Now,
-                IsActual = true
-            };
+            (
+                employeeId: Guid.NewGuid(),
+                positionId: Guid.NewGuid(),
+                salary: 10_000,
+                startDate: DateTime.Now,
+                finishDate: DateTime.Now,
+                isActual: true
+            );
         }
     }
 }

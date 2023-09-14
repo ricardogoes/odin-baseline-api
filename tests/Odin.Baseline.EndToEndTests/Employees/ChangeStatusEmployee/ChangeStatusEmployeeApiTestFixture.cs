@@ -15,27 +15,27 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeStatusEmployee
         { }
 
         public ChangeStatusEmployeeInput GetValidInputToActivate(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = ChangeStatusAction.ACTIVATE,
-                LoggedUsername = "unit.testing"
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                ChangeStatusAction.ACTIVATE,
+                "unit.testing"
+            );
 
         public ChangeStatusEmployeeInput GetValidInputToDeactivate(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = ChangeStatusAction.DEACTIVATE,
-                LoggedUsername = "unit.testing"
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                ChangeStatusAction.DEACTIVATE,
+                "unit.testing"
+            );
 
         public ChangeStatusEmployeeInput GetInputWithInvalidAction(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = ChangeStatusAction.INVALID,
-                LoggedUsername = "unit.testing"
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                ChangeStatusAction.INVALID,
+                "unit.testing"
+            );
     }
 }

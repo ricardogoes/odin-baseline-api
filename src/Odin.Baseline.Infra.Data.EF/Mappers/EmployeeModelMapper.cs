@@ -10,27 +10,27 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
         public static EmployeeModel ToEmployeeModel(this Employee employee)
         {
             return new EmployeeModel
-            {
-                Id = employee.Id,
-                CustomerId = employee.CustomerId,
-                DepartmentId = employee.DepartmentId,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                Document = employee.Document,
-                Email = employee.Email,
-                StreetName = employee.Address?.StreetName,
-                StreetNumber = employee.Address?.StreetNumber,
-                Complement = employee.Address?.Complement,
-                Neighborhood = employee.Address?.Neighborhood,
-                ZipCode = employee.Address?.ZipCode,
-                City = employee.Address?.City,
-                State = employee.Address?.State,
-                IsActive = employee.IsActive,
-                CreatedAt = employee.CreatedAt,
-                CreatedBy = employee.CreatedBy,
-                LastUpdatedAt = employee.LastUpdatedAt,
-                LastUpdatedBy = employee.LastUpdatedBy
-            };
+            (
+                employee.Id,
+                employee.FirstName,
+                employee.LastName,
+                employee.Document,
+                employee.Email,
+                employee.Address?.StreetName,
+                employee.Address?.StreetNumber,
+                employee.Address?.Complement,
+                employee.Address?.Neighborhood,
+                employee.Address?.ZipCode,
+                employee.Address?.City,
+                employee.Address?.State,
+                employee.IsActive,
+                employee.CreatedAt ?? default,
+                employee.CreatedBy ?? "",
+                employee.LastUpdatedAt ?? default,
+                employee.LastUpdatedBy ?? "",
+                employee.CustomerId,
+                employee.DepartmentId
+            );
         }
 
         public static IEnumerable<EmployeeModel> ToEmployeeModel(this IEnumerable<Employee> employees)
@@ -44,15 +44,15 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
 
             if (!string.IsNullOrWhiteSpace(model.StreetName))
             {
-                var address = new Address(model.StreetName, model.StreetNumber ?? 0, model.Complement, model.Neighborhood, model.ZipCode, model.City, model.State);
+                var address = new Address(model.StreetName, model.StreetNumber ?? 0, model.Complement ?? "", model.Neighborhood!, model.ZipCode!, model.City!, model.State!);
                 employee.ChangeAddress(address);
             }
 
-            employee.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer.Name));
+            employee.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer!.Name));
 
             if(model.DepartmentId.HasValue && model.DepartmentId.Value != Guid.Empty)
             {
-                employee.LoadDepartmentData(new DepartmentData(model.DepartmentId.Value, model.Department.Name));
+                employee.LoadDepartmentData(new DepartmentData(model.DepartmentId.Value, model.Department!.Name));
             }
 
             if(model.HistoricPositions is not null && model.HistoricPositions.Any())

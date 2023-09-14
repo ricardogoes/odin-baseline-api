@@ -14,43 +14,43 @@ namespace Odin.Baseline.EndToEndTests.Customers.CreateCustomer
         { }
 
         public CreateCustomerInput GetValidInput()
-            => new()
-            {
-                Name = GetValidName(),
-                Document = GetValidDocument(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                name: GetValidName(),
+                document: GetValidDocument(),
+                loggedUsername: GetValidUsername()
+            );
 
         public CreateCustomerInput GetInputWithNameEmpty()
-            => new()
-            {
-                Name = "",
-                Document = GetValidDocument(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                name: "",
+                document: GetValidDocument(),
+                loggedUsername: GetValidUsername()
+            );
 
         public CreateCustomerInput GetInputWithDocumentEmpty()
-            => new()
-            {
-                Name = GetValidName(),
-                Document = "",
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                name: GetValidName(),
+                document: "",
+                loggedUsername: GetValidUsername()
+            );
 
         public CreateCustomerInput GetInputWithInvalidDocument()
-            => new()
-            {
-                Name = GetValidName(),
-                Document = GetInvalidDocument(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                name: GetValidName(),
+                document: GetInvalidDocument(),
+                loggedUsername: GetValidUsername()
+            );
 
         public CreateCustomerInput GetInputWithUsernameEmpty()
-            => new()
-            {
-                Name = GetValidName(),
-                Document = GetValidDocument(),
-                LoggedUsername = ""
-            };
+            => new
+            (
+                name: GetValidName(),
+                document: GetValidDocument(),
+                loggedUsername: ""
+            );
     }
 }

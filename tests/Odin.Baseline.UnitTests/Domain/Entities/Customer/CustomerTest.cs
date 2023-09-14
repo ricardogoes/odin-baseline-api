@@ -107,7 +107,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Customer
             customer.ChangeAddress(address);
 
             customer.Address.Should().NotBeNull();
-            customer.Address.StreetName.Should().Be(address.StreetName);
+            customer.Address!.StreetName.Should().Be(address.StreetName);
             customer.Address.StreetNumber.Should().Be(address.StreetNumber);
             customer.Address.Complement.Should().Be(address.Complement);
             customer.Address.Neighborhood.Should().Be(address.Neighborhood);

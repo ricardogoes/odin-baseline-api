@@ -27,8 +27,8 @@ namespace Odin.Baseline.EndToEndTests.Customers.ChangeStatusCustomer
             await dbContext.AddRangeAsync(customersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var customerToChangeStatus = customersList.FirstOrDefault();
-            customerToChangeStatus.IsActive = false;
+            var customerToChangeStatus = customersList.FirstOrDefault()!;
+            customerToChangeStatus.ChangeIsActive(false);
 
             var input = _fixture.GetValidInputToActivate(customerToChangeStatus.Id) ;
             
@@ -55,7 +55,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.ChangeStatusCustomer
             await dbContext.AddRangeAsync(customersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var customerToChangeStatus = customersList.Where(x => x.IsActive).FirstOrDefault();
+            var customerToChangeStatus = customersList.Where(x => x.IsActive).FirstOrDefault()!;
 
             var input = _fixture.GetValidInputToDeactivate(customerToChangeStatus.Id);
 

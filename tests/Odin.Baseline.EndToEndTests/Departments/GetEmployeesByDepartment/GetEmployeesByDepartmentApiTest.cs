@@ -104,12 +104,7 @@ namespace Odin.Baseline.EndToEndTests.Departments.GetEmployeesByDepartment
 
             var idToQuery = departmentsList.Select(x => x.Id).FirstOrDefault();
 
-            var input = new GetEmployeesInput
-            {
-                PageNumber = page,
-                PageSize = pageSize
-            };
-
+            var input = new GetEmployeesInput(page, pageSize, departmentId: idToQuery);
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<EmployeeOutput>>($"/v1/departments/{idToQuery}/employees", input);
 
             response.Should().NotBeNull();
@@ -142,17 +137,17 @@ namespace Odin.Baseline.EndToEndTests.Departments.GetEmployeesByDepartment
         {
             var customer = _fixture.GetValidCustomerModel();
             var department = _fixture.GetValidDepartmentModel(customer.Id);
-            
+
             var employees = new List<EmployeeModel>()
             {
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 01", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 02", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 03", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 04", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 05", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Depto 01",    LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Depto 02",    LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Depto 03",    LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new EmployeeModel(Guid.NewGuid(), "Employee 01", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 02", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 03", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 04", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 05", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Depto 01",    "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Depto 02",    "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Depto 03",    "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id)
             };
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
@@ -161,12 +156,7 @@ namespace Odin.Baseline.EndToEndTests.Departments.GetEmployeesByDepartment
             await dbContext.AddRangeAsync(employees);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetEmployeesInput
-            {
-                PageNumber = page,
-                PageSize = pageSize,
-                FirstName = search
-            };
+            var input = new GetEmployeesInput(page, pageSize, departmentId: department.Id, firstName: search);
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<EmployeeOutput>>($"/v1/departments/{department.Id}/employees", input);
 
@@ -202,14 +192,14 @@ namespace Odin.Baseline.EndToEndTests.Departments.GetEmployeesByDepartment
 
             var employees = new List<EmployeeModel>()
             {
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 01", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 02", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 03", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 04", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 05", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Depto 01",    LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Depto 02",    LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Depto 03",    LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new EmployeeModel(Guid.NewGuid(), "Employee 01", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 02", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 03", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 04", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 05", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Depto 01",    "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Depto 02",    "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Depto 03",    "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id)
             };
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
@@ -218,13 +208,7 @@ namespace Odin.Baseline.EndToEndTests.Departments.GetEmployeesByDepartment
             await dbContext.AddRangeAsync(employees);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetEmployeesInput
-            {
-                PageNumber = page,
-                PageSize = pageSize,
-                IsActive = search
-            };
-
+            var input = new GetEmployeesInput(page, pageSize, departmentId: department.Id, isActive: search);
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<EmployeeOutput>>($"/v1/departments/{department.Id}/employees", input);
 
             response.Should().NotBeNull();
@@ -257,14 +241,14 @@ namespace Odin.Baseline.EndToEndTests.Departments.GetEmployeesByDepartment
 
             var employees = new List<EmployeeModel>()
             {
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 01", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 02", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 03", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 04", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 05", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 00", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 09", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new EmployeeModel { Id = Guid.NewGuid(), CustomerId = customer.Id, DepartmentId = department.Id, FirstName = "Employee 10", LastName = "Test", Document = _fixture.GetValidEmployeeDocument(), Email = _fixture.GetValidEmployeeEmail(), IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new EmployeeModel(Guid.NewGuid(), "Employee 01", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 02", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 03", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 04", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Employee 05", "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Depto 01",    "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Depto 02",    "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), true,  DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id),
+                new EmployeeModel(Guid.NewGuid(), "Depto 03",    "Test",  _fixture.GetValidDocument(), _fixture.GetValidEmployeeEmail(), false, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id, department.Id)
             };
 
             var dbContext = _fixture.CreateDbContext(preserveData: false);
@@ -273,12 +257,7 @@ namespace Odin.Baseline.EndToEndTests.Departments.GetEmployeesByDepartment
             await dbContext.AddRangeAsync(employees);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetEmployeesInput
-            {
-                PageNumber = 1,
-                PageSize = 5,
-                Sort = "firstname"
-            };
+            var input = new GetEmployeesInput(1, 5, departmentId: department.Id, sort: "firstName");
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<EmployeeOutput>>($"/v1/departments/{department.Id}/employees", input);
 
@@ -291,11 +270,11 @@ namespace Odin.Baseline.EndToEndTests.Departments.GetEmployeesByDepartment
             output.TotalRecords.Should().Be(employees.Count);
             output.Items.Should().HaveCount(5);
 
-            output.Items.ToList()[0].FirstName.Should().Be("Employee 00");
-            output.Items.ToList()[1].FirstName.Should().Be("Employee 01");
-            output.Items.ToList()[2].FirstName.Should().Be("Employee 02");
-            output.Items.ToList()[3].FirstName.Should().Be("Employee 03");
-            output.Items.ToList()[4].FirstName.Should().Be("Employee 04");
+            output.Items.ToList()[0].FirstName.Should().Be("Depto 01");
+            output.Items.ToList()[1].FirstName.Should().Be("Depto 02");
+            output.Items.ToList()[2].FirstName.Should().Be("Depto 03");
+            output.Items.ToList()[3].FirstName.Should().Be("Employee 01");
+            output.Items.ToList()[4].FirstName.Should().Be("Employee 02");
         }
     }
 }

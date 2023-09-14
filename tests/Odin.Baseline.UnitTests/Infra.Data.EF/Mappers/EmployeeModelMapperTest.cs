@@ -63,7 +63,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             model.LastUpdatedAt.Should().Be(employee.LastUpdatedAt);
             model.LastUpdatedBy.Should().Be(employee.LastUpdatedBy);
 
-            model.StreetName.Should().Be(employee.Address.StreetName);
+            model.StreetName.Should().Be(employee.Address!.StreetName);
             model.StreetNumber.Should().Be(employee.Address.StreetNumber);
             model.Complement.Should().Be(employee.Address.Complement);
             model.Neighborhood.Should().Be(employee.Address.Neighborhood);
@@ -103,7 +103,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 employee.LastUpdatedAt.Should().Be(employeeToCompare.LastUpdatedAt);
                 employee.LastUpdatedBy.Should().Be(employeeToCompare.LastUpdatedBy);
 
-                employee.StreetName.Should().Be(employeeToCompare.Address.StreetName);
+                employee.StreetName.Should().Be(employeeToCompare.Address!.StreetName);
                 employee.StreetNumber.Should().Be(employeeToCompare.Address.StreetNumber);
                 employee.Complement.Should().Be(employeeToCompare.Address.Complement);
                 employee.Neighborhood.Should().Be(employeeToCompare.Address.Neighborhood);
@@ -139,7 +139,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             employee.LastUpdatedBy.Should().Be(model.LastUpdatedBy);
 
             employee.Address.Should().NotBeNull();
-            employee.Address.StreetName.Should().Be(employee.Address.StreetName);
+            employee.Address!.StreetName.Should().Be(employee.Address.StreetName);
             employee.Address.StreetNumber.Should().Be(employee.Address.StreetNumber);
             employee.Address.Complement.Should().Be(employee.Address.Complement);
             employee.Address.Neighborhood.Should().Be(employee.Address.Neighborhood);
@@ -200,7 +200,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 employee.LastUpdatedBy.Should().Be(employeeToCompare.LastUpdatedBy);
 
                 employee.Address.Should().NotBeNull();
-                employee.Address.StreetName.Should().Be(employeeToCompare.StreetName);
+                employee.Address!.StreetName.Should().Be(employeeToCompare.StreetName);
                 employee.Address.StreetNumber.Should().Be(employeeToCompare.StreetNumber);
                 employee.Address.Complement.Should().Be(employeeToCompare.Complement);
                 employee.Address.Neighborhood.Should().Be(employeeToCompare.Neighborhood);

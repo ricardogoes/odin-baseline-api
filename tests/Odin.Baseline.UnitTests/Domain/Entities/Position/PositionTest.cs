@@ -147,7 +147,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
             employee.LoadCustomerData(new CustomerData(customer.Id, customer.Name));
 
             employee.CustomerData.Should().NotBeNull();
-            employee.CustomerData.Id.Should().Be(customer.Id);
+            employee.CustomerData!.Id.Should().Be(customer.Id);
             employee.CustomerData.Name.Should().Be(customer.Name);
         }
 

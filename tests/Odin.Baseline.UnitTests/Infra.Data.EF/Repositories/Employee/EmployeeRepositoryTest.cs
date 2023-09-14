@@ -284,8 +284,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetEmployeesInput(1, 20, sort: "firstname", customerId: customer1.Id, departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: true, "", null, null, "", null, null);
-            var filters = new Dictionary<string, object>
+            var searchInput = new GetEmployeesInput(1, 20, customerId: customer1.Id, sort: "firstname", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: true, "", null, null, "", null, null);
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", searchInput.CustomerId },
                 { "DepartmentId", searchInput.DepartmentId },
@@ -297,7 +297,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             };
 
             var employeeRepository = new EmployeeRepository(dbContext);
-            var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
@@ -310,7 +310,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
                 );
                 exampleItem.Should().NotBeNull();
                 outputItem.CustomerId.Should().Be(customer1.Id);
-                outputItem.FirstName.Should().Be(exampleItem.FirstName);
+                outputItem.FirstName.Should().Be(exampleItem!.FirstName);
                 outputItem.LastName.Should().Be(exampleItem.LastName);
                 outputItem.Document.Should().Be(exampleItem.Document);
                 outputItem.Email.Should().Be(exampleItem.Email);
@@ -335,15 +335,15 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
                 customersIds: new List<Guid> { customer1.Id, customer2.Id },
                 length: 15);
 
-            var employeeToAddPositionHistory = exampleEmployeesList.FirstOrDefault(x => x.IsActive);
+            var employeeToAddPositionHistory = exampleEmployeesList.FirstOrDefault(x => x.IsActive)!;
             var examplePositionsHistoryList = _fixture.GetValidEmployeesPositionsHistoryModelList(employeeToAddPositionHistory.Id);
 
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.AddRangeAsync(examplePositionsHistoryList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetEmployeesInput(1, 20, sort: "firstname", customerId: customer1.Id, departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: true, "", null, null, "", null, null);
-            var filters = new Dictionary<string, object>
+            var searchInput = new GetEmployeesInput(1, 20, customerId: customer1.Id, sort: "firstname", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: true, "", null, null, "", null, null);
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", searchInput.CustomerId },
                 { "DepartmentId", searchInput.DepartmentId },
@@ -355,7 +355,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             };
 
             var employeeRepository = new EmployeeRepository(dbContext);
-            var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
@@ -368,7 +368,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
                 );
                 exampleItem.Should().NotBeNull();
                 outputItem.CustomerId.Should().Be(customer1.Id);
-                outputItem.FirstName.Should().Be(exampleItem.FirstName);
+                outputItem.FirstName.Should().Be(exampleItem!.FirstName);
                 outputItem.LastName.Should().Be(exampleItem.LastName);
                 outputItem.Document.Should().Be(exampleItem.Document);
                 outputItem.Email.Should().Be(exampleItem.Email);
@@ -380,7 +380,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
                 {
                     var examplePositionHistory = examplePositionsHistoryList.FirstOrDefault(x => x.EmployeeId == exampleItem.Id && x.PositionId == positionHistory.PositionId);
                     examplePositionHistory.Should().NotBeNull();
-                    examplePositionHistory.Salary.Should().Be(positionHistory.Salary);
+                    examplePositionHistory!.Salary.Should().Be(positionHistory.Salary);
                     examplePositionHistory.StartDate.Should().Be(positionHistory.StartDate);
                     examplePositionHistory.FinishDate.Should().Be(positionHistory.FinishDate);
                     examplePositionHistory.IsActual.Should().Be(positionHistory.IsActual);
@@ -403,8 +403,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetEmployeesInput(1, 20, sort: "firstname", customerId: null, departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: null, "", null, null, "", null, null);
-            var filters = new Dictionary<string, object>
+            var searchInput = new GetEmployeesInput(1, 20, customerId: null, sort: "firstname", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: null, "", null, null, "", null, null);
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", searchInput.CustomerId },
                 { "DepartmentId", searchInput.DepartmentId },
@@ -416,7 +416,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             };
 
             var employeeRepository = new EmployeeRepository(dbContext);
-            var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
@@ -426,7 +426,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             {
                 var exampleItem = exampleEmployeesList.Find(employee => employee.Id == outputItem.Id);
                 exampleItem.Should().NotBeNull();
-                outputItem.CustomerId.Should().Be(exampleItem.CustomerId);
+                outputItem.CustomerId.Should().Be(exampleItem!.CustomerId);
                 outputItem.DepartmentId.Should().Be(exampleItem.DepartmentId);
                 outputItem.FirstName.Should().Be(exampleItem.FirstName);
                 outputItem.LastName.Should().Be(exampleItem.LastName);
@@ -444,8 +444,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             var dbContext = _fixture.CreateDbContext();
             var employeeRepository = new EmployeeRepository(dbContext);
 
-            var searchInput = new GetEmployeesInput(1, 20, sort: "name", customerId: null, departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: null, "", null, null, "", null, null);
-            var filters = new Dictionary<string, object>
+            var searchInput = new GetEmployeesInput(1, 20, customerId: null, sort: "name", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: null, "", null, null, "", null, null);
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", searchInput.CustomerId },
                 { "DepartmentId", searchInput.DepartmentId },
@@ -456,7 +456,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
                 { "IsActive", searchInput.IsActive },
             };
 
-            var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();

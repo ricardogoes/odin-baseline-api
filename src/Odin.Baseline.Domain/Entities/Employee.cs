@@ -9,11 +9,11 @@ namespace Odin.Baseline.Domain.Entities
     {
         public Guid CustomerId { get; private set; }
 
-        public CustomerData CustomerData { get; private set; }
+        public CustomerData? CustomerData { get; private set; }
 
         public Guid? DepartmentId { get; private set; }
 
-        public DepartmentData DepartmentData { get; private set; }
+        public DepartmentData? DepartmentData { get; private set; }
 
         public string FirstName { get; private set; }
 
@@ -21,7 +21,7 @@ namespace Odin.Baseline.Domain.Entities
 
         public string Email { get; private set; }
 
-        public Address Address { get; private set; }
+        public Address? Address { get; private set; }
 
         public bool IsActive { get; set; }
 
@@ -124,8 +124,7 @@ namespace Odin.Baseline.Domain.Entities
         public void AddHistoricPosition(EmployeePositionHistory positionHistory, string loggedUsername = LOGGED_USERNAME)
         {
             var actualPosition = HistoricPositions.FirstOrDefault(x => x.IsActual);
-            if (actualPosition is not null)
-                actualPosition.UpdateFinishDate(DateTime.UtcNow, loggedUsername);
+            actualPosition?.UpdateFinishDate(DateTime.UtcNow, loggedUsername);
 
             LoadHistoricPosition(positionHistory);
 

@@ -35,16 +35,18 @@ namespace Odin.Baseline.UnitTests.Application.Employees.CreateEmployee
             var input = _fixture.GetValidCreateEmployeeInput();
             var employeeToInsert = new Employee(input.CustomerId, input.FirstName, input.LastName, input.Document, input.Email, departmentId: input.DepartmentId, isActive: true);
             var expectedEmployeeInserted = new EmployeeOutput
-            {
-                Id = Guid.NewGuid(),
-                FirstName = input.FirstName,
-                LastName = input.LastName,
-                Document = input.Document,
-                Email = input.Email,
-                IsActive = true,
-                CreatedBy = "unit.testing",
-                CreatedAt = DateTime.UtcNow
-            };
+            (
+                id: Guid.NewGuid(),
+                firstName: input.FirstName,
+                lastName: input.LastName,
+                document: input.Document,
+                email: input.Email,
+                isActive: true,
+                createdAt: DateTime.UtcNow,
+                createdBy: "unit.testing",
+                lastUpdatedAt: DateTime.UtcNow,
+                lastUpdatedBy: "unit.testing"
+            );
 
             _documentServiceMock.Setup(s => s.IsDocumentUnique(It.IsAny<EntityWithDocument>(), It.IsAny<CancellationToken>()))
                .Returns(() => Task.FromResult(true));

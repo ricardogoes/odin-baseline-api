@@ -28,7 +28,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.ChangeAddressCustomer
             await dbContext.AddRangeAsync(customersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var customerToChangeAddress = customersList.Where(x => x.IsActive).FirstOrDefault();
+            var customerToChangeAddress = customersList.Where(x => x.IsActive).FirstOrDefault()!;
 
             var input = _fixture.GetValidInput(customerToChangeAddress.Id) ;
 
@@ -44,7 +44,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.ChangeAddressCustomer
             output.LastUpdatedAt.Should().NotBeSameDateAs(default);
 
             output.Address.Should().NotBeNull();
-            output.Address.StreetName.Should().Be(input.StreetName);
+            output.Address!.StreetName.Should().Be(input.StreetName);
             output.Address.StreetNumber.Should().Be(input.StreetNumber);
             output.Address.Complement.Should().Be(input.Complement);
             output.Address.Neighborhood.Should().Be(input.Neighborhood);
@@ -109,7 +109,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.ChangeAddressCustomer
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var idToQuery = customersList.Where(x => x.IsActive).Select(x => x.Id).FirstOrDefault();
-            input.CustomerId = idToQuery;
+            input.ChangeCustomerId(idToQuery);
 
             var (response, output) = await _fixture.ApiClient.PutAsync<ProblemDetails>($"/v1/customers/{idToQuery}/addresses", input);
 

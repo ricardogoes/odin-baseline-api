@@ -5,13 +5,13 @@ namespace Odin.Baseline.Domain.Validations
 {
     public class DomainValidation
     {
-        public static void NotNull(object target, string fieldName)
+        public static void NotNull(object? target, string fieldName)
         {
             if (target is null)
                 throw new EntityValidationException($"{fieldName} should not be null");
         }
 
-        public static void NotNullOrEmpty(object target, string fieldName)
+        public static void NotNullOrEmpty(object? target, string fieldName)
         {
             bool throwError = false;
 
@@ -20,13 +20,13 @@ namespace Odin.Baseline.Domain.Validations
 
             if (target is string && string.IsNullOrWhiteSpace(target.ToString()))
                 throwError = true;
-            else if (target is int && int.Parse(target.ToString()) <= 0)
+            else if (target is int && int.Parse(target.ToString()!) <= 0)
                 throwError = true;
-            else if (target is decimal && decimal.Parse(target.ToString()) <= 0)
+            else if (target is decimal && decimal.Parse(target.ToString()!) <= 0)
                 throwError = true;
-            else if (target is Guid && Guid.Parse(target.ToString()) == Guid.Empty)
+            else if (target is Guid && Guid.Parse(target.ToString()!) == Guid.Empty)
                 throwError = true;
-            else if (target is DateTime && DateTime.Parse(target.ToString()) == default)
+            else if (target is DateTime && DateTime.Parse(target.ToString()!) == default)
                 throwError = true;
 
             if (throwError)

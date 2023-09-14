@@ -14,38 +14,39 @@ namespace Odin.Baseline.EndToEndTests.Positions.CreatePosition
         { }
 
         public CreatePositionInput GetValidInput(Guid? customerId = null)
-            => new()
-            {
-                CustomerId = customerId ?? Guid.NewGuid(),
-                Name = GetValidName(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId ?? Guid.NewGuid(),
+                GetValidName(),
+                10_000,
+                GetValidUsername()
+            );
 
         public CreatePositionInput GetInputWithCustomerIdEmpty()
-            => new()
-            {
-                CustomerId = Guid.Empty,
-                Name = GetValidName(),
-                BaseSalary = 1_000,
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                Guid.Empty,
+                GetValidName(),
+                1_000,
+                GetValidUsername()
+            );
 
         public CreatePositionInput GetInputWithNameEmpty()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                Name = "",
-                BaseSalary = 1_000,
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                Guid.NewGuid(),
+                "",
+                1_000,
+                GetValidUsername()
+            );
 
         public CreatePositionInput GetInputWithUsernameEmpty()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                Name = GetValidName(),
-                BaseSalary = 1_000,
-                LoggedUsername = ""
-            };
+            => new
+            (
+                Guid.NewGuid(),
+                GetValidName(),
+                1_000,
+                ""
+            );
     }
 }

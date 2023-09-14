@@ -29,7 +29,7 @@ namespace Odin.Baseline.EndToEndTests.Departments.ChangeStatusDepartment
             await dbContext.AddRangeAsync(departmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var departmentToChangeStatus = departmentsList.Where(x => !x.IsActive).FirstOrDefault();
+            var departmentToChangeStatus = departmentsList.Where(x => !x.IsActive).First();
 
             var input = _fixture.GetValidInputToActivate(departmentToChangeStatus.Id) ;
 
@@ -56,7 +56,7 @@ namespace Odin.Baseline.EndToEndTests.Departments.ChangeStatusDepartment
             await dbContext.AddRangeAsync(departmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var departmentToChangeStatus = departmentsList.Where(x => x.IsActive).FirstOrDefault();
+            var departmentToChangeStatus = departmentsList.Where(x => x.IsActive).First();
 
             var input = _fixture.GetValidInputToDeactivate(departmentToChangeStatus.Id);
 

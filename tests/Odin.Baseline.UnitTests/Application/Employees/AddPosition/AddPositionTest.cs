@@ -47,11 +47,11 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
             output.PositionsHistory.Should().NotBeNull();
             output.PositionsHistory.Should().HaveCount(2);
 
-            var oldPosition = output.PositionsHistory.FirstOrDefault(x => !x.IsActual);
+            var oldPosition = output.PositionsHistory!.First(x => !x.IsActual);
             oldPosition.Should().NotBeNull();
             oldPosition!.FinishDate.Should().NotBeNull();
 
-            var actualPosition = output.PositionsHistory.FirstOrDefault(x => x.IsActual);
+            var actualPosition = output.PositionsHistory!.First(x => x.IsActual);
             actualPosition.Should().NotBeNull();            
             actualPosition!.FinishDate.Should().BeNull();
 
@@ -80,10 +80,10 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
             output.PositionsHistory.Should().NotBeNull();
             output.PositionsHistory.Should().HaveCount(1);
 
-            var oldPosition = output.PositionsHistory.FirstOrDefault(x => !x.IsActual);
+            var oldPosition = output.PositionsHistory!.FirstOrDefault(x => !x.IsActual);
             oldPosition.Should().BeNull();
 
-            var actualPosition = output.PositionsHistory.FirstOrDefault(x => x.IsActual);
+            var actualPosition = output.PositionsHistory!.First(x => x.IsActual);
             actualPosition.Should().NotBeNull();
             actualPosition!.FinishDate.Should().BeNull();
 

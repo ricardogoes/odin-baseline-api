@@ -85,7 +85,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
         public async Task ThrowWhenCantUpdateCustomer(App.UpdateCustomerInput input, string expectedExceptionMessage)
         {
             var validCustomer = _fixture.GetValidCustomer();
-            input.Id = validCustomer.Id;
+            input.ChangeId(validCustomer.Id);
 
             _repositoryMock.Setup(x => x.FindByIdAsync(validCustomer.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validCustomer);
@@ -106,7 +106,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
         {
             var input = _fixture.GetValidUpdateCustomerInput();
             var validCustomer = _fixture.GetValidCustomer();
-            input.Id = validCustomer.Id;
+            input.ChangeId(validCustomer.Id);
 
             _repositoryMock.Setup(x => x.FindByIdAsync(validCustomer.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validCustomer);

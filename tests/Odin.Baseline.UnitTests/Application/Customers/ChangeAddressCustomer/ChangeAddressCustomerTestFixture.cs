@@ -14,130 +14,122 @@ namespace Odin.Baseline.UnitTests.Application.Customers.ChangeAddressCustomer
 
         public ChangeAddressCustomerInput GetValidInputAddress()
         {
-            var address = new ChangeAddressCustomerInput
-            {
-                CustomerId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressCustomerInput
+            (
+                customerId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city: Faker.Address.City(),
+                state: Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressCustomerInput GetInputAddressWithCustomerIdEmpty()
         {
-            var address = new ChangeAddressCustomerInput
-            {
-                CustomerId = Guid.Empty,
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressCustomerInput
+            (
+                customerId: Guid.Empty,
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city: Faker.Address.City(),
+                state: Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressCustomerInput GetInputAddressWithStreetNameEmpty()
         {
-            var address = new ChangeAddressCustomerInput
-            {
-                CustomerId = Guid.NewGuid(),
-                StreetName = string.Empty,
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressCustomerInput
+            (
+                customerId: Guid.NewGuid(),
+                streetName: string.Empty,
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city: Faker.Address.City(),
+                state: Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressCustomerInput GetInputAddressWithStreetNumberEmpty()
         {
-            var address = new ChangeAddressCustomerInput
-            {
-                CustomerId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = 0,
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressCustomerInput
+            (
+                customerId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: 0,
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city: Faker.Address.City(),
+                state: Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressCustomerInput GetInputAddressWithNeighborhoodEmpty()
         {
-            var address = new ChangeAddressCustomerInput
-            {
-                CustomerId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = string.Empty,
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressCustomerInput
+            (
+                customerId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: string.Empty,
+                zipCode: Faker.Address.ZipCode(),
+                city: Faker.Address.City(),
+                state: Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressCustomerInput GetInputAddressWithZipCodeEmpty()
         {
-            var address = new ChangeAddressCustomerInput
-            {
-                CustomerId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = 196,
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = string.Empty,
-                City = Faker.Address.City(),
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressCustomerInput
+            (
+                customerId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: 196,
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: string.Empty,
+                city: Faker.Address.City(),
+                state: Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressCustomerInput GetInputAddressWithCityEmpty()
         {
-            var address = new ChangeAddressCustomerInput
-            {
-                CustomerId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = string.Empty,
-                State = Faker.Address.StateAbbr()
-            };
-            return address;
+            return new ChangeAddressCustomerInput
+            (
+                customerId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city: string.Empty,
+                state: Faker.Address.StateAbbr()
+            );
         }
 
         public ChangeAddressCustomerInput GetInputAddressWithStateEmpty()
         {
-            var address = new ChangeAddressCustomerInput
-            {
-                CustomerId = Guid.NewGuid(),
-                StreetName = Faker.Address.StreetName(),
-                StreetNumber = int.Parse(Faker.Address.BuildingNumber()),
-                Complement = Faker.Address.SecondaryAddress(),
-                Neighborhood = Faker.Address.CardinalDirection(),
-                ZipCode = Faker.Address.ZipCode(),
-                City = Faker.Address.City(),
-                State = string.Empty
-            };
-            return address;
+            return new ChangeAddressCustomerInput
+            (
+                customerId: Guid.NewGuid(),
+                streetName: Faker.Address.StreetName(),
+                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
+                complement: Faker.Address.SecondaryAddress(),
+                neighborhood: Faker.Address.CardinalDirection(),
+                zipCode: Faker.Address.ZipCode(),
+                city: Faker.Address.City(),
+                state: string.Empty
+            );
         }
     }
 }

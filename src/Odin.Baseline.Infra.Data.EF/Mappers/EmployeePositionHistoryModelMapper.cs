@@ -8,14 +8,14 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
         public static EmployeePositionHistoryModel ToEmployeePositionHistoryModel(this EmployeePositionHistory positionHistory, Guid employeeId)
         {
             return new EmployeePositionHistoryModel
-            {
-                EmployeeId = employeeId,
-                PositionId = positionHistory.PositionId,
-                Salary = positionHistory.Salary,
-                StartDate = positionHistory.StartDate,
-                FinishDate = positionHistory.FinishDate,                
-                IsActual = positionHistory.IsActual
-            };
+            (
+                employeeId,
+                positionHistory.PositionId,
+                positionHistory.Salary,
+                positionHistory.StartDate,
+                positionHistory.FinishDate,                
+                positionHistory.IsActual
+            );
         }
 
         public static IEnumerable<EmployeePositionHistoryModel> ToEmployeePositionHistoryModel(this IEnumerable<EmployeePositionHistory> positionHistorys, Guid employeeId)

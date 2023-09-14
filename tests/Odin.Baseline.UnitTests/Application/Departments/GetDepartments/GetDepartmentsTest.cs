@@ -25,22 +25,22 @@ namespace Odin.Baseline.UnitTests.Application.Departments.GetDepartments
         public async Task GetDepartments()
         {
             var expectedDepartments = new PaginatedListOutput<Department>
-            {
-                TotalItems = 4,
-                Items = new List<Department>
+            (
+                totalItems: 4,
+                items: new List<Department>
                 {
                     new Department(Guid.NewGuid(), _fixture.GetValidName()),
                     new Department(Guid.NewGuid(), _fixture.GetValidName()),
                     new Department(Guid.NewGuid(), _fixture.GetValidName()),
                     new Department(Guid.NewGuid(), _fixture.GetValidName())
                 }
-            };
+            );
 
-            _repositoryMock.Setup(s => s.FindPaginatedListAsync(It.IsAny<Dictionary<string, object>>(), 1, 10, "name", new CancellationToken()))
+            _repositoryMock.Setup(s => s.FindPaginatedListAsync(It.IsAny<Dictionary<string, object?>>(), 1, 10, "name", new CancellationToken()))
                 .Returns(() => Task.FromResult(expectedDepartments));
 
             var useCase = new App.GetDepartments(_repositoryMock.Object);
-            var departments = await useCase.Handle(new App.GetDepartmentsInput(1, 10, "name", Guid.NewGuid(), "Unit Testing", true, "", null, null, "", null, null), new CancellationToken());
+            var departments = await useCase.Handle(new App.GetDepartmentsInput(1, 10, Guid.NewGuid(), "name", "Unit Testing", true, "", null, null, "", null, null), new CancellationToken());
 
             departments.TotalItems.Should().Be(4);
         }

@@ -131,7 +131,7 @@ namespace Odin.Baseline.UnitTests.Domain.Validations
             nameof(DomainValidationTestDataGenerator.GetValuesGreaterThanMax),
             parameters: 10,
             MemberType = typeof(DomainValidationTestDataGenerator))]
-        public void maxLengthThrowWhenGreater(string target, int maxLength)
+        public void MaxLengthThrowWhenGreater(string target, int maxLength)
         {
             string fieldName = _fixture.GetValidFieldName();
 
@@ -148,7 +148,7 @@ namespace Odin.Baseline.UnitTests.Domain.Validations
             nameof(DomainValidationTestDataGenerator.GetValuesLessThanMax),
             parameters: 10,
             MemberType = typeof(DomainValidationTestDataGenerator))]
-        public void maxLengthOk(string target, int maxLength)
+        public void MaxLengthOk(string target, int maxLength)
         {
             string fieldName = _fixture.GetValidFieldName();
 

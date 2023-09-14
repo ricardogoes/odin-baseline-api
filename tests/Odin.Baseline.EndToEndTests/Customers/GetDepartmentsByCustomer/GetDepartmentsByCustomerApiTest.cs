@@ -35,7 +35,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetDepartmentsByCustomer
             await dbContext.AddRangeAsync(departmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var customerIdToQuery = customersList.Where(x => x.IsActive).Select(x => x.Id).FirstOrDefault();
+            var customerIdToQuery = customersList.Select(x => x.Id).First();
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<DepartmentOutput>>($"/v1/customers/{customerIdToQuery}/departments");
 
@@ -99,11 +99,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetDepartmentsByCustomer
 
             var customerIdToQuery = customersList.Select(x => x.Id).FirstOrDefault();
 
-            var input = new GetDepartmentsInput
-            {
-                PageNumber = page,
-                PageSize = pageSize
-            };
+            var input = new GetDepartmentsInput(page, pageSize, customerIdToQuery);
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<DepartmentOutput>>($"/v1/customers/{customerIdToQuery}/departments", input);
 
@@ -139,25 +135,20 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetDepartmentsByCustomer
             
             var departments = new List<DepartmentModel>()
             {
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 01", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 02", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 03", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 04", IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 05", IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 01", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 02", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 03", IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new DepartmentModel (Guid.NewGuid(), "Department 01", true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 02", true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 03", true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 04", false,DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 05", false,DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Depto 01"     , true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Depto 02"     , true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Depto 03"     , false,DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id)
             };
 
             await dbContext.AddRangeAsync(departments);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetDepartmentsInput
-            {
-                PageNumber = page,
-                PageSize = pageSize,
-                Name = search
-            };
+            var input = new GetDepartmentsInput(page, pageSize, customer.Id, name: search);
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<DepartmentOutput>>($"/v1/customers/{customer.Id}/departments", input);
 
@@ -192,26 +183,20 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetDepartmentsByCustomer
 
             var departments = new List<DepartmentModel>()
             {
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 01", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 02", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 03", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 04", IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 05", IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 01", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 02", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 03", IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new DepartmentModel (Guid.NewGuid(), "Department 01", true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 02", true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 03", true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 04", false,DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 05", false,DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Depto 01"     , true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Depto 02"     , true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Depto 03"     , false,DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id)
             };
 
-            
             await dbContext.AddRangeAsync(departments);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetDepartmentsInput
-            {
-                PageNumber = page,
-                PageSize = pageSize,
-                IsActive = search
-            };
+            var input = new GetDepartmentsInput(page, pageSize, customer.Id, isActive: search);
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<DepartmentOutput>>($"/v1/customers/{customer.Id}/departments", input);
 
@@ -244,25 +229,20 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetDepartmentsByCustomer
 
             var departments = new List<DepartmentModel>()
             {
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 04", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 05", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 03", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 01", IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Department 02", IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 11", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 12", IsActive = true, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"},
-                new DepartmentModel { Id = Guid.NewGuid(), CustomerId = customer.Id, Name = "Depto 23", IsActive = false, CreatedAt = DateTime.Now, CreatedBy = "unit.Testing", LastUpdatedAt = DateTime.Now, LastUpdatedBy = "unit.testing"}
+                new DepartmentModel (Guid.NewGuid(), "Department 01", true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 02", true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 03", true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 04", false,DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Department 05", false,DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Depto 01"     , true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Depto 02"     , true, DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id),
+                new DepartmentModel (Guid.NewGuid(), "Depto 03"     , false,DateTime.Now, "unit.Testing", DateTime.Now, "unit.testing", customer.Id)
             };
 
             await dbContext.AddRangeAsync(departments);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var input = new GetDepartmentsInput
-            {
-                PageNumber = 1,
-                PageSize = 5,
-                Sort = "name"
-            };
+            var input = new GetDepartmentsInput(1, 5, customer.Id, sort: "name");
 
             var (response, output) = await _fixture.ApiClient.GetAsync<PaginatedApiResponse<DepartmentOutput>>($"/v1/customers/{customer.Id}/departments", input);
 

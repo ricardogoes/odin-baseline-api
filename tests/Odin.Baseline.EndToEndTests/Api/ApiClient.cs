@@ -18,24 +18,21 @@ namespace Odin.Baseline.EndToEndTests.Api
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _defaultSerializeOptions;
 
-        private string USERNAME = Environment.GetEnvironmentVariable("OdinSettings__AdminUsername");
-        private string PASSWORD = Environment.GetEnvironmentVariable("OdinSettings__AdminPassword");
+        private readonly string _username = Environment.GetEnvironmentVariable("OdinSettings__AdminUsername")!;
+        private readonly string _password = Environment.GetEnvironmentVariable("OdinSettings__AdminPassword")!;
 
         public ApiClient(HttpClient httpClient)
         {
-            _appSettings = new AppSettings
-            {
-                AWSCognitoSettings = new AWSCognitoSettings
-                {
-                    AccessKeyId = Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__AccessKeyId"),
-                    AccessSecretKey = Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__AccessSecretKey"),
-                    AppClientId = Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__AppClientId"),
-                    CognitoAuthorityUrl = Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__CognitoAuthorityUrl"),
-                    CognitoIdpUrl = Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__CognitoIdpUrl"),
-                    Region = Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__Region"),
-                    UserPoolId = Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__UserPoolId")
-                }
-            };
+            var cognitoSettings = new AWSCognitoSettings
+            (
+                Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__AccessKeyId")!,
+                Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__AccessSecretKey")!,
+                Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__AppClientId")!,
+                Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__CognitoAuthorityUrl")!,
+                Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__Region")!
+            );
+
+            _appSettings = new AppSettings(cognitoSettings);
 
             _httpClient = httpClient;
 
@@ -68,8 +65,8 @@ namespace Odin.Baseline.EndToEndTests.Api
                 ClientId = _appSettings.AWSCognitoSettings.AppClientId,
                 AuthParameters =
                 {
-                    { "USERNAME", USERNAME },
-                    { "PASSWORD", PASSWORD }
+                    { "USERNAME", _username },
+                    { "PASSWORD", _password }
                 }
             };
 
@@ -78,7 +75,7 @@ namespace Odin.Baseline.EndToEndTests.Api
             return result.IdToken;
         }
 
-        public async Task<(HttpResponseMessage, TOutput)> PostAsync<TOutput>(string route, object request) where TOutput : class
+        public async Task<(HttpResponseMessage, TOutput)> PostAsync<TOutput>(string route, object? request) where TOutput : class
         {
             var requestJson = JsonSerializer.Serialize(request, _defaultSerializeOptions);
 
@@ -88,7 +85,7 @@ namespace Odin.Baseline.EndToEndTests.Api
             return (response, output);
         }
 
-        public async Task<(HttpResponseMessage, TOutput)> PutAsync<TOutput>(string route, object request) where TOutput : class
+        public async Task<(HttpResponseMessage, TOutput)> PutAsync<TOutput>(string route, object? request) where TOutput : class
         {
             var requestJson = JsonSerializer.Serialize(request, _defaultSerializeOptions);
 
@@ -98,7 +95,7 @@ namespace Odin.Baseline.EndToEndTests.Api
             return (response, output);
         }
 
-        public async Task<(HttpResponseMessage, TOutput)> GetByIdAsync<TOutput>(string route, object queryStringParametersObject = null) where TOutput : class
+        public async Task<(HttpResponseMessage, TOutput)> GetByIdAsync<TOutput>(string route, object? queryStringParametersObject = null) where TOutput : class
         {
             var urlToCall = PrepareGetRoute(route, queryStringParametersObject);
 
@@ -108,7 +105,7 @@ namespace Odin.Baseline.EndToEndTests.Api
             return (response, output);
         }
 
-        public async Task<(HttpResponseMessage, TOutput)> GetAsync<TOutput>(string route, object queryStringParametersObject = null) where TOutput : class
+        public async Task<(HttpResponseMessage, TOutput)> GetAsync<TOutput>(string route, object? queryStringParametersObject = null) where TOutput : class
         {
             var urlToCall = PrepareGetRoute(route, queryStringParametersObject);
 
@@ -122,15 +119,15 @@ namespace Odin.Baseline.EndToEndTests.Api
         {
             var outputString = await response.Content.ReadAsStringAsync();
 
-            TOutput output = null;
+            TOutput? output = null;
 
             if (!string.IsNullOrWhiteSpace(outputString))
                 output = JsonSerializer.Deserialize<TOutput>(outputString, _defaultSerializeOptions);
 
-            return output;
+            return output!;
         }
 
-        private string PrepareGetRoute(string route, object queryStringParametersObject)
+        private string PrepareGetRoute(string route, object? queryStringParametersObject)
         {
             if (queryStringParametersObject is null)
                 return route;

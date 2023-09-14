@@ -29,23 +29,21 @@ namespace Odin.Baseline.EndToEndTests.Customers.GetEmployeesByCustomer
 
         public EmployeeModel GetValidEmployeeModel(Guid? customerId = null, Guid? departmentId = null)
         {
-            var employee = new EmployeeModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId ?? Guid.NewGuid(),
-                DepartmentId = departmentId,
-                FirstName = GetValidEmployeeFistName(),
-                LastName = GetValidEmployeeLastName(),
-                Document = GetValidEmployeeDocument(),
-                Email = GetValidEmployeeEmail(),
-                IsActive = true,
-                CreatedAt = DateTime.Now,
-                CreatedBy = "unit.test",
-                LastUpdatedAt = DateTime.Now,
-                LastUpdatedBy = "unit.test"
-            };
-
-            return employee;
+            return new EmployeeModel
+            (
+                id: Guid.NewGuid(),
+                customerId: customerId ?? Guid.NewGuid(),
+                departmentId: departmentId,
+                firstName: GetValidEmployeeFistName(),
+                lastName: GetValidEmployeeLastName(),
+                document: GetValidEmployeeDocument(),
+                email: GetValidEmployeeEmail(),
+                isActive: true,
+                createdAt: DateTime.Now,
+                createdBy: "unit.test",
+                lastUpdatedAt: DateTime.Now,
+                lastUpdatedBy: "unit.test"
+            );
         }
 
         public List<EmployeeModel> GetValidEmployeesModelList(List<Guid> customersIds, List<Guid>? departmentsIds = null, int length = 10)

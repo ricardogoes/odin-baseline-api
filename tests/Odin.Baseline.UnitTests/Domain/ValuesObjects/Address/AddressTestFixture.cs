@@ -31,19 +31,5 @@ namespace Odin.Baseline.UnitTests.Domain.ValuesObjects.Address
 
         public string GetValidState()
             => Faker.Address.StateAbbr();
-
-        public ValueObject.Address GetValidAddress()
-        {
-            var address = new ValueObject.Address(
-                GetValidStreetName(),
-                GetValidStreetNumber(),
-                GetValidComplement(),
-                GetValidNeighborhood(),
-                GetValidZipCode(),
-                GetValidCity(),
-                GetValidState()
-            );
-            return address;
-        }
     }
 }

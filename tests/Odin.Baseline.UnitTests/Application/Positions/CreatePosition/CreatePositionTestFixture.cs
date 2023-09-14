@@ -13,39 +13,39 @@ namespace Odin.Baseline.UnitTests.Application.Positions.CreatePosition
             : base() { }
 
         public CreatePositionInput GetValidCreatePositionInput()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                Name = GetValidName(),
-                BaseSalary = GetValidBaseSalary(),                
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId: Guid.NewGuid(),
+                name: GetValidName(),
+                baseSalary: GetValidBaseSalary(),                
+                loggedUsername: GetValidUsername()
+            );
 
         public CreatePositionInput GetCreatePositionInputWithEmptyCustomerId()
-            => new()
-            {
-                CustomerId = Guid.Empty,
-                Name = GetValidName(),
-                BaseSalary = GetValidBaseSalary(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId: Guid.Empty,
+                name: GetValidName(),
+                baseSalary: GetValidBaseSalary(),
+                loggedUsername: GetValidUsername()
+            );
 
         public CreatePositionInput GetCreatePositionInputWithEmptyName()
-            => new()
-            {
-                CustomerId = Guid.NewGuid(),
-                Name = "",
-                BaseSalary = GetValidBaseSalary(),
-                LoggedUsername = GetValidUsername()
-            };
+            => new
+            (
+                customerId: Guid.NewGuid(),
+                name: "",
+                baseSalary: GetValidBaseSalary(),
+                loggedUsername: GetValidUsername()
+            );
 
         public CreatePositionInput GetCreatePositionInputWithEmptyLoggedUsername()
-           => new()
-           {
-               CustomerId = Guid.NewGuid(),
-               Name = GetValidName(),
-               BaseSalary = GetValidBaseSalary(),
-               LoggedUsername = ""
-           };
+           => new
+           (
+               customerId: Guid.NewGuid(),
+               name: GetValidName(),
+               baseSalary: GetValidBaseSalary(),
+               loggedUsername: ""
+           );
     }
 }

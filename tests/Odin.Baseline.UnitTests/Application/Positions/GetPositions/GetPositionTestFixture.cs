@@ -10,11 +10,13 @@ namespace Odin.Baseline.UnitTests.Application.Positions.GetPositions
     public class GetPositionsTestFixture : PositionBaseFixture
     {
         public GetPositionsInput GetValidGetPositionsInput(Guid? id = null)
-            => new()
-            {
-                CustomerId = id ?? Guid.NewGuid(),
-                Name = Faker.Commerce.Department(),
-                IsActive = true
-            };
+            => new GetPositionsInput
+            (
+                page: 1,
+                pageSize: 5,                
+                customerId: id ?? Guid.NewGuid(),
+                name: Faker.Commerce.Department(),
+                isActive: true                
+            );
     }
 }

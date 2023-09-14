@@ -16,7 +16,7 @@ namespace Odin.Baseline.Application.Departments.GetDepartments
 
         public async Task<PaginatedListOutput<DepartmentOutput>> Handle(GetDepartmentsInput input, CancellationToken cancellationToken)
         {
-            var filters = new Dictionary<string, object>
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", input.CustomerId },
                 { "Name", input.Name },
@@ -30,17 +30,17 @@ namespace Odin.Baseline.Application.Departments.GetDepartments
             };
 
             var departments = await _repository.FindPaginatedListAsync(
-                filters, input.PageNumber, input.PageSize, input.Sort,
+                filters, input.PageNumber, input.PageSize, input.Sort!,
                 cancellationToken: cancellationToken);
 
             return new PaginatedListOutput<DepartmentOutput>
-            {
-                PageNumber = input.PageNumber,
-                PageSize = input.PageSize,
-                TotalPages = PaginatedListHelper.GetTotalPages(departments.TotalItems, input.PageSize),
-                TotalItems = departments.TotalItems,
-                Items = DepartmentOutput.FromDepartment(departments.Items)
-            };
+            (
+                pageNumber: input.PageNumber,
+                pageSize: input.PageSize,
+                totalPages: PaginatedListHelper.GetTotalPages(departments.TotalItems, input.PageSize),
+                totalItems: departments.TotalItems,
+                items: DepartmentOutput.FromDepartment(departments.Items)
+            );
         }
     }
 }

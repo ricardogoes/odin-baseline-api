@@ -15,19 +15,17 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Department
 
         public DepartmentModel GetValidDepartmentModel(Guid? customerId = null)
         {
-            var department = new DepartmentModel
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId ?? Guid.NewGuid(),
-                Name = GetValidDepartmentName(),
-                IsActive = true,
-                CreatedAt = DateTime.Now,
-                CreatedBy = "unit.test",
-                LastUpdatedAt = DateTime.Now,
-                LastUpdatedBy = "unit.test"
-            };
-
-            return department;
+            return new DepartmentModel
+            (
+                id: Guid.NewGuid(),
+                customerId: customerId ?? Guid.NewGuid(),
+                name: GetValidDepartmentName(),
+                isActive: true,
+                createdAt: DateTime.Now,
+                createdBy: "unit.test",
+                lastUpdatedAt: DateTime.Now,
+                lastUpdatedBy: "unit.test"
+            );
         }
 
         public List<DomainEntity.Department> GetValidDepartmentsList(int length = 10)

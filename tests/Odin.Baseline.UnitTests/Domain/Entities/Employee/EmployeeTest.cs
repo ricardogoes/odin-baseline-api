@@ -88,7 +88,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             var validEmployee = _fixture.GetValidEmployee();
 
             Action action =
-                () => new DomainEntity.Employee(validEmployee.CustomerId, validEmployee.FirstName, validEmployee.LastName, null, validEmployee.Email, validEmployee.DepartmentId);
+                () => new DomainEntity.Employee(validEmployee.CustomerId, validEmployee.FirstName, validEmployee.LastName, "", validEmployee.Email, validEmployee.DepartmentId);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -129,7 +129,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             employee.ChangeAddress(address);
 
             employee.Address.Should().NotBeNull();
-            employee.Address.StreetName.Should().Be(address.StreetName);
+            employee.Address!.StreetName.Should().Be(address.StreetName);
             employee.Address.StreetNumber.Should().Be(address.StreetNumber);
             employee.Address.Complement.Should().Be(address.Complement);
             employee.Address.Neighborhood.Should().Be(address.Neighborhood);
@@ -204,7 +204,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         {
             var employee = _fixture.GetValidEmployee();
 
-            Action action =() => employee.Update(employee.FirstName, employee.LastName, null, employee.Email);
+            Action action =() => employee.Update(employee.FirstName, employee.LastName, "", employee.Email);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -309,7 +309,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             employee.LoadCustomerData(new CustomerData(customer.Id, customer.Name));
 
             employee.CustomerData.Should().NotBeNull();
-            employee.CustomerData.Id.Should().Be(customer.Id);
+            employee.CustomerData!.Id.Should().Be(customer.Id);
             employee.CustomerData.Name.Should().Be(customer.Name);
         }
 
@@ -324,7 +324,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             employee.LoadDepartmentData(new DepartmentData(department.Id, department.Name));
 
             employee.DepartmentData.Should().NotBeNull();
-            employee.DepartmentData.Id.Should().Be(department.Id);
+            employee.DepartmentData!.Id.Should().Be(department.Id);
             employee.DepartmentData.Name.Should().Be(department.Name);
         }
 

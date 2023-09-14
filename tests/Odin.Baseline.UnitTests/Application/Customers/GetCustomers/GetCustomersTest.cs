@@ -25,29 +25,29 @@ namespace Odin.Baseline.UnitTests.Application.Customers.GetCustomers
         public async Task GetCustomers()
         {
             var expectedCustomers = new PaginatedListOutput<Customer>
-            {
-                TotalItems = 15,
-                Items = new List<Customer>
+            (
+                totalItems: 15,
+                items: new List<Customer>
                 {
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
                 }
-            };
+            );
 
-            _repositoryMock.Setup(s => s.FindPaginatedListAsync(It.IsAny<Dictionary<string, object>>(), 1, 10, "name", new CancellationToken()))
+            _repositoryMock.Setup(s => s.FindPaginatedListAsync(It.IsAny<Dictionary<string, object?>>(), 1, 10, "name", new CancellationToken()))
                 .Returns(() => Task.FromResult(expectedCustomers));
 
             var useCase = new App.GetCustomers(_repositoryMock.Object);
@@ -66,18 +66,18 @@ namespace Odin.Baseline.UnitTests.Application.Customers.GetCustomers
         public async Task GetOnePageWhenTotalItemsLessPageSize()
         {
             var expectedCustomers = new PaginatedListOutput<Customer>
-            {
-                TotalItems = 4,
-                Items = new List<Customer>
+            (
+                totalItems: 4,
+                items: new List<Customer>
                 {
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
-                    new Customer(_fixture.GetValidName(), _fixture.GetValidDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
+                    new Customer(_fixture.GetValidCustomerName(), _fixture.GetValidCustomerDocument(), isActive: true),
                 }
-            };
+            );
 
-            _repositoryMock.Setup(s => s.FindPaginatedListAsync(It.IsAny<Dictionary<string, object>>(), 1, 10, "name", new CancellationToken()))
+            _repositoryMock.Setup(s => s.FindPaginatedListAsync(It.IsAny<Dictionary<string, object?>>(), 1, 10, "name", new CancellationToken()))
                 .Returns(() => Task.FromResult(expectedCustomers));
 
             var useCase = new App.GetCustomers(_repositoryMock.Object);

@@ -150,7 +150,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Customer
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var searchInput = new GetCustomersInput(1, 20, name: "", document: "", isActive: true, sort: "name");
-            var filters = new Dictionary<string, object>
+            var filters = new Dictionary<string, object?>
             {
                 { "Name", searchInput.Name },
                 { "Document", searchInput.Document },
@@ -158,7 +158,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Customer
             };
 
             var customerRepository = new CustomerRepository(dbContext);
-            var output = await customerRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await customerRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
@@ -188,7 +188,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Customer
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var searchInput = new GetCustomersInput(1, 20, name: "", document: "", isActive: null, sort: "name");
-            var filters = new Dictionary<string, object>
+            var filters = new Dictionary<string, object?>
             {
                 { "Name", searchInput.Name },
                 { "Document", searchInput.Document },
@@ -196,7 +196,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Customer
             };
 
             var customerRepository = new CustomerRepository(dbContext);
-            var output = await customerRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await customerRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
@@ -222,14 +222,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Customer
             var dbContext = _fixture.CreateDbContext();
             var customerRepository = new CustomerRepository(dbContext);
             var searchInput = new GetCustomersInput(1, 20, name: "", document: "", isActive: true, sort: "");
-            var filters = new Dictionary<string, object>
+            var filters = new Dictionary<string, object?>
             {
                 { "Name", searchInput.Name },
                 { "Document", searchInput.Document },
                 { "IsActive", searchInput.IsActive },
             };
 
-            var output = await customerRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort, CancellationToken.None);
+            var output = await customerRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();

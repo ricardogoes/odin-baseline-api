@@ -77,7 +77,7 @@ namespace Odin.Baseline.UnitTests.Application.Positions.UpdatePosition
         public async Task ThrowWhenCantUpdatePosition(App.UpdatePositionInput input, string expectedExceptionMessage)
         {
             var validPosition = _fixture.GetValidPosition();
-            input.Id = validPosition.Id;
+            input.ChangeId(validPosition.Id);
 
             _repositoryMock.Setup(x => x.FindByIdAsync(validPosition.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validPosition);

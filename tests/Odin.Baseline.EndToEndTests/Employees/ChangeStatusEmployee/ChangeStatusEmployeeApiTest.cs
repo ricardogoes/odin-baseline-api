@@ -31,7 +31,7 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeStatusEmployee
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var employeeToChangeStatus = employeesList.Where(x => !x.IsActive).FirstOrDefault();
+            var employeeToChangeStatus = employeesList.Where(x => !x.IsActive).First();
 
             var input = _fixture.GetValidInputToActivate(employeeToChangeStatus.Id) ;
 
@@ -63,7 +63,7 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeStatusEmployee
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var employeeToChangeStatus = employeesList.Where(x => x.IsActive).FirstOrDefault();
+            var employeeToChangeStatus = employeesList.Where(x => x.IsActive).First();
 
             var input = _fixture.GetValidInputToDeactivate(employeeToChangeStatus.Id);
 

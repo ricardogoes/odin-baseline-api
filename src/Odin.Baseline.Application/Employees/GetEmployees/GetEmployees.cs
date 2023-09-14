@@ -2,7 +2,6 @@
 using Odin.Baseline.Application.Common;
 using Odin.Baseline.Application.Employees.Common;
 using Odin.Baseline.Domain.DTO.Common;
-using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
 
 namespace Odin.Baseline.Application.Employees.GetEmployees
@@ -16,7 +15,7 @@ namespace Odin.Baseline.Application.Employees.GetEmployees
 
         public async Task<PaginatedListOutput<EmployeeOutput>> Handle(GetEmployeesInput input, CancellationToken cancellationToken)
         {
-            var filters = new Dictionary<string, object>
+            var filters = new Dictionary<string, object?>
             {
                 { "CustomerId", input.CustomerId },
                 { "DepartmentId", input.DepartmentId },
@@ -28,17 +27,17 @@ namespace Odin.Baseline.Application.Employees.GetEmployees
             };
 
             var employees = await _repository.FindPaginatedListAsync(
-                filters, input.PageNumber, input.PageSize, input.Sort,
+                filters, input.PageNumber, input.PageSize, input.Sort!,
                 cancellationToken: cancellationToken);
 
             return new PaginatedListOutput<EmployeeOutput>
-            {
-                PageNumber = input.PageNumber,
-                PageSize = input.PageSize,
-                TotalPages = PaginatedListHelper.GetTotalPages(employees.TotalItems, input.PageSize),
-                TotalItems = employees.TotalItems,
-                Items = EmployeeOutput.FromEmployee(employees.Items)
-            };
+            (
+                pageNumber: input.PageNumber,
+                pageSize: input.PageSize,
+                totalPages: PaginatedListHelper.GetTotalPages(employees.TotalItems, input.PageSize),
+                totalItems: employees.TotalItems,
+                items: EmployeeOutput.FromEmployee(employees.Items)
+            );
         }
     }
 }

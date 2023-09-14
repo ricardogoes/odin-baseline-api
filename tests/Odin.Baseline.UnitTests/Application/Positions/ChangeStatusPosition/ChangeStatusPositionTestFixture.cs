@@ -13,35 +13,35 @@ namespace Odin.Baseline.UnitTests.Application.Positions.ChangeStatusPosition
             : base() { }
 
         public ChangeStatusPositionInput GetValidChangeStatusPositionInputToActivate(Guid? id = null)
-            => new()
-            {
-                Id = id ?? Guid.NewGuid(),
-                Action = Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
-                LoggedUsername = "unit.testing"
-            };
+            => new
+            (
+                id ?? Guid.NewGuid(),
+                Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
+                "unit.testing"
+            );
 
         public ChangeStatusPositionInput GetValidChangeStatusPositionInputToDeactivate(Guid? id = null)
-           => new()
-           {
-               Id = id ?? Guid.NewGuid(),
-               Action = Baseline.Domain.Enums.ChangeStatusAction.DEACTIVATE,
-               LoggedUsername = "unit.testing"
-           };
+           => new
+           (
+               id ?? Guid.NewGuid(),
+               Baseline.Domain.Enums.ChangeStatusAction.DEACTIVATE,
+               "unit.testing"
+           );
 
         public ChangeStatusPositionInput GetChangeStatusPositionInputWithEmptyAction(Guid? id = null)
-          => new()
-          {
-              Id = id ?? Guid.NewGuid(),
-              Action = null,
-              LoggedUsername = "unit.testing"
-          };
+          => new
+          (
+              id ?? Guid.NewGuid(),
+              null,
+              "unit.testing"
+          );
 
         public ChangeStatusPositionInput GetChangeStatusPositionInputWithEmptyLoggedUsername(Guid? id = null)
-           => new()
-           {
-               Id = id ?? Guid.NewGuid(),
-               Action = Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
-               LoggedUsername = ""
-           };
+           => new
+           (
+               id ?? Guid.NewGuid(),
+               Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
+               ""
+           );
     }
 }

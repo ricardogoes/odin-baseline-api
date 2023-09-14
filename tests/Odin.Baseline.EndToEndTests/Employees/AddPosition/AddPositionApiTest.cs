@@ -33,7 +33,7 @@ namespace Odin.Baseline.EndToEndTests.Employees.AddPosition
             await dbContext.AddRangeAsync(employeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var employeeToAddPosition = employeesList.Where(x => x.IsActive).FirstOrDefault();
+            var employeeToAddPosition = employeesList.Where(x => x.IsActive).First();
 
             var input = _fixture.GetValidInput(employeeToAddPosition.Id) ;
 
@@ -53,7 +53,7 @@ namespace Odin.Baseline.EndToEndTests.Employees.AddPosition
             output.PositionsHistory.Should().NotBeNull();
             output.PositionsHistory.Should().HaveCount(1);
 
-            var positionHistory = output.PositionsHistory.FirstOrDefault();
+            var positionHistory = output.PositionsHistory!.First();
             positionHistory.PositionId.Should().Be(input.PositionId);
             positionHistory.Salary.Should().Be(input.Salary);
             positionHistory.StartDate.Should().NotBeSameDateAs(default);
@@ -124,7 +124,7 @@ namespace Odin.Baseline.EndToEndTests.Employees.AddPosition
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var idToQuery = employeesList.Where(x => x.IsActive).Select(x => x.Id).FirstOrDefault();
-            input.EmployeeId = idToQuery;
+            input.ChangeEmployeeId(idToQuery);
 
             var (response, output) = await _fixture.ApiClient.PostAsync<ProblemDetails>($"/v1/employees/{idToQuery}/positions", input);
 
