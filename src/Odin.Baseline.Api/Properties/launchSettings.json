@@ -35,7 +35,7 @@
       },
       "publishAllPorts": true,
       "useSSL": true,
-      "DockerfileRunArguments": "--network odin_baseline"
+      "DockerfileRunArguments": "--network odin_baseline_network"
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",
