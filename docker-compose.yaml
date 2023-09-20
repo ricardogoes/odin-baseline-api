@@ -2,14 +2,21 @@ version: '3.4'
 
 services:
   odin.baseline.db:
-    container_name: odin_baseline
-    hostname: odin_baseline
+    container_name: odin_baseline_db
+    hostname: odin_baseline_db
     image: postgres
     ports:
       - 5432:5432
     environment:
+      POSTGRES_USER: root
       POSTGRES_PASSWORD: tIiefwntHebhEXI78twf
+    volumes:
+      - ./.docker/postgres-data:/var/lib/postgresql/data
+      - ./.docker/db/create-databases.sql:/docker-entrypoint-initdb.d/create-databases.sql
+    command: postgres -c 'max_connections=200' && postgres -c 'shared_buffers=24MB' 
+    healthcheck:
+      test: "exit 0"    
 
 networks:
   default:
-    name: odin_baseline
+    name: odin_baseline_network
