@@ -27,7 +27,7 @@ namespace Odin.Baseline.Domain.Validations
                 throwError = true;
             else if (target is Guid && Guid.Parse(target.ToString()!) == Guid.Empty)
                 throwError = true;
-            else if (target is DateTime && DateTime.Parse(target.ToString()!, new CultureInfo("en-US")) == default)
+            else if (target is DateTime && DateTime.Parse(target.ToString()!, new CultureInfo("pt-BR")) == default)
                 throwError = true;
 
             if (throwError)
