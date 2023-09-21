@@ -1,5 +1,10 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
+using Odin.Baseline.Application.Customers.ChangeAddressCustomer;
+using Odin.Baseline.Application.Employees.AddPosition;
+using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
 using App = Odin.Baseline.Application.Employees.AddPosition;
@@ -13,12 +18,14 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
 
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IEmployeeRepository> _repositoryMock;
+        private readonly Mock<IValidator<AddPositionInput>> _validatorMock;
 
         public AddPositionTest(AddPositionTestFixture fixture)
         {
             _fixture = fixture;
             _unitOfWorkMock = _fixture.GetUnitOfWorkMock();
             _repositoryMock = _fixture.GetRepositoryMock();
+            _validatorMock = new();
         }
 
         [Fact(DisplayName = "Handle() should add a new position with valid data")]
@@ -26,6 +33,9 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
         public async void AddPosition()
         {
             var input = _fixture.GetValidInput();
+
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<AddPositionInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
 
             var positionsHistory = new List<EmployeePositionHistory>
             {
@@ -40,7 +50,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
             _repositoryMock.Setup(s => s.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(employee));
 
-            var useCase = new App.AddPosition(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.AddPosition(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
             var output = await useCase.Handle(input, CancellationToken.None);
 
             output.Should().NotBeNull();
@@ -59,10 +69,28 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
             _repositoryMock.Verify(uow => uow.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
+        [Fact(DisplayName = "Handle() should throw an error when validation failed")]
+        [Trait("Application", "Employees / AddPosition")]
+        public async void FluentValidationFailed()
+        {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<AddPositionInput>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Property", "'Property' must not be empty") })));
+
+            var input = _fixture.GetValidInput();
+            var useCase = new App.AddPosition(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
+
+            var task = async () => await useCase.Handle(input, CancellationToken.None);
+
+            await task.Should().ThrowAsync<EntityValidationException>();
+        }
+
         [Fact(DisplayName = "Handle() should add a new position when list is empty")]
         [Trait("Application", "Employees / AddPosition")]
         public async void AddPositionEmptyList()
         {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<AddPositionInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetValidInput();
 
             var employee = _fixture.GetValidEmployee();
@@ -73,7 +101,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
             _repositoryMock.Setup(s => s.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(employee));
 
-            var useCase = new App.AddPosition(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.AddPosition(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
             var output = await useCase.Handle(input, CancellationToken.None);
 
             output.Should().NotBeNull();

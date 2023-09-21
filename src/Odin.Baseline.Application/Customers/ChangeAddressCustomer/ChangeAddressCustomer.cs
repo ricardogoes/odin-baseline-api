@@ -1,28 +1,38 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Odin.Baseline.Application.Customers.Common;
+using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Interfaces.Repositories;
 using Odin.Baseline.Domain.ValueObjects;
 
 namespace Odin.Baseline.Application.Customers.ChangeAddressCustomer
 {
     public class ChangeAddressCustomer : IRequestHandler<ChangeAddressCustomerInput, CustomerOutput>
-    {
+    {        
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICustomerRepository _repository;
+        private readonly IValidator<ChangeAddressCustomerInput> _validator;
 
-        public ChangeAddressCustomer(IUnitOfWork unitOfWork, ICustomerRepository repository)
+        public ChangeAddressCustomer(IUnitOfWork unitOfWork, ICustomerRepository repository, IValidator<ChangeAddressCustomerInput> validator)
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
+            _validator = validator;
         }
 
-        public async Task<CustomerOutput> Handle(ChangeAddressCustomerInput request, CancellationToken cancellationToken)
+        public async Task<CustomerOutput> Handle(ChangeAddressCustomerInput input, CancellationToken cancellationToken)
         {
-            var customer = await _repository.FindByIdAsync(request.CustomerId, cancellationToken);
-            var address = new Address(request.StreetName, request.StreetNumber, request.Complement, request.Neighborhood, request.ZipCode, request.City, request.State);
+            var validationResult = await _validator.ValidateAsync(input, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                throw new EntityValidationException($"One or more validation errors occurred on type {nameof(input)}.", validationResult.ToDictionary());
+            }
+            
+            var customer = await _repository.FindByIdAsync(input.CustomerId, cancellationToken);
 
-            customer.ChangeAddress(address);
-
+            var address = new Address(input.StreetName, input.StreetNumber, input.Complement, input.Neighborhood, input.ZipCode, input.City, input.State);
+            customer.ChangeAddress(address, input.LoggedUsername);
+            
             await _repository.UpdateAsync(customer, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 

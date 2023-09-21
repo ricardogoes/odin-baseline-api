@@ -19,7 +19,7 @@ namespace Odin.Baseline.UnitTests.Application.Departments.Common
         public Department GetValidDepartment()
         {
             var position = new Department(Guid.NewGuid(), GetValidName());
-            position.Create();
+            position.Create("unit.testing");
 
             return position;
         }

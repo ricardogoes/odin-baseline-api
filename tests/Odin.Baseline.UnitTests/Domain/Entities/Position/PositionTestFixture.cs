@@ -20,7 +20,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
         public  DomainEntity.Position GetValidPosition(Guid? customerId = null)
         {
             var position = new DomainEntity.Position(customerId ?? Guid.NewGuid(), GetValidPositionName(), GetValidBaseSalary());
-            position.Create();
+            position.Create("unit.testing");
 
             return position;
         }

@@ -1,6 +1,10 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
 using Odin.Baseline.Application.Employees.Common;
+using Odin.Baseline.Application.Employees.CreateEmployee;
+using Odin.Baseline.Application.Positions.CreatePosition;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.DomainServices;
@@ -18,6 +22,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.CreateEmployee
         private readonly Mock<IDocumentService> _documentServiceMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IEmployeeRepository> _repositoryMock;
+        private readonly Mock<IValidator<CreateEmployeeInput>> _validatorMock;
 
         public CreateEmployeeTest(CreateEmployeeTestFixture fixture)
         {
@@ -26,12 +31,16 @@ namespace Odin.Baseline.UnitTests.Application.Employees.CreateEmployee
             _documentServiceMock = _fixture.GetDocumentServiceMock();
             _unitOfWorkMock = _fixture.GetUnitOfWorkMock();
             _repositoryMock = _fixture.GetRepositoryMock();
+            _validatorMock = new();
         }
 
         [Fact(DisplayName = "Handle() should create a employee with valid data")]
         [Trait("Application", "Employees / CreateEmployee")]
         public async void CreateEmployee()
         {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreateEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetValidCreateEmployeeInput();
             var employeeToInsert = new Employee(input.CustomerId, input.FirstName, input.LastName, input.Document, input.Email, departmentId: input.DepartmentId, isActive: true);
             var expectedEmployeeInserted = new EmployeeOutput
@@ -54,7 +63,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.CreateEmployee
             _repositoryMock.Setup(s => s.InsertAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(employeeToInsert));
 
-            var useCase = new App.CreateEmployee(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.CreateEmployee(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
             var output = await useCase.Handle(input, CancellationToken.None);
 
             _unitOfWorkMock.Verify(
@@ -72,6 +81,21 @@ namespace Odin.Baseline.UnitTests.Application.Employees.CreateEmployee
             output.CreatedAt.Should().NotBeSameDateAs(default);
         }
 
+        [Fact(DisplayName = "Handle() should throw an error when validation failed")]
+        [Trait("Application", "Employees / CreateEmployee")]
+        public async void FluentValidationFailed()
+        {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreateEmployeeInput>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Property", "'Property' must not be empty") })));
+
+            var input = _fixture.GetValidCreateEmployeeInput();
+            var useCase = new App.CreateEmployee(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
+
+            var task = async () => await useCase.Handle(input, CancellationToken.None);
+
+            await task.Should().ThrowAsync<EntityValidationException>();
+        }
+
         [Theory(DisplayName = "Handle() should throw an error when data is invalid")]
         [Trait("Application", "Employees / CreateEmployee")]
         [MemberData(
@@ -84,7 +108,10 @@ namespace Odin.Baseline.UnitTests.Application.Employees.CreateEmployee
             string exceptionMessage
         )
         {
-            var useCase = new App.CreateEmployee(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreateEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
+            var useCase = new App.CreateEmployee(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             Func<Task> task = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -97,12 +124,15 @@ namespace Odin.Baseline.UnitTests.Application.Employees.CreateEmployee
         [Trait("Application", "Employees / CreateEmployee")]
         public async void ThrowWhenDocumentAlreadyExists()
         {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreateEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetValidCreateEmployeeInput();
 
             _documentServiceMock.Setup(s => s.IsDocumentUnique(It.IsAny<EntityWithDocument>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(false));
 
-            var useCase = new App.CreateEmployee(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.CreateEmployee(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             Func<Task> task = async () => await useCase.Handle(input, CancellationToken.None);
 

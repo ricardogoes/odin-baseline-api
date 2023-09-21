@@ -62,7 +62,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Department
             var validDepartment = _fixture.GetValidDepartment();
 
             var department = new DomainEntity.Department(validDepartment.CustomerId, validDepartment.Name);
-            department.Activate();
+            department.Activate("unit.testing");
 
             department.IsActive.Should().BeTrue();
         }
@@ -74,7 +74,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Department
             var validDepartment = _fixture.GetValidDepartment();
 
             var department = new DomainEntity.Department(validDepartment.CustomerId, validDepartment.Name);
-            department.Deactivate();
+            department.Deactivate("unit.testing");
 
             department.IsActive.Should().BeFalse();
         }
@@ -99,7 +99,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Department
             var department = _fixture.GetValidDepartment();
             var newDepartment = _fixture.GetValidDepartment();
 
-            department.Update(newDepartment.Name, newDepartment.CustomerId);
+            department.Update(newDepartment.Name, newDepartment.CustomerId, "unit.testing");
 
             department.Name.Should().Be(newDepartment.Name);
             department.CustomerId.Should().Be(newDepartment.CustomerId);
@@ -112,7 +112,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Department
             var department = _fixture.GetValidDepartment();
             var newName = _fixture.GetValidDepartmentName();
 
-            department.Update(newName);
+            department.Update(newName, department.CustomerId, "unit.testing");
 
             department.Name.Should().Be(newName);
             department.CustomerId.Should().Be(department.CustomerId);
@@ -124,7 +124,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Department
         {
             var department = _fixture.GetValidDepartment();
             Action action =
-                () => department.Update(department.Name, Guid.Empty);
+                () => department.Update(department.Name, Guid.Empty, "unit.testing");
 
             action.Should().Throw<EntityValidationException>()
                 .WithMessage("CustomerId should not be empty or null");
@@ -139,7 +139,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Department
         {
             var department = _fixture.GetValidDepartment();
             Action action =
-                () => department.Update(name!);
+                () => department.Update(name!, department.CustomerId, "unit.testing");
 
             action.Should().Throw<EntityValidationException>()
                 .WithMessage("Name should not be empty or null");

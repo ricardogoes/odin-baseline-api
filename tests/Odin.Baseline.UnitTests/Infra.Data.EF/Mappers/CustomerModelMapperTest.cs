@@ -45,7 +45,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         {
             var customer = _fixture.GetValidCustomer();
             var address = _fixture.GetValidAddress();
-            customer.ChangeAddress(address);
+            customer.ChangeAddress(address, "unit.testing");
 
             var model = customer.ToCustomerModel();
 
@@ -75,10 +75,10 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             var address = _fixture.GetValidAddress();
 
             var customer1 = _fixture.GetValidCustomer();            
-            customer1.ChangeAddress(address);
+            customer1.ChangeAddress(address, "unit.testing");
 
             var customer2 = _fixture.GetValidCustomer();
-            customer2.ChangeAddress(address);
+            customer2.ChangeAddress(address, "unit.testing");
 
             var customers = new List<Customer> { customer1, customer2 };
 

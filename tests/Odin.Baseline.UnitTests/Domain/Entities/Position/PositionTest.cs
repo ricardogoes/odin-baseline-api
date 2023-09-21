@@ -65,7 +65,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
             var validPosition = _fixture.GetValidPosition();
 
             var position = new DomainEntity.Position(validPosition.CustomerId, validPosition.Name, validPosition.BaseSalary);
-            position.Activate();
+            position.Activate("unit.testing");
 
             position.IsActive.Should().BeTrue();
         }
@@ -77,7 +77,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
             var validPosition = _fixture.GetValidPosition();
 
             var position = new DomainEntity.Position(validPosition.CustomerId, validPosition.Name, validPosition.BaseSalary);
-            position.Deactivate();
+            position.Deactivate("unit.testing");
 
             position.IsActive.Should().BeFalse();
         }
@@ -102,7 +102,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
             var position = _fixture.GetValidPosition();
             var positionWithNewValues = _fixture.GetValidPosition();
 
-            position.Update(positionWithNewValues.Name, positionWithNewValues.CustomerId, positionWithNewValues.BaseSalary);
+            position.Update(positionWithNewValues.Name, positionWithNewValues.CustomerId, positionWithNewValues.BaseSalary, "unit.testing");
 
             position.Name.Should().Be(positionWithNewValues.Name);
             position.BaseSalary.Should().Be(positionWithNewValues.BaseSalary);
@@ -116,7 +116,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
             var newName = _fixture.GetValidPositionName();
             var currentBaseSalary = position.BaseSalary;
 
-            position.Update(newName);
+            position.Update(newName, position.CustomerId, position.BaseSalary, "unit.testing");
 
             position.Name.Should().Be(newName);
             position.BaseSalary.Should().Be(currentBaseSalary);
@@ -131,7 +131,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
         {
             var position = _fixture.GetValidPosition();
 
-            Action action = () => position.Update(name!);
+            Action action = () => position.Update(name!, position.CustomerId, position.BaseSalary, "unit.testing");
 
             action.Should().Throw<EntityValidationException>()
                 .WithMessage("Name should not be empty or null");

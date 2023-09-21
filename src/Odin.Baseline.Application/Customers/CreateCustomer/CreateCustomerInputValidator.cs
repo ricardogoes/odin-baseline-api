@@ -12,7 +12,7 @@ namespace Odin.Baseline.Application.Customers.CreateCustomer
 
             RuleFor(x => x.Document)
                 .Must(CpfCnpjValidation.IsCpfCnpj)
-                .WithMessage("Document should be a valid CPF or CNPJ");
+                .WithMessage("'Document' must be a valid CPF or CNPJ");
             
             RuleFor(x => x.LoggedUsername).NotEmpty();
         }

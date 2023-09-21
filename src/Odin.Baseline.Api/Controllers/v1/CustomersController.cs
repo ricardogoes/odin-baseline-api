@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Odin.Baseline.Api.Helpers;
 using Odin.Baseline.Api.Models;
+using Odin.Baseline.Api.Models.Customers;
 using Odin.Baseline.Application.Customers.ChangeAddressCustomer;
 using Odin.Baseline.Application.Customers.ChangeStatusCustomer;
 using Odin.Baseline.Application.Customers.Common;
@@ -79,10 +80,11 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(CustomerOutput), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Create([FromBody] CreateCustomerInput input, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromBody] CreateCustomerApiRequest request, CancellationToken cancellationToken)
         {
-            //TODO: Alterar quando auth estiver implementado
-            input.ChangeLoggedUsername("ricardo.goes");
+
+            var loggedUsername = User.Identity!.Name!;
+            var input = new CreateCustomerInput(request.Name, request.Document, loggedUsername);
 
             var customerCreated = await _mediator.Send(input, cancellationToken);
 
@@ -97,13 +99,13 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateCustomerInput input, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateCustomerApiRequest request, CancellationToken cancellationToken)
         {
-            if (id == Guid.Empty || id != input.Id)
+            if (id == Guid.Empty || id != request.Id)
                 throw new BadRequestException("Invalid request");
 
-            //TODO: Alterar quando auth estiver implementado
-            input.ChangeLoggedUsername("ricardo.goes");
+            var loggedUsername = User.Identity!.Name!;
+            var input = new UpdateCustomerInput(request.Id, request.Name, request.Document, loggedUsername);
 
             var customerUpdated = await _mediator.Send(input, cancellationToken);
 
@@ -122,11 +124,13 @@ namespace Odin.Baseline.Api.Controllers.v1
             if (action.ToUpper() != "ACTIVATE" && action.ToUpper() != "DEACTIVATE")
                 throw new BadRequestException("Invalid action. Only ACTIVATE or DEACTIVATE values are allowed");
 
+            var loggedUsername = User.Identity!.Name!;
+
             var customerUpdated = await _mediator.Send(new ChangeStatusCustomerInput
             (
                 id,
                 (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
-                "ricardo.goes" // TODO: Alterar quando auth estiver implementado
+                loggedUsername
             ), cancellationToken);
 
             return Ok(customerUpdated);
@@ -136,14 +140,18 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(EmployeeOutput), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ChangeAddress([FromRoute] Guid id, [FromBody] ChangeAddressCustomerInput input, CancellationToken cancellationToken)
+        public async Task<IActionResult> ChangeAddress([FromRoute] Guid id, [FromBody] ChangeAddressCustomerApiRequest request, CancellationToken cancellationToken)
         {
-            if (id == Guid.Empty || id != input.CustomerId)
+            if (id == Guid.Empty || id != request.CustomerId)
                 throw new BadRequestException("Invalid request");
 
-            var employeeUpdated = await _mediator.Send(input, cancellationToken);
+            var loggedUsername = User.Identity!.Name!;
+            var input = new ChangeAddressCustomerInput(id, request.StreetName, request.StreetNumber, request.Neighborhood, 
+                request.ZipCode, request.City, request.State, loggedUsername, request.Complement);
 
-            return Ok(employeeUpdated);
+            var customerUpdated = await _mediator.Send(input, cancellationToken);
+
+            return Ok(customerUpdated);
         }
 
         [HttpGet("{id:guid}/departments")]

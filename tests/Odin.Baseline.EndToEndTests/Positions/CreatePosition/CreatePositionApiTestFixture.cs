@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Application.Positions.CreatePosition;
+﻿using Odin.Baseline.Api.Models.Positions;
+using Odin.Baseline.Application.Positions.CreatePosition;
 using Odin.Baseline.EndToEndTests.Positions.Common;
 
 namespace Odin.Baseline.EndToEndTests.Positions.CreatePosition

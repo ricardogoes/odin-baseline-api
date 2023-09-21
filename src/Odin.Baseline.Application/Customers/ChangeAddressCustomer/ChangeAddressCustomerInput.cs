@@ -14,7 +14,10 @@ namespace Odin.Baseline.Application.Customers.ChangeAddressCustomer
         public string City { get; private set; }
         public string State { get; private set; }
 
-        public ChangeAddressCustomerInput(Guid customerId, string streetName, int streetNumber, string neighborhood, string zipCode, string city, string state, string? complement = null)
+        public string LoggedUsername { get; private set; }
+
+        public ChangeAddressCustomerInput(Guid customerId, string streetName, int streetNumber, string neighborhood, 
+            string zipCode, string city, string state, string loggedUsername, string? complement = null)
         {
             CustomerId = customerId;
             StreetName = streetName;
@@ -24,6 +27,8 @@ namespace Odin.Baseline.Application.Customers.ChangeAddressCustomer
             ZipCode = zipCode;
             City = city;
             State = state;
+
+            LoggedUsername = loggedUsername;
         }
 
         public void ChangeCustomerId(Guid customerId)

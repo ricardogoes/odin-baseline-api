@@ -14,7 +14,7 @@ namespace Odin.Baseline.Application.Employees.CreateEmployee
 
             RuleFor(x => x.Document)
                 .Must(CpfCnpjValidation.IsCpfCnpj)
-                .WithMessage("Document should be a valid CPF or CNPJ");
+                .WithMessage("'Document' must be a valid CPF or CNPJ");
 
             RuleFor(x => x.Email).EmailAddress();
             RuleFor(x => x.LoggedUsername).NotEmpty();

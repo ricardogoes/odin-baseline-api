@@ -1,8 +1,7 @@
-﻿using Amazon;
-using Amazon.CognitoIdentityProvider;
-using Amazon.CognitoIdentityProvider.Model;
+﻿using Keycloak.AuthServices.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
-using Odin.Baseline.Domain.DTO.Common;
+using Microsoft.Net.Http.Headers;
+using Odin.Baseline.EndToEndTests.Models;
 using Odin.Baseline.Infra.Messaging.JsonPolicies;
 using System.Net.Http.Headers;
 using System.Text;
@@ -12,67 +11,59 @@ namespace Odin.Baseline.EndToEndTests.Api
 {
     public class ApiClient
     {
-        private readonly AppSettings _appSettings;
-        private readonly AmazonCognitoIdentityProviderClient _awsIdentityProvider;
-
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _defaultSerializeOptions;
+        private readonly KeycloakAuthenticationOptions _keycloakOptions;
 
-        private readonly string _username = Environment.GetEnvironmentVariable("OdinSettings__AdminUsername")!;
-        private readonly string _password = Environment.GetEnvironmentVariable("OdinSettings__AdminPassword")!;
+        private const string USERNAME = "admin";
+        private const string PASSWORD = "Odin@123!";
 
-        public ApiClient(HttpClient httpClient)
+        public ApiClient(HttpClient httpClient,
+            KeycloakAuthenticationOptions keycloakOptions)
         {
-            var cognitoSettings = new AWSCognitoSettings
-            (
-                Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__AccessKeyId")!,
-                Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__AccessSecretKey")!,
-                Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__AppClientId")!,
-                Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__CognitoAuthorityUrl")!,
-                Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__Region")!
-            );
-
-            _appSettings = new AppSettings(cognitoSettings);
-
             _httpClient = httpClient;
-
             _defaultSerializeOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = new JsonSnakeCasePolicy(),
                 PropertyNameCaseInsensitive = true
             };
+            _keycloakOptions = keycloakOptions;
 
-            _awsIdentityProvider = new AmazonCognitoIdentityProviderClient(
-                _appSettings.AWSCognitoSettings.AccessKeyId,
-                _appSettings.AWSCognitoSettings.AccessSecretKey,
-                RegionEndpoint.GetBySystemName(_appSettings.AWSCognitoSettings.Region)
-            );
-
-            AddAuthorizationHeader();
+            AddAuthorizationHeader(USERNAME, PASSWORD);
         }
 
-        private void AddAuthorizationHeader()
+        private void AddAuthorizationHeader(string user, string password)
         {
-            var accessToken = GetAccessTokenAsync().Result;
+            var accessToken = GetAccessTokenAsync(user, password).Result;
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         }
 
-        public async Task<string> GetAccessTokenAsync()
+        public async Task<string> GetAccessTokenAsync(string user, string password)
         {
-            var authRequest = new InitiateAuthRequest()
+            var client = new HttpClient
             {
-                AuthFlow = "USER_PASSWORD_AUTH",
-                ClientId = _appSettings.AWSCognitoSettings.AppClientId,
-                AuthParameters =
-                {
-                    { "USERNAME", _username },
-                    { "PASSWORD", _password }
-                }
+                BaseAddress = new Uri(_keycloakOptions.AuthServerUrl)
+            };
+            client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/x-www-form-urlencoded");
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                $"{_keycloakOptions.KeycloakUrlRealm}/protocol/openid-connect/token");
+
+            var collection = new List<KeyValuePair<string, string>>
+            {
+                new("grant_type", "password"),
+                new("client_id", _keycloakOptions.Resource),
+                new("client_secret", _keycloakOptions.Credentials.Secret),
+                new("username", user),
+                new("password", password)
             };
 
-            var authResponse = await _awsIdentityProvider.InitiateAuthAsync(authRequest);
-            var result = authResponse.AuthenticationResult;
-            return result.IdToken;
+            var content = new FormUrlEncodedContent(collection);
+            request.Content = content;
+            var response = await client.SendAsync(request);
+            var credentials = await GetOutputAsync<Credentials>(response);
+            return credentials!.AccessToken;
         }
 
         public async Task<(HttpResponseMessage, TOutput)> PostAsync<TOutput>(string route, object? request) where TOutput : class

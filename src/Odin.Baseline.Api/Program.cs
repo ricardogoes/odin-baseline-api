@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Keycloak.AuthServices.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Odin.Baseline.Api.Configurations;
 using Odin.Baseline.Api.Filters;
 using Odin.Baseline.Domain.DTO.Common;
@@ -22,11 +22,76 @@ builder.Services.AddCors(options =>
     });
 });
 
-var cognitoSettings = new AWSCognitoSettings(Environment.GetEnvironmentVariable("OdinSettings__AWSCognitoSettings__CognitoAuthorityUrl")!);
 var connectionString = new ConnectionStrings(Environment.GetEnvironmentVariable("OdinSettings__ConnectionStrings__OdinBaselineDB")!);
-var appSettings = new AppSettings(cognitoSettings, connectionString, builder.Configuration.GetSection("CancellationTokenTimeout").Get<int>());
+var appSettings = new AppSettings(connectionString, builder.Configuration.GetSection("CancellationTokenTimeout").Get<int>());
 
+var keycloakOptions = builder.Configuration
+    .GetSection(KeycloakAuthenticationOptions.Section)
+    .Get<KeycloakAuthenticationOptions>()!;
+
+// Add services to the container.
 builder.Services
+    .AddSingleton(appSettings)
+    .AddSingleton(keycloakOptions)
+    .AddAppConnections(appSettings)
+    .AddApplications()
+    .AddRepositories()
+    .AddSecurity(builder.Configuration)
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen(option =>
+    {
+        option.SwaggerDoc("v1", new OpenApiInfo { Title = "Odin Baseline", Version = "v1" });
+        option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Please enter a valid token",
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = "Bearer"
+        });
+        option.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                    new string[]{}
+                }
+            });
+    })
+    .AddApiVersioning(options =>
+    {
+        // Retorna os headers "api-supported-versions" e "api-deprecated-versions"
+        // indicando versoes suportadas pela API e o que esta como deprecated
+        options.ReportApiVersions = true;
+
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+    })
+    .AddVersionedApiExplorer(options =>
+    {
+        // Agrupar por numero de versao
+        // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+        // note: the specified format code will format the version as "'v'major[.minor][-status]"
+        options.GroupNameFormat = "'v'VVV";
+
+        // Necessario para o correto funcionamento das rotas
+        // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+        // can also be used to control the format of the API version in route templates
+        options.SubstituteApiVersionInUrl = true;
+    })
+    .AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+        options.Providers.Add<BrotliCompressionProvider>();
+        options.Providers.Add<GzipCompressionProvider>();
+    })
     .AddControllers(options =>
     {
         options.Filters.Add(typeof(ApiExceptionFilter));
@@ -36,57 +101,6 @@ builder.Services
         jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = new JsonSnakeCasePolicy();
         jsonOptions.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     });
-
-builder.Services.AddAppConnections(appSettings);
-
-builder.Services.AddApplications();
-
-builder.Services.AddRepositories();
-
-builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddResponseCompression(options =>
-{
-    options.EnableForHttps = true;
-    options.Providers.Add<BrotliCompressionProvider>();
-    options.Providers.Add<GzipCompressionProvider>();
-});
-
-builder.Services.AddCognitoIdentity();
-
-builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.Authority = appSettings.AWSCognitoSettings.CognitoAuthorityUrl;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            ValidateAudience = false
-        };
-});
-
-builder.Services.AddApiVersioning(options =>
-{
-    // Retorna os headers "api-supported-versions" e "api-deprecated-versions"
-    // indicando versoes suportadas pela API e o que esta como deprecated
-    options.ReportApiVersions = true;
-
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-});
-
-builder.Services.AddVersionedApiExplorer(options =>
-{
-    options.GroupNameFormat = "'v'VVV";
-    options.SubstituteApiVersionInUrl = true;
-});
 
 var app = builder.Build();
 
@@ -99,6 +113,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseResponseCompression();
 app.MapControllers();

@@ -16,14 +16,16 @@
                         var input1 = fixture.GetInputWithNameEmpty(Guid.NewGuid());
                         invalidInputsList.Add(new object[] {
                         input1,
-                        "Name should not be empty or null"
+                        "Name",
+                        "'Name' must not be empty."
                     });
                         break;
                     case 1:
                         var input2 = fixture.GetInputWithCustomerIdEmpty(Guid.NewGuid());
                         invalidInputsList.Add(new object[] {
                         input2,
-                        "CustomerId should not be empty or null"
+                        "CustomerId",
+                        "'Customer Id' must not be empty."
                     });
                         break;
                     default:

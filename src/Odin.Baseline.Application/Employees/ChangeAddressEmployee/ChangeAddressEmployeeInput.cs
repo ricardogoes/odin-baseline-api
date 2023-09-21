@@ -14,7 +14,10 @@ namespace Odin.Baseline.Application.Employees.ChangeAddressEmployee
         public string City { get; private set; }
         public string State { get; private set; }
 
-        public ChangeAddressEmployeeInput(Guid employeeId, string streetName, int streetNumber, string neighborhood, string zipCode, string city, string state, string? complement = null)
+        public string LoggedUsername { get; private set; }
+
+        public ChangeAddressEmployeeInput(Guid employeeId, string streetName, int streetNumber, string neighborhood, string zipCode, 
+            string city, string state, string loggedUsername, string? complement = null)
         {
             EmployeeId = employeeId;
             StreetName = streetName;
@@ -24,6 +27,8 @@ namespace Odin.Baseline.Application.Employees.ChangeAddressEmployee
             ZipCode = zipCode;
             City = city;
             State = state;
+
+            LoggedUsername = loggedUsername;
         }
 
         public void ChangeEmployeeId(Guid employeeId)

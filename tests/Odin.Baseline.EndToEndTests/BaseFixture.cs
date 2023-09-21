@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Bogus.Extensions.Brazil;
+using Keycloak.AuthServices.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,9 +22,18 @@ namespace Odin.Baseline.EndToEndTests
         protected BaseFixture()
         {
             Faker = new Faker("pt_BR");
-            WebAppFactory = new CustomWebApplicationFactory<Program>();            
+
+            WebAppFactory = new CustomWebApplicationFactory<Program>();
             HttpClient = WebAppFactory.CreateClient();
-            ApiClient = new ApiClient(HttpClient);
+
+            var configuration = WebAppFactory.Services.GetRequiredService<IConfiguration>();
+
+            var keycloakOptions = configuration
+                .GetSection(KeycloakAuthenticationOptions.Section)
+                .Get<KeycloakAuthenticationOptions>();
+
+            ApiClient = new ApiClient(HttpClient, keycloakOptions!);
+            ArgumentNullException.ThrowIfNull(configuration);
         }
 
         public OdinBaselineDbContext CreateDbContext(bool preserveData = false)

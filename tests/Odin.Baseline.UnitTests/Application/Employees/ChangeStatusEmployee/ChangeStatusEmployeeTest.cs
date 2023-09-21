@@ -1,5 +1,8 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
+using Odin.Baseline.Application.Employees.ChangeStatusEmployee;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
@@ -14,12 +17,14 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
 
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IEmployeeRepository> _repositoryMock;
+        private readonly Mock<IValidator<ChangeStatusEmployeeInput>> _validatorMock;
 
         public ChangeStatusEmployeeTest(ChangeStatusEmployeeTestFixture fixture)
         {
             _fixture = fixture;
             _unitOfWorkMock = _fixture.GetUnitOfWorkMock();
             _repositoryMock = _fixture.GetRepositoryMock();
+            _validatorMock = new();
         }
 
         [Fact(DisplayName = "Handle() should activate a employee with valid data")]
@@ -29,13 +34,16 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             var validEmployee = _fixture.GetValidEmployee();
             var input = _fixture.GetValidChangeStatusEmployeeInputToActivate();
 
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeStatusEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);
 
             _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(validEmployee));
 
-            var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
             var output = await useCase.Handle(input, CancellationToken.None);
 
             output.Should().NotBeNull();
@@ -53,13 +61,16 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             var validEmployee = _fixture.GetValidEmployee();
             var input = _fixture.GetValidChangeStatusEmployeeInputToDeactivate();
 
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeStatusEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);
 
             _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(validEmployee));
 
-            var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
             var output = await useCase.Handle(input, CancellationToken.None);
 
             output.Should().NotBeNull();
@@ -70,6 +81,21 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
+        [Fact(DisplayName = "Handle() should throw an error when validation failed")]
+        [Trait("Application", "Employees / ChangeStatusEmployee")]
+        public async void FluentValidationFailed()
+        {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeStatusEmployeeInput>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Property", "'Property' must not be empty") })));
+
+            var input = _fixture.GetValidChangeStatusEmployeeInputToActivate();
+            var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
+
+            var task = async () => await useCase.Handle(input, CancellationToken.None);
+
+            await task.Should().ThrowAsync<EntityValidationException>();
+        }
+
         [Fact(DisplayName = "Handle() should change status of a employee with valid data")]
         [Trait("Application", "Employees / ChangeStatusEmployee")]
         public async Task ChangeStatusEmployee()
@@ -77,13 +103,16 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
             var validEmployee = _fixture.GetValidEmployee();
             var input = _fixture.GetValidChangeStatusEmployeeInputToActivate();
 
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeStatusEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);
 
             _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(validEmployee));
 
-            var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
             var output = await useCase.Handle(input, CancellationToken.None);
 
             output.Should().NotBeNull();
@@ -99,10 +128,13 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeStatusEmployee
         {
             var input = _fixture.GetValidChangeStatusEmployeeInputToActivate();
 
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeStatusEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             _repositoryMock.Setup(x => x.FindByIdAsync(input.Id, It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new NotFoundException($"Employee '{input.Id}' not found"));
 
-            var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeStatusEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var task = async () => await useCase.Handle(input, CancellationToken.None);
 

@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Application.Departments.CreateDepartment;
+﻿using Odin.Baseline.Api.Models.Departments;
+using Odin.Baseline.Application.Departments.CreateDepartment;
 using Odin.Baseline.EndToEndTests.Departments.Common;
 
 namespace Odin.Baseline.EndToEndTests.Departments.CreateDepartment

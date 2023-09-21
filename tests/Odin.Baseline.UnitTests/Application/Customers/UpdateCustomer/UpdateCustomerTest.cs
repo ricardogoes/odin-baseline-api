@@ -1,5 +1,8 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
+using Odin.Baseline.Application.Customers.UpdateCustomer;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.DomainServices;
@@ -17,6 +20,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
         private readonly Mock<IDocumentService> _documentServiceMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<ICustomerRepository> _repositoryMock;
+        private readonly Mock<IValidator<UpdateCustomerInput>> _validatorMock;
 
         public UpdateCustomerTest(UpdateCustomerTestFixture fixture)
         {
@@ -25,6 +29,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
             _documentServiceMock = _fixture.GetDocumentServiceMock();
             _unitOfWorkMock = _fixture.GetUnitOfWorkMock();
             _repositoryMock = _fixture.GetRepositoryMock();
+            _validatorMock = new();
         }
 
         [Theory(DisplayName = "Handle() should update customer with valid data")]
@@ -36,6 +41,9 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
         )]
         public async Task UpdateCustomer(Customer exampleCustomer, App.UpdateCustomerInput input)
         {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<UpdateCustomerInput>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+
             _documentServiceMock.Setup(s => s.IsDocumentUnique(It.IsAny<EntityWithDocument>(), It.IsAny<CancellationToken>()))
                .Returns(() => Task.FromResult(true));
 
@@ -45,7 +53,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
             _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(exampleCustomer));
 
-            var useCase = new App.UpdateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.UpdateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
             var output = await useCase.Handle(input, CancellationToken.None);
 
             output.Should().NotBeNull();
@@ -57,16 +65,35 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
+        [Fact(DisplayName = "Handle() should throw an error when validation failed")]
+        [Trait("Application", "Customers / UpdateCustomer")]
+        public async void FluentValidationFailed()
+        {
+            var input = _fixture.GetValidUpdateCustomerInput();
+
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<UpdateCustomerInput>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Property", "'Property' must not be empty") })));
+
+            var useCase = new App.UpdateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
+
+            var task = async () => await useCase.Handle(input, CancellationToken.None);
+
+            await task.Should().ThrowAsync<EntityValidationException>();
+        }
+
         [Fact(DisplayName = "Handle() should throw an error when customer not found")]
         [Trait("Application", "Customers / UpdateCustomer")]
         public async Task ThrowWhenCustomerNotFound()
         {
             var input = _fixture.GetValidUpdateCustomerInput();
 
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<UpdateCustomerInput>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+
             _repositoryMock.Setup(x => x.FindByIdAsync(input.Id, It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new NotFoundException($"Customer '{input.Id}' not found"));
 
-            var useCase = new App.UpdateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.UpdateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var task = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -87,10 +114,13 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
             var validCustomer = _fixture.GetValidCustomer();
             input.ChangeId(validCustomer.Id);
 
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<UpdateCustomerInput>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+
             _repositoryMock.Setup(x => x.FindByIdAsync(validCustomer.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validCustomer);
 
-            var useCase = new App.UpdateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.UpdateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var task = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -108,13 +138,16 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
             var validCustomer = _fixture.GetValidCustomer();
             input.ChangeId(validCustomer.Id);
 
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<UpdateCustomerInput>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+
             _repositoryMock.Setup(x => x.FindByIdAsync(validCustomer.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validCustomer);
 
             _documentServiceMock.Setup(s => s.IsDocumentUnique(It.IsAny<EntityWithDocument>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(false));
 
-            var useCase = new App.UpdateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.UpdateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             Func<Task> task = async () => await useCase.Handle(input, CancellationToken.None);
 

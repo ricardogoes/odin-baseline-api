@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Application.Employees.UpdateEmployee;
+﻿using Odin.Baseline.Api.Models.Employees;
+using Odin.Baseline.Application.Employees.UpdateEmployee;
 using Odin.Baseline.EndToEndTests.Employees.Common;
 
 namespace Odin.Baseline.EndToEndTests.Employees.UpdateEmployee

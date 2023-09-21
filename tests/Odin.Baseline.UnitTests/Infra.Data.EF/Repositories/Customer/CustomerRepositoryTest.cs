@@ -98,7 +98,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Customer
             await dbContext.AddRangeAsync(exampleCustomersList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            exampleCustomer.Update(newCustomerValues.Name, newCustomerValues.Document);
+            exampleCustomer.Update(newCustomerValues.Name, newCustomerValues.Document, "unit.testing");
 
             dbContext = _fixture.CreateDbContext(true);
             var customerRepository = new CustomerRepository(dbContext);

@@ -57,7 +57,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.UpdateCustomer
             validateResult.Should().NotBeNull();
             validateResult.IsValid.Should().BeFalse();
             validateResult.Errors.Should().HaveCount(1);
-            validateResult.Errors[0].ErrorMessage.Should().Be("Document should be a valid CPF or CNPJ");
+            validateResult.Errors[0].ErrorMessage.Should().Be("'Document' must be a valid CPF or CNPJ");
         }
 
         [Fact(DisplayName = "Validate() should not validate when LoggedUsername is empty")]

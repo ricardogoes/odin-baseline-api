@@ -28,13 +28,13 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         public DomainEntity.Employee GetValidEmployee(Guid? customerId = null, Guid? departmentId = null, List<DomainEntity.EmployeePositionHistory>? historicPositions = null)
         {
             var employee = new DomainEntity.Employee(customerId ?? Guid.NewGuid(), GetValidEmployeeFistName(), GetValidEmployeeLastName(), GetValidEmployeeDocument(), GetValidEmployeeEmail(), departmentId);
-            employee.Create();
+            employee.Create("unit.testing");
 
             if (historicPositions is not null)
             {
                 foreach (var historic in historicPositions)
                 {
-                    employee.AddHistoricPosition(historic);
+                    employee.AddHistoricPosition(historic, "unit.testing");
                 }
             }
 

@@ -12,10 +12,6 @@ namespace Odin.Baseline.Domain.Entities
         public decimal? BaseSalary { get; private set; }
         public bool IsActive { get; private set; }
 
-
-        //TODO: Implementar loggedUsername
-        private const string LOGGED_USERNAME = "ricardo.goes";
-
         public Position(Guid id, Guid customerId, string name, decimal? baseSalary, bool isActive = true)
            : base(id)
         {
@@ -37,23 +33,23 @@ namespace Odin.Baseline.Domain.Entities
             Validate();
         }
 
-        public void Create(string loggedUsername = LOGGED_USERNAME)
+        public void Create(string loggedUsername)
         {
             CreatedAt = DateTime.UtcNow;
-            CreatedBy = loggedUsername; //TODO: Implementar loggedUser
+            CreatedBy = loggedUsername;
             LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedBy = loggedUsername;
 
             Validate();
         }
 
-        public void Update(string newName, Guid? newCustomerId = null, decimal? newBaseSalary = null, string loggedUsername = LOGGED_USERNAME)
+        public void Update(string newName, Guid? newCustomerId, decimal? newBaseSalary, string loggedUsername)
         {
             CustomerId = newCustomerId ?? CustomerId;
             Name = newName;
             BaseSalary = newBaseSalary ?? BaseSalary;
             LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedBy = loggedUsername; 
 
             Validate();
         }
@@ -68,20 +64,20 @@ namespace Odin.Baseline.Domain.Entities
             Validate();
         }
 
-        public void Activate(string loggedUsername = LOGGED_USERNAME)
+        public void Activate(string loggedUsername)
         {
             IsActive = true;
             LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedBy = loggedUsername;
 
             Validate();
         }
 
-        public void Deactivate(string loggedUsername = LOGGED_USERNAME)
+        public void Deactivate(string loggedUsername)
         {
             IsActive = false;
             LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedBy = loggedUsername;
 
             Validate();
         }

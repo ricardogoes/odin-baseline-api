@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Odin.Baseline.Api.Models.Departments;
 using Odin.Baseline.Application.Departments.Common;
 using Odin.Baseline.Application.Departments.CreateDepartment;
 using System.Net;
+using System.Text.Json;
 
 namespace Odin.Baseline.EndToEndTests.Departments.CreateDepartment
 {
@@ -45,17 +47,21 @@ namespace Odin.Baseline.EndToEndTests.Departments.CreateDepartment
             nameof(CreateDepartmentApiTestDataGenerator.GetInvalidInputs),
             MemberType = typeof(CreateDepartmentApiTestDataGenerator)
         )]
-        public async Task ErrorWhenCantInstantiateDepartment(CreateDepartmentInput input, string expectedDetail)
+        public async Task ErrorWhenCantInstantiateDepartment(CreateDepartmentInput input, string property, string expectedDetail)
         {
             var (response, output) = await _fixture.ApiClient.PostAsync<ProblemDetails>("/v1/departments", input);
 
             response.Should().NotBeNull();
             response.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+
             output.Should().NotBeNull();
-            output.Title.Should().Be("One or more validation errors ocurred");
-            output.Type.Should().Be("UnprocessableEntity");
+            output.Title.Should().Be("Unprocessable entity");
             output.Status.Should().Be(StatusCodes.Status422UnprocessableEntity);
-            output.Detail.Should().Be(expectedDetail);
+
+            output.Extensions["errors"].Should().NotBeNull();
+            var errors = JsonSerializer.Deserialize<Dictionary<string, string[]>>(JsonSerializer.Serialize(output.Extensions["errors"]))!;
+            errors.ContainsKey(property).Should().BeTrue();
+            errors[property].First().Should().Be(expectedDetail);
         }
     }
 }

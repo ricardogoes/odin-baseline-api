@@ -62,8 +62,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             var historicPosition1 = new EmployeePositionHistory(Guid.NewGuid(), 1_000, DateTime.Now.AddMonths(-2), DateTime.Now, isActual: false);
             var historicPosition2 = new EmployeePositionHistory(Guid.NewGuid(), 2_000, DateTime.Now.AddMonths(-2), null, isActual: true);
 
-            exampleEmployee.AddHistoricPosition(historicPosition1);
-            exampleEmployee.AddHistoricPosition(historicPosition2);
+            exampleEmployee.AddHistoricPosition(historicPosition1, "unit.testing");
+            exampleEmployee.AddHistoricPosition(historicPosition2, "unit.testing");
 
             var repository = new EmployeeRepository(dbContext);
             var unitOfWork = new UnitOfWork(dbContext);
@@ -164,7 +164,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            exampleEmployee.Update(newEmployeeValues.FirstName, newEmployeeValues.LastName, newEmployeeValues.Document, newEmployeeValues.Email);
+            exampleEmployee.Update(newEmployeeValues.FirstName, newEmployeeValues.LastName, newEmployeeValues.Document, newEmployeeValues.Email, "unit.testing");
 
             dbContext = _fixture.CreateDbContext(true);
             var employeeRepository = new EmployeeRepository(dbContext);
@@ -196,7 +196,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             var exampleEmployee = _fixture.GetValidEmployee(exampleCustomer.Id);
 
             var historicPosition = new EmployeePositionHistory(Guid.NewGuid(), 2_000, DateTime.Now.AddMonths(-2), DateTime.Now, false);
-            exampleEmployee.AddHistoricPosition(historicPosition);
+            exampleEmployee.AddHistoricPosition(historicPosition, "unit.testing");
 
             var exampleEmployeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { Guid.NewGuid() }, length: 15);
             exampleEmployeesList.Add(exampleEmployee.ToEmployeeModel());
@@ -205,10 +205,10 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var newEmployeeValues = _fixture.GetValidEmployee();
-            exampleEmployee.Update(newEmployeeValues.FirstName, newEmployeeValues.LastName, newEmployeeValues.Document, newEmployeeValues.Email);
+            exampleEmployee.Update(newEmployeeValues.FirstName, newEmployeeValues.LastName, newEmployeeValues.Document, newEmployeeValues.Email, "unit.testing");
 
             var newHistoricPosition = new EmployeePositionHistory(Guid.NewGuid(), 2_500, DateTime.Now, null, true);
-            exampleEmployee.AddHistoricPosition(newHistoricPosition);
+            exampleEmployee.AddHistoricPosition(newHistoricPosition, "unit.testing");
 
             dbContext = _fixture.CreateDbContext(true);
             var employeeRepository = new EmployeeRepository(dbContext);

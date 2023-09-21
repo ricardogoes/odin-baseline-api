@@ -1,6 +1,9 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
 using Odin.Baseline.Application.Customers.Common;
+using Odin.Baseline.Application.Customers.CreateCustomer;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.DomainServices;
@@ -18,6 +21,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.CreateCustomer
         private readonly Mock<IDocumentService> _documentServiceMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<ICustomerRepository> _repositoryMock;
+        private readonly Mock<IValidator<CreateCustomerInput>> _validatorMock;
 
         public CreateCustomerTest(CreateCustomerTestFixture fixture)
         {
@@ -26,12 +30,16 @@ namespace Odin.Baseline.UnitTests.Application.Customers.CreateCustomer
             _documentServiceMock = _fixture.GetDocumentServiceMock();
             _unitOfWorkMock = _fixture.GetUnitOfWorkMock();
             _repositoryMock = _fixture.GetRepositoryMock();
+            _validatorMock = new();
         }
 
         [Fact(DisplayName = "Handle() should create a customer with valid data")]
         [Trait("Application", "Customers / CreateCustomer")]
         public async void CreateCustomer()
         {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreateCustomerInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetValidCreateCustomerInput();
             var customerToInsert = new Customer(input.Name, input.Document, isActive: true);
             var expectedCustomerInserted = new CustomerOutput
@@ -53,7 +61,7 @@ namespace Odin.Baseline.UnitTests.Application.Customers.CreateCustomer
             _repositoryMock.Setup(s => s.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(customerToInsert));
 
-            var useCase = new App.CreateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.CreateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
             var output = await useCase.Handle(input, CancellationToken.None);
 
             _unitOfWorkMock.Verify(
@@ -69,6 +77,21 @@ namespace Odin.Baseline.UnitTests.Application.Customers.CreateCustomer
             output.CreatedAt.Should().NotBeSameDateAs(default);
         }
 
+        [Fact(DisplayName = "Handle() should throw an error when validation failed")]
+        [Trait("Application", "Customers / CreateCustomer")]
+        public async void FluentValidationFailed()
+        {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreateCustomerInput>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Property", "'Property' must not be empty") })));
+
+            var input = _fixture.GetValidCreateCustomerInput();
+            var useCase = new App.CreateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
+
+            var task = async () => await useCase.Handle(input, CancellationToken.None);
+
+            await task.Should().ThrowAsync<EntityValidationException>();
+        }
+
         [Theory(DisplayName = "Handle() should throw an error when data is invalid")]
         [Trait("Application", "Customers / CreateCustomer")]
         [MemberData(
@@ -81,7 +104,10 @@ namespace Odin.Baseline.UnitTests.Application.Customers.CreateCustomer
             string exceptionMessage
         )
         {
-            var useCase = new App.CreateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreateCustomerInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
+            var useCase = new App.CreateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             Func<Task> task = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -97,10 +123,13 @@ namespace Odin.Baseline.UnitTests.Application.Customers.CreateCustomer
         {
             var input = _fixture.GetValidCreateCustomerInput();
 
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreateCustomerInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             _documentServiceMock.Setup(s => s.IsDocumentUnique(It.IsAny<EntityWithDocument>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(false));
 
-            var useCase = new App.CreateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.CreateCustomer(_documentServiceMock.Object, _unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             Func<Task> task = async () => await useCase.Handle(input, CancellationToken.None);
 

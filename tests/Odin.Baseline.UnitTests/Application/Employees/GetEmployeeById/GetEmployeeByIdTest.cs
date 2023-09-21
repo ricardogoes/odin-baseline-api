@@ -1,7 +1,10 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
+using Odin.Baseline.Application.Employees.GetEmployeeById;
+using Odin.Baseline.Application.Positions.GetPositionById;
 using Odin.Baseline.Domain.CustomExceptions;
-using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
 using App = Odin.Baseline.Application.Employees.GetEmployeeById;
 
@@ -13,11 +16,13 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployeeById
         private readonly GetEmployeeByIdTestFixture _fixture;
 
         private readonly Mock<IEmployeeRepository> _repositoryMock;
+        private readonly Mock<IValidator<GetEmployeeByIdInput>> _validatorMock;
 
         public GetEmployeeByIdTest(GetEmployeeByIdTestFixture fixture)
         {
             _fixture = fixture;
             _repositoryMock = _fixture.GetRepositoryMock();
+            _validatorMock = new();
         }
 
         [Fact(DisplayName = "Handle() should get a employee when searched by valid Id")]
@@ -25,6 +30,9 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployeeById
         public async Task GetEmployeeById()
         {
             var validEmployee = _fixture.GetValidEmployee();
+
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<GetEmployeeByIdInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
 
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);
@@ -34,7 +42,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployeeById
                 Id = validEmployee.Id
             };
 
-            var useCase = new App.GetEmployeeById(_repositoryMock.Object);
+            var useCase = new App.GetEmployeeById(_repositoryMock.Object, _validatorMock.Object);
 
             var output = await useCase.Handle(input, CancellationToken.None);
 
@@ -50,11 +58,28 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployeeById
             output.CreatedAt.Should().Be(validEmployee.CreatedAt);
         }
 
+        [Fact(DisplayName = "Handle() should throw an error when validation failed")]
+        [Trait("Application", "Employees / GetEmployeeById")]
+        public async void FluentValidationFailed()
+        {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<GetEmployeeByIdInput>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Property", "'Property' must not be empty") })));
+
+            var useCase = new App.GetEmployeeById(_repositoryMock.Object, _validatorMock.Object);
+
+            var task = async () => await useCase.Handle(new App.GetEmployeeByIdInput { Id = Guid.NewGuid() }, CancellationToken.None);
+
+            await task.Should().ThrowAsync<EntityValidationException>();
+        }
+
         [Fact(DisplayName = "Handle() should throw an error when employee does not exist")]
         [Trait("Application", "Employees / GetEmployeeById")]
         public async Task NotFoundExceptionWhenEmployeeDoesntExist()
         {
             var exampleGuid = Guid.NewGuid();
+
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<GetEmployeeByIdInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
 
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new NotFoundException($"Employee '{exampleGuid}' not found"));
@@ -64,7 +89,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployeeById
                 Id = exampleGuid
             };
 
-            var useCase = new App.GetEmployeeById(_repositoryMock.Object);
+            var useCase = new App.GetEmployeeById(_repositoryMock.Object, _validatorMock.Object);
 
             var task = async () => await useCase.Handle(input, CancellationToken.None);
 

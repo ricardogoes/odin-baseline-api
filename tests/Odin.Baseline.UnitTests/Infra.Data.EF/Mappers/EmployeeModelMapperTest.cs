@@ -47,7 +47,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         {
             var employee = _fixture.GetValidEmployee();
             var address = _fixture.GetValidAddress();
-            employee.ChangeAddress(address);
+            employee.ChangeAddress(address, "unit.testing");
 
             var model = employee.ToEmployeeModel();
 
@@ -79,10 +79,10 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             var address = _fixture.GetValidAddress();
 
             var employee1 = _fixture.GetValidEmployee();            
-            employee1.ChangeAddress(address);
+            employee1.ChangeAddress(address, "unit.testing");
 
             var employee2 = _fixture.GetValidEmployee();
-            employee2.ChangeAddress(address);
+            employee2.ChangeAddress(address, "unit.testing");
 
             var employees = new List<Employee> { employee1, employee2 };
 

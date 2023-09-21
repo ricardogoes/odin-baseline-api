@@ -1,10 +1,12 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Odin.Baseline.Api.Models.Employees;
 using Odin.Baseline.Application.Employees.AddPosition;
 using Odin.Baseline.Application.Employees.Common;
 using Odin.Baseline.EndToEndTests.Employees.AddPosition;
 using System.Net;
+using System.Text.Json;
 
 namespace Odin.Baseline.EndToEndTests.Employees.AddPosition
 {
@@ -110,7 +112,7 @@ namespace Odin.Baseline.EndToEndTests.Employees.AddPosition
             nameof(AddPositionApiTestDataGenerator.GetInvalidInputs),
             MemberType = typeof(AddPositionApiTestDataGenerator)
         )]
-        public async Task ErrorWhenCantInstantiatePosition(AddPositionInput input, string expectedDetail)
+        public async Task ErrorWhenCantInstantiatePosition(AddPositionInput input, string property, string expectedDetail)
         {
             var customer = _fixture.GetValidCustomerModel();
             var department = _fixture.GetValidDepartmentModel();
@@ -130,11 +132,15 @@ namespace Odin.Baseline.EndToEndTests.Employees.AddPosition
 
             response.Should().NotBeNull();
             response.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+
             output.Should().NotBeNull();
-            output.Title.Should().Be("One or more validation errors ocurred");
-            output.Type.Should().Be("UnprocessableEntity");
+            output.Title.Should().Be("Unprocessable entity");
             output.Status.Should().Be(StatusCodes.Status422UnprocessableEntity);
-            output.Detail.Should().Be(expectedDetail);
+
+            output.Extensions["errors"].Should().NotBeNull();
+            var errors = JsonSerializer.Deserialize<Dictionary<string, string[]>>(JsonSerializer.Serialize(output.Extensions["errors"]))!;
+            errors.ContainsKey(property).Should().BeTrue();
+            errors[property].First().Should().Be(expectedDetail);
         }
     }
 }

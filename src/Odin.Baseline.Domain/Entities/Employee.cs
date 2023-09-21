@@ -29,9 +29,6 @@ namespace Odin.Baseline.Domain.Entities
 
         private readonly List<EmployeePositionHistory> _historicPositions;
 
-        //TODO: Implementar loggedUsername
-        private const string LOGGED_USERNAME = "ricardo.goes";
-
         public Employee(Guid id, Guid customerId, string firstName, string lastName, string document, string email, Guid? departmentId = null, bool isActive = true,
             List<EmployeePositionHistory>? positionsHistory = null)
            : base(document, id)
@@ -63,17 +60,17 @@ namespace Odin.Baseline.Domain.Entities
             Validate();
         }
 
-        public void Create(string loggedUsername = LOGGED_USERNAME)
+        public void Create(string loggedUsername)
         {
             CreatedAt = DateTime.UtcNow;
-            CreatedBy = loggedUsername; //TODO: Implementar loggedUser
+            CreatedBy = loggedUsername;
             LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedBy = loggedUsername;
 
             Validate();
         }
 
-        public void Update(string newFirstName, string newLastName, string newDocument, string newEmail, Guid? newCustomerId = null, Guid? newDepartmentId = null, string loggedUsername = LOGGED_USERNAME)
+        public void Update(string newFirstName, string newLastName, string newDocument, string newEmail, string loggedUsername, Guid? newCustomerId = null, Guid? newDepartmentId = null)
         {
             CustomerId = newCustomerId ?? CustomerId;
             DepartmentId = newDepartmentId ?? DepartmentId;
@@ -82,7 +79,7 @@ namespace Odin.Baseline.Domain.Entities
             Document = newDocument;
             Email = newEmail;
             LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedBy = loggedUsername;
 
             Validate();
         }
@@ -97,31 +94,35 @@ namespace Odin.Baseline.Domain.Entities
             Validate();
         }
 
-        public void ChangeAddress(Address newAddress)
+        public void ChangeAddress(Address newAddress, string loggedUsername)
         {
             Address = newAddress;
+
+            LastUpdatedAt = DateTime.UtcNow;
+            LastUpdatedBy = loggedUsername;
+
             Validate();
         }
 
-        public void Activate(string loggedUsername = LOGGED_USERNAME)
+        public void Activate(string loggedUsername)
         {
             IsActive = true;
             LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedBy = loggedUsername;
 
             Validate();
         }
 
-        public void Deactivate(string loggedUsername = LOGGED_USERNAME)
+        public void Deactivate(string loggedUsername)
         {
             IsActive = false;
             LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedBy = loggedUsername;
 
             Validate();
         }
 
-        public void AddHistoricPosition(EmployeePositionHistory positionHistory, string loggedUsername = LOGGED_USERNAME)
+        public void AddHistoricPosition(EmployeePositionHistory positionHistory, string loggedUsername)
         {
             var actualPosition = HistoricPositions.FirstOrDefault(x => x.IsActual);
             actualPosition?.UpdateFinishDate(DateTime.UtcNow, loggedUsername);

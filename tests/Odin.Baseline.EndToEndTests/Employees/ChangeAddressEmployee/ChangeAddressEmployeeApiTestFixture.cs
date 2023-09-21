@@ -23,7 +23,8 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeAddressEmployee
                 neighborhood: Faker.Address.CardinalDirection(),
                 zipCode: Faker.Address.ZipCode(),
                 city: Faker.Address.City(),
-                state: Faker.Address.StateAbbr()
+                state: Faker.Address.StateAbbr(),
+                loggedUsername: "unit.testing"
             );
 
         public ChangeAddressEmployeeInput GetAddressInputWithoutStreetName(Guid? id = null)
@@ -36,7 +37,8 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeAddressEmployee
                 neighborhood: Faker.Address.CardinalDirection(),
                 zipCode: Faker.Address.ZipCode(),
                 city: Faker.Address.City(),
-                state: Faker.Address.StateAbbr()
+                state: Faker.Address.StateAbbr(),
+                loggedUsername: "unit.testing"
             );
 
         public ChangeAddressEmployeeInput GetAddressInputWithoutStreetNumber(Guid? id = null)
@@ -49,7 +51,8 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeAddressEmployee
                 neighborhood: Faker.Address.CardinalDirection(),
                 zipCode: Faker.Address.ZipCode(),
                 city: Faker.Address.City(),
-                state: Faker.Address.StateAbbr()
+                state: Faker.Address.StateAbbr(),
+                loggedUsername: "unit.testing"
             );
 
         public ChangeAddressEmployeeInput GetAddressInputWithoutNeighborhood(Guid? id = null)
@@ -62,7 +65,8 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeAddressEmployee
                 neighborhood: "",
                 zipCode: Faker.Address.ZipCode(),
                 city: Faker.Address.City(),
-                state: Faker.Address.StateAbbr()
+                state: Faker.Address.StateAbbr(),
+                loggedUsername: "unit.testing"
             );
 
         public ChangeAddressEmployeeInput GetAddressInputWithoutZipCode(Guid? id = null)
@@ -75,7 +79,8 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeAddressEmployee
                 neighborhood: Faker.Address.CardinalDirection(),
                 zipCode: "",
                 city: Faker.Address.City(),
-                state: Faker.Address.StateAbbr()
+                state: Faker.Address.StateAbbr(),
+                loggedUsername: "unit.testing"
             );
 
         public ChangeAddressEmployeeInput GetAddressInputWithoutCity(Guid? id = null)
@@ -88,7 +93,8 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeAddressEmployee
                 neighborhood: Faker.Address.CardinalDirection(),
                 zipCode: Faker.Address.ZipCode(),
                 city: "",
-                state: Faker.Address.StateAbbr()
+                state: Faker.Address.StateAbbr(),
+                loggedUsername: "unit.testing"
             );
 
         public ChangeAddressEmployeeInput GetAddressInputWithoutState(Guid? id = null)
@@ -101,7 +107,8 @@ namespace Odin.Baseline.EndToEndTests.Employees.ChangeAddressEmployee
                 neighborhood: Faker.Address.CardinalDirection(),
                 zipCode: Faker.Address.ZipCode(),
                 city: Faker.Address.City(),
-                state: ""
+                state: "",
+                loggedUsername: "unit.testing"
             );
     }
 }

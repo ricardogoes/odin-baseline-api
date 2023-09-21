@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Odin.Baseline.Api.Models.Employees;
 using Odin.Baseline.Application.Employees.AddPosition;
 using Odin.Baseline.Application.Employees.ChangeAddressEmployee;
 using Odin.Baseline.Application.Employees.ChangeStatusEmployee;
@@ -45,10 +46,10 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(EmployeeOutput), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Create([FromBody] CreateEmployeeInput input, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromBody] CreateEmployeeApiRequest request, CancellationToken cancellationToken)
         {
-            //TODO: Alterar quando auth estiver implementado
-            input.ChangeLoggedUsername("ricardo.goes");
+            var loggedUsername = User.Identity!.Name!;
+            var input = new CreateEmployeeInput(request.CustomerId, request.FirstName, request.LastName, request.Document, request.Email, loggedUsername, request.DepartmentId);
 
             var employeeCreated = await _mediator.Send(input, cancellationToken);
 
@@ -63,13 +64,13 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateEmployeeInput input, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateEmployeeApiRequest request, CancellationToken cancellationToken)
         {
-            if (id == Guid.Empty || id != input.Id)
+            if (id == Guid.Empty || id != request.Id)
                 throw new BadRequestException("Invalid request");
 
-            //TODO: Alterar quando auth estiver implementado
-            input.ChangeLoggedUsername("ricardo.goes");
+            var loggedUsername = User.Identity!.Name!;
+            var input = new UpdateEmployeeInput(id, request.CustomerId, request.FirstName, request.LastName, request.Document, request.Email, loggedUsername, request.DepartmentId);
 
             var employeeUpdated = await _mediator.Send(input, cancellationToken);
 
@@ -88,11 +89,12 @@ namespace Odin.Baseline.Api.Controllers.v1
             if (action.ToUpper() != "ACTIVATE" && action.ToUpper() != "DEACTIVATE")
                 throw new BadRequestException("Invalid action. Only ACTIVATE or DEACTIVATE values are allowed");
 
+            var loggedUsername = User.Identity!.Name!;
             var employeeUpdated = await _mediator.Send(new ChangeStatusEmployeeInput
             (
                 id,
                 (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
-                "ricardo.goes" // TODO: Alterar quando auth estiver implementado
+                loggedUsername
             ), cancellationToken);
 
             return Ok(employeeUpdated);
@@ -102,10 +104,14 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(EmployeeOutput), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ChangeAddress([FromRoute] Guid id, [FromBody] ChangeAddressEmployeeInput input, CancellationToken cancellationToken)
+        public async Task<IActionResult> ChangeAddress([FromRoute] Guid id, [FromBody] ChangeAddressEmployeeApiRequest request, CancellationToken cancellationToken)
         {
-            if (id == Guid.Empty || id != input.EmployeeId)
+            if (id == Guid.Empty || id != request.EmployeeId)
                 throw new BadRequestException("Invalid request");
+
+            var loggedUsername = User.Identity!.Name!;
+            var input = new ChangeAddressEmployeeInput(id, request.StreetName, request.StreetNumber, request.Neighborhood, request.ZipCode, request.City,
+                request.State, loggedUsername, request.Complement);
 
             var employeeUpdated = await _mediator.Send(input, cancellationToken);
 
@@ -116,10 +122,13 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(EmployeeOutput), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AddPosition([FromRoute] Guid id, [FromBody] AddPositionInput input, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddPosition([FromRoute] Guid id, [FromBody] AddPositionApiRequest request, CancellationToken cancellationToken)
         {
-            if (id == Guid.Empty || id != input.EmployeeId)
+            if (id == Guid.Empty || id != request.EmployeeId)
                 throw new BadRequestException("Invalid request");
+
+            var loggedUsername = User.Identity!.Name!;
+            var input = new AddPositionInput(id, request.PositionId, request.Salary, request.StartDate, request.FinishDate, loggedUsername);
 
             var employeeUpdated = await _mediator.Send(input, cancellationToken);
 
