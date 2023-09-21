@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Application.Departments.UpdateDepartment;
+﻿using Odin.Baseline.Api.Models.Departments;
+using Odin.Baseline.Application.Departments.UpdateDepartment;
 using Odin.Baseline.EndToEndTests.Departments.Common;
 
 namespace Odin.Baseline.EndToEndTests.Departments.UpdateDepartment

@@ -110,7 +110,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Department
             await dbContext.AddRangeAsync(exampleDepartmentsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            exampleDepartment.Update(newDepartmentValues.Name);
+            exampleDepartment.Update(newDepartmentValues.Name, exampleDepartment.CustomerId, "unit.testing");
 
             dbContext = _fixture.CreateDbContext(true);
             var departmentRepository = new DepartmentRepository(dbContext);

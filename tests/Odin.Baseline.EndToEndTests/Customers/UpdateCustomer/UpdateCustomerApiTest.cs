@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Odin.Baseline.Api.Models.Customers;
 using Odin.Baseline.Application.Customers.Common;
 using Odin.Baseline.Application.Customers.UpdateCustomer;
 using System.Net;
+using System.Text.Json;
 
 namespace Odin.Baseline.EndToEndTests.Customers.UpdateCustomer
 {
@@ -76,7 +78,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.UpdateCustomer
             nameof(UpdateCustomerApiTestDataGenerator.GetInvalidInputs),
             MemberType = typeof(UpdateCustomerApiTestDataGenerator)
         )]
-        public async Task ErrorWhenCantInstantiateCustomer(UpdateCustomerInput input, string expectedDetail)
+        public async Task ErrorWhenCantInstantiateCustomer(UpdateCustomerInput input, string property, string expectedDetail)
         {
             var customersList = _fixture.GetValidCustomersModelList(20);
 
@@ -91,11 +93,15 @@ namespace Odin.Baseline.EndToEndTests.Customers.UpdateCustomer
 
             response.Should().NotBeNull();
             response.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+
             output.Should().NotBeNull();
-            output.Title.Should().Be("One or more validation errors ocurred");
-            output.Type.Should().Be("UnprocessableEntity");
+            output.Title.Should().Be("Unprocessable entity");
             output.Status.Should().Be(StatusCodes.Status422UnprocessableEntity);
-            output.Detail.Should().Be(expectedDetail);
+
+            output.Extensions["errors"].Should().NotBeNull();
+            var errors = JsonSerializer.Deserialize<Dictionary<string, string[]>>(JsonSerializer.Serialize(output.Extensions["errors"]))!;
+            errors.ContainsKey(property).Should().BeTrue();
+            errors[property].First().Should().Be(expectedDetail);
         }
 
         [Fact(DisplayName = "Should throw an error when customer not found")]
@@ -141,7 +147,7 @@ namespace Odin.Baseline.EndToEndTests.Customers.UpdateCustomer
             response.Should().NotBeNull();
             response.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
             output.Should().NotBeNull();
-            output.Title.Should().Be("One or more validation errors ocurred");
+            output.Title.Should().Be("Unprocessable entity");
             output.Type.Should().Be("UnprocessableEntity");
             output.Status.Should().Be(StatusCodes.Status422UnprocessableEntity);
             output.Detail.Should().Be("Document must be unique");

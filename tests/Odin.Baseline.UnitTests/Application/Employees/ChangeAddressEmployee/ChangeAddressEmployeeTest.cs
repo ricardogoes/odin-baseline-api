@@ -1,6 +1,9 @@
 ﻿using FluentAssertions;
 using FluentValidation;
+using FluentValidation.Results;
 using Moq;
+using Odin.Baseline.Application.Employees.ChangeAddressEmployee;
+using Odin.Baseline.Application.Positions.ChangeStatusPosition;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
@@ -15,22 +18,26 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
 
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IEmployeeRepository> _repositoryMock;
+        private readonly Mock<IValidator<ChangeAddressEmployeeInput>> _validatorMock;
 
         public ChangeAddressEmployeeTest(ChangeAddressEmployeeTestFixture fixture)
         {
             _fixture = fixture;
             _unitOfWorkMock = _fixture.GetUnitOfWorkMock();
             _repositoryMock = _fixture.GetRepositoryMock();
+            _validatorMock = new();
         }
 
         [Fact(DisplayName = "Handle() should throw an error EmployeeId is empty")]
         [Trait("Application", "Employees / ChangeAddressEmployee")]
         public void ThrowErrorWhenEmployeeIdEmpty()
         {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeAddressEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetInputAddressWithEmployeeIdEmpty();
                         
-            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var action = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -42,10 +49,12 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
         [Trait("Application", "Employees / ChangeAddressEmployee")]
         public void ThrowErrorWhenStreetNameEmpty()
         {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeAddressEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetInputAddressWithStreetNameEmpty();
 
-            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var action = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -56,9 +65,11 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
         [Trait("Application", "Employees / ChangeAddressEmployee")]
         public void ThrowErrorWhenStreetNumberEmpty()
         {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeAddressEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetInputAddressWithStreetNumberEmpty();
-            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var action = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -69,10 +80,12 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
         [Trait("Application", "Employees / ChangeAddressEmployee")]
         public void ThrowErrorWhenNeighborhoodEmpty()
         {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeAddressEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetInputAddressWithNeighborhoodEmpty();
 
-            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var action = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -83,9 +96,11 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
         [Trait("Application", "Employees / ChangeAddressEmployee")]
         public void DontValidateWhenEmptyZipCode()
         {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeAddressEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetInputAddressWithZipCodeEmpty();
-            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var action = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -96,9 +111,11 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
         [Trait("Application", "Employees / ChangeAddressEmployee")]
         public void DontValidateWhenEmptyCity()
         {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeAddressEmployeeInput>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetInputAddressWithCityEmpty();
-            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var action = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -109,9 +126,11 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
         [Trait("Application", "Employees / ChangeAddressEmployee")]
         public void DontValidateWhenEmptyState()
         {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeAddressEmployeeInput>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetInputAddressWithStateEmpty();
-            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var action = async () => await useCase.Handle(input, CancellationToken.None);
 
@@ -123,7 +142,10 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
         public async void ValidateWhenValid()
         {
             var validEmployee = _fixture.GetValidEmployee();
-            
+
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeAddressEmployeeInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             _repositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(validEmployee);
 
@@ -131,7 +153,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
                 .Returns(() => Task.FromResult(validEmployee));
 
             var input = _fixture.GetValidInputAddress();
-            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             var output = await useCase.Handle(input, CancellationToken.None);
 
@@ -146,6 +168,22 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
             output.Address.State.Should().Be(input.State);
 
             _repositoryMock.Verify(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+
+        [Fact(DisplayName = "Handle() should throw an error when validation failed")]
+        [Trait("Application", "Employees / ChangeAddressEmployee")]
+        public async void FluentValidationFailed()
+        {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<ChangeAddressEmployeeInput>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Property", "'Property' must not be empty") })));
+
+            var input = _fixture.GetValidInputAddress();
+            var useCase = new App.ChangeAddressEmployee(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
+
+            var task = async () => await useCase.Handle(input, CancellationToken.None);
+
+            await task.Should().ThrowAsync<EntityValidationException>();
         }
     }
 }

@@ -113,7 +113,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
             await dbContext.AddRangeAsync(examplePositionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            examplePosition.Update(newPositionValues.Name);
+            examplePosition.Update(newPositionValues.Name, examplePosition.CustomerId, examplePosition.BaseSalary, "unit.testing");
 
             dbContext = _fixture.CreateDbContext(true);
             var positionRepository = new PositionRepository(dbContext);

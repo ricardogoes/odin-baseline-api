@@ -16,14 +16,16 @@
                         var input2 = fixture.GetInputWithEmptyPositionId();
                         invalidInputsList.Add(new object[] {
                         input2,
-                        "PositionId should not be empty or null"
+                        "PositionId",
+                        "'Position Id' must not be empty."
                     });
                         break;
                     case 1:
                         var input3 = fixture.GetInputWithEmptySalary();
                         invalidInputsList.Add(new object[] {
                         input3,
-                        "Salary should not be empty or null"
+                        "Salary",
+                        "'Salary' must not be empty."
                     });
                         break;
                     default:

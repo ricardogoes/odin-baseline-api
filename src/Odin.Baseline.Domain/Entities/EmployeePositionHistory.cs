@@ -11,9 +11,6 @@ namespace Odin.Baseline.Domain.Entities
         public DateTime? FinishDate { get; set; }
         public bool IsActual { get; private set; }
 
-        //TODO: Implementar loggedUsername
-        private const string LOGGED_USERNAME = "ricardo.goes";
-
         public EmployeePositionHistory(Guid positionId, decimal salary, DateTime startDate, DateTime? finishDate = null, bool isActual = true)
         {
             PositionId = positionId;
@@ -25,22 +22,22 @@ namespace Odin.Baseline.Domain.Entities
             Validate();
         }
 
-        public void Create(string loggedUsername = LOGGED_USERNAME)
+        public void Create(string loggedUsername)
         {
             CreatedAt = DateTime.UtcNow;
-            CreatedBy = loggedUsername; //TODO: Implementar loggedUser
+            CreatedBy = loggedUsername;
             LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedBy = loggedUsername;
 
             Validate();
         }
 
-        public void UpdateFinishDate(DateTime finishDate, string loggedUsername = LOGGED_USERNAME)
+        public void UpdateFinishDate(DateTime finishDate, string loggedUsername)
         {
             FinishDate = finishDate;
             IsActual = false;
             LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername; //TODO: Implementar loggedUser
+            LastUpdatedBy = loggedUsername;
             Validate();
         }
 

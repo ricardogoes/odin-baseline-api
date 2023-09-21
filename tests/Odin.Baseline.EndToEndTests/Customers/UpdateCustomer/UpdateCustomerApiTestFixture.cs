@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Application.Customers.UpdateCustomer;
+﻿using Odin.Baseline.Api.Models.Customers;
+using Odin.Baseline.Application.Customers.UpdateCustomer;
 using Odin.Baseline.EndToEndTests.Customers.Common;
 
 namespace Odin.Baseline.EndToEndTests.Customers.UpdateCustomer

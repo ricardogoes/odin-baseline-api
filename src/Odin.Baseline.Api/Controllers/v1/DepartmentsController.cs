@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Odin.Baseline.Api.Helpers;
 using Odin.Baseline.Api.Models;
+using Odin.Baseline.Api.Models.Departments;
 using Odin.Baseline.Application.Departments.ChangeStatusDepartment;
 using Odin.Baseline.Application.Departments.Common;
 using Odin.Baseline.Application.Departments.CreateDepartment;
@@ -48,10 +49,10 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(DepartmentOutput), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Create([FromBody] CreateDepartmentInput input, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromBody] CreateDepartmentApiRequest request, CancellationToken cancellationToken)
         {
-            //TODO: Alterar quando auth estiver implementado
-            input.ChangeLoggedUsername("ricardo.goes");
+            var loggedUsername = User.Identity!.Name!;
+            var input = new CreateDepartmentInput(request.CustomerId, request.Name, loggedUsername);
 
             var departmentCreated = await _mediator.Send(input, cancellationToken);
 
@@ -66,13 +67,13 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateDepartmentInput input, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateDepartmentApiRequest request, CancellationToken cancellationToken)
         {
-            if (id == Guid.Empty || id != input.Id)
+            if (id == Guid.Empty || id != request.Id)
                 throw new BadRequestException("Invalid request");
 
-            //TODO: Alterar quando auth estiver implementado
-            input.ChangeLoggedUsername("ricardo.goes");
+            var loggedUsername = User.Identity!.Name!;
+            var input = new UpdateDepartmentInput(id, request.CustomerId, request.Name, loggedUsername);
 
             var departmentUpdated = await _mediator.Send(input, cancellationToken);
 
@@ -91,11 +92,13 @@ namespace Odin.Baseline.Api.Controllers.v1
             if (action.ToUpper() != "ACTIVATE" && action.ToUpper() != "DEACTIVATE")
                 throw new BadRequestException("Invalid action. Only ACTIVATE or DEACTIVATE values are allowed");
 
+            var loggedUsername = User.Identity!.Name!;
+
             var departmentUpdated = await _mediator.Send(new ChangeStatusDepartmentInput
             (
                 id,
                 (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
-                "ricardo.goes" // TODO: Alterar quando auth estiver implementado
+                loggedUsername
             ), cancellationToken);
 
             return Ok(departmentUpdated);

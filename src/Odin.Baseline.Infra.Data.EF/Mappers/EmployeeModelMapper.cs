@@ -45,7 +45,7 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
             if (!string.IsNullOrWhiteSpace(model.StreetName))
             {
                 var address = new Address(model.StreetName, model.StreetNumber ?? 0, model.Complement ?? "", model.Neighborhood!, model.ZipCode!, model.City!, model.State!);
-                employee.ChangeAddress(address);
+                employee.ChangeAddress(address, "unit.testing");
             }
 
             employee.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer!.Name));

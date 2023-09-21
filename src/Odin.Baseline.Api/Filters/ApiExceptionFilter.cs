@@ -23,10 +23,12 @@ namespace Odin.Baseline.Api.Filters
 
             if (exception is EntityValidationException)
             {
-                details.Title = "One or more validation errors ocurred";
+                details.Title = "Unprocessable entity";
                 details.Status = StatusCodes.Status422UnprocessableEntity;
                 details.Type = "UnprocessableEntity";
                 details.Detail = exception.Message;
+
+                details.Extensions["errors"] = (exception as EntityValidationException)?.Errors;
             }
             else if (exception is BadRequestException)
             {

@@ -22,7 +22,7 @@ namespace Odin.Baseline.UnitTests.Application.Positions.Common
         public Position GetValidPosition()
         {
             var position = new Position(Guid.NewGuid(), GetValidName(), GetValidBaseSalary());
-            position.Create();
+            position.Create("unit.testing");
 
             return position;
         }

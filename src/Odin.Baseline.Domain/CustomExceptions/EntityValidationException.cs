@@ -2,10 +2,10 @@
 {
     public class EntityValidationException : Exception
     {
-        //public IReadOnlyCollection<ValidationError>? Errors { get; }
+        public IDictionary<string, string[]>? Errors { get; private set; }
 
-        public EntityValidationException(string message/*, IReadOnlyCollection<ValidationError>? errors = null */)
-            : base(message) { }
-            //=> Errors = errors;
+        public EntityValidationException(string message, IDictionary<string, string[]>? errors = null)
+            : base(message)
+            => Errors = errors;
     }
 }

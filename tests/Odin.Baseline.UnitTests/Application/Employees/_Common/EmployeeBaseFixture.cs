@@ -35,7 +35,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.Common
         public Employee GetValidEmployee(List<EmployeePositionHistory>? positionsHistory = null)
         {
             var employee = new Employee(Guid.NewGuid(), GetValidFirstName(), GetValidLastName(), GetValidDocument(), GetValidEmail(), departmentId: Guid.NewGuid(), isActive: true);
-            employee.Create();
+            employee.Create("unit.testing");
 
             if(positionsHistory is not null)
                 positionsHistory.ForEach(employee.LoadHistoricPosition);

@@ -6,13 +6,13 @@ namespace Odin.Baseline.Application.Customers.ChangeAddressCustomer
     {
         public ChangeAddressCustomerInputValidator()
         {
-            RuleFor(x => x.CustomerId).NotNull().NotEmpty();
-            RuleFor(x => x.StreetName).NotNull().NotEmpty();
-            RuleFor(x => x.StreetNumber).NotNull().NotEmpty();
-            RuleFor(x => x.Neighborhood).NotNull().NotEmpty();
-            RuleFor(x => x.ZipCode).NotNull().NotEmpty();
-            RuleFor(x => x.City).NotNull().NotEmpty();
-            RuleFor(x => x.State).NotNull().NotEmpty();
+            RuleFor(x => x.CustomerId).NotEmpty();
+            RuleFor(x => x.StreetName).NotEmpty();
+            RuleFor(x => x.StreetNumber).GreaterThan(0);
+            RuleFor(x => x.Neighborhood).NotEmpty();
+            RuleFor(x => x.ZipCode).NotEmpty();
+            RuleFor(x => x.City).NotEmpty();
+            RuleFor(x => x.State).NotEmpty();
         }
     }
 }

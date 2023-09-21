@@ -16,21 +16,24 @@
                         var input1 = fixture.GetInputWithNameEmpty();
                         invalidInputsList.Add(new object[] {
                         input1,
-                        "Name should not be empty or null"
+                        "Name",
+                        "'Name' must not be empty."
                     });
                         break;
                     case 1:
                         var input2 = fixture.GetInputWithDocumentEmpty();
                         invalidInputsList.Add(new object[] {
                         input2,
-                        "Document should be a valid CPF or CNPJ"
+                        "Document",
+                        "'Document' must be a valid CPF or CNPJ"
                     });
                         break;
                     case 2:
                         var input3 = fixture.GetInputWithInvalidDocument();
                         invalidInputsList.Add(new object[] {
                         input3,
-                        "Document should be a valid CPF or CNPJ"
+                        "Document",
+                        "'Document' must be a valid CPF or CNPJ"
                     });
                         break;
                     default:

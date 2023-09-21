@@ -15,31 +15,36 @@
                     case 0:
                         invalidInputsList.Add(new object[] {
                         fixture.GetUpdateEmployeeInputWithEmptyFirstName(),
-                        "FirstName should not be empty or null"
+                        "FirstName",
+                        "'First Name' must not be empty."
                     });
                         break;
                     case 1:
                         invalidInputsList.Add(new object[] {
                         fixture.GetUpdateEmployeeInputWithEmptyLastName(),
-                        "LastName should not be empty or null"
+                        "LastName",
+                        "'Last Name' must not be empty."
                     });
                         break;
                     case 2:
                         invalidInputsList.Add(new object[] {
                         fixture.GetUpdateEmployeeInputWithEmptyDocument(),
-                        "Document should be a valid CPF or CNPJ"
+                        "Document",
+                        "'Document' must be a valid CPF or CNPJ"
                     });
                         break;
                     case 3:
                         invalidInputsList.Add(new object[] {
                         fixture.GetUpdateEmployeeInputWithInvalidDocument(),
-                        "Document should be a valid CPF or CNPJ"
+                        "Document",
+                        "'Document' must be a valid CPF or CNPJ"
                     });
                         break;
                     case 4:
                         invalidInputsList.Add(new object[] {
                         fixture.GetUpdateEmployeeInputWithInvalidEmail(),
-                        "Email should be a valid email"
+                        "Email",
+                        "'Email' must be a valid email address."
                     });
                         break;
                     default:

@@ -4,14 +4,17 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>d33e66f1-bfd3-41ee-a30b-39cd009a3639</UserSecretsId>
+	<UserSecretsId>d33e66f1-bfd3-41ee-a30b-39cd009a3639</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="Amazon.AspNetCore.Identity.Cognito" Version="3.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
+	<PackageReference Include="Keycloak.AuthServices.Authentication" Version="1.5.2" />
+	<PackageReference Include="Keycloak.AuthServices.Authorization" Version="1.5.2" />
+	<PackageReference Include="MediatR" Version="12.1.1" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
 	<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">

@@ -11,6 +11,11 @@ namespace Odin.Baseline.EndToEndTests.Api
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            //var environment = "EndToEndTest";
+            //Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
+            //builder.UseEnvironment(environment);
+
+            
             builder.ConfigureServices(services =>
             {
                 var dbOptions = services.FirstOrDefault(x => x.ServiceType == typeof(DbContextOptions<OdinBaselineDbContext>));
@@ -21,6 +26,8 @@ namespace Odin.Baseline.EndToEndTests.Api
                 {
                     options.UseInMemoryDatabase("e2e-tests-db");
                 });
+
+                
 
             });
 

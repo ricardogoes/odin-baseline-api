@@ -1,6 +1,10 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Moq;
+using Odin.Baseline.Application.Employees.GetEmployeeById;
 using Odin.Baseline.Application.Positions.Common;
+using Odin.Baseline.Application.Positions.CreatePosition;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
@@ -15,18 +19,23 @@ namespace Odin.Baseline.UnitTests.Application.Positions.CreatePosition
 
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IRepository<Position>> _repositoryMock;
+        private readonly Mock<IValidator<CreatePositionInput>> _validatorMock;
 
         public CreatePositionTest(CreatePositionTestFixture fixture)
         {
             _fixture = fixture;
             _unitOfWorkMock = _fixture.GetUnitOfWorkMock();
             _repositoryMock = _fixture.GetRepositoryMock();
+            _validatorMock = new();
         }
 
         [Fact(DisplayName = "Handle() should create a position with valid data")]
         [Trait("Application", "Positions / CreatePosition")]
         public async void CreatePosition()
         {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreatePositionInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
             var input = _fixture.GetValidCreatePositionInput();
             var positionToInsert = new Position(input.CustomerId, input.Name, input.BaseSalary);
             var expectedPositionInserted = new PositionOutput
@@ -44,7 +53,7 @@ namespace Odin.Baseline.UnitTests.Application.Positions.CreatePosition
             _repositoryMock.Setup(s => s.InsertAsync(It.IsAny<Position>(), It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(positionToInsert));
 
-            var useCase = new App.CreatePosition(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var useCase = new App.CreatePosition(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
             var output = await useCase.Handle(input, CancellationToken.None);
 
             _unitOfWorkMock.Verify(
@@ -60,6 +69,21 @@ namespace Odin.Baseline.UnitTests.Application.Positions.CreatePosition
             output.CreatedAt.Should().NotBeSameDateAs(default);
         }
 
+        [Fact(DisplayName = "Handle() should throw an error when validation failed")]
+        [Trait("Application", "Positions / CreatePosition")]
+        public async void FluentValidationFailed()
+        {
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreatePositionInput>(), It.IsAny<CancellationToken>()))
+                .Returns(() => Task.FromResult(new ValidationResult(new List<ValidationFailure> { new ValidationFailure("Property", "'Property' must not be empty") })));
+
+            var input = _fixture.GetValidCreatePositionInput();
+            var useCase = new App.CreatePosition(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
+
+            var task = async () => await useCase.Handle(input, CancellationToken.None);
+
+            await task.Should().ThrowAsync<EntityValidationException>();
+        }
+
         [Theory(DisplayName = "Handle() should throw an error when data is invalid")]
         [Trait("Application", "Positions / CreatePosition")]
         [MemberData(
@@ -72,7 +96,10 @@ namespace Odin.Baseline.UnitTests.Application.Positions.CreatePosition
             string exceptionMessage
         )
         {
-            var useCase = new App.CreatePosition(_unitOfWorkMock.Object, _repositoryMock.Object);
+            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreatePositionInput>(), It.IsAny<CancellationToken>()))
+               .ReturnsAsync(new ValidationResult());
+
+            var useCase = new App.CreatePosition(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
             Func<Task> task = async () => await useCase.Handle(input, CancellationToken.None);
 

@@ -1,4 +1,5 @@
-﻿using Odin.Baseline.Application.Employees.AddPosition;
+﻿using Odin.Baseline.Api.Models.Employees;
+using Odin.Baseline.Application.Employees.AddPosition;
 using Odin.Baseline.EndToEndTests.Employees.Common;
 
 namespace Odin.Baseline.EndToEndTests.Employees.AddPosition

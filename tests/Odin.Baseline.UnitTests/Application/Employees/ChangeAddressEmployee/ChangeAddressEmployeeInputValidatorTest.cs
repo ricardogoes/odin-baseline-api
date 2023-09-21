@@ -57,7 +57,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.ChangeAddressEmployee
             validateResult.Should().NotBeNull();
             validateResult.IsValid.Should().BeFalse();
             validateResult.Errors.Should().HaveCount(1);
-            validateResult.Errors[0].ErrorMessage.Should().Be("'Street Number' must not be empty.");
+            validateResult.Errors[0].ErrorMessage.Should().Be("'Street Number' must be greater than '0'.");
         }
 
         [Fact(DisplayName = "Validate() should not validate when neighborhood is empty")]

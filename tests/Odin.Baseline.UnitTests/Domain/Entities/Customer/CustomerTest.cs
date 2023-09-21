@@ -80,7 +80,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Customer
             var validCustomer = _fixture.GetValidCustomer();
 
             var customer = new DomainEntity.Customer(validCustomer.Name, validCustomer.Document, isActive: false);
-            customer.Activate();
+            customer.Activate("unit.testing");
 
             customer.IsActive.Should().BeTrue();
         }
@@ -92,7 +92,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Customer
             var validCustomer = _fixture.GetValidCustomer();
 
             var customer = new DomainEntity.Customer(validCustomer.Name, validCustomer.Document, isActive: true);
-            customer.Deactivate();
+            customer.Deactivate("unit.testing");
 
             customer.IsActive.Should().BeFalse();
         }
@@ -104,7 +104,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Customer
             var customer = _fixture.GetValidCustomer();
             var address = _fixture.GetValidAddress();
 
-            customer.ChangeAddress(address);
+            customer.ChangeAddress(address, "unit.testing");
 
             customer.Address.Should().NotBeNull();
             customer.Address!.StreetName.Should().Be(address.StreetName);
@@ -136,7 +136,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Customer
             var customer = _fixture.GetValidCustomer();
             var customerWithNewValues = _fixture.GetValidCustomer();
 
-            customer.Update(customerWithNewValues.Name, customerWithNewValues.Document);
+            customer.Update(customerWithNewValues.Name, customerWithNewValues.Document, "unit.testing");
 
             customer.Name.Should().Be(customerWithNewValues.Name);
             customer.Document.Should().Be(customerWithNewValues.Document);
@@ -150,7 +150,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Customer
             var newName = _fixture.GetValidCustomerName();
             var currentDocument = customer.Document;
 
-            customer.Update(newName);
+            customer.Update(newName, null, "unit.testing");
 
             customer.Name.Should().Be(newName);
             customer.Document.Should().Be(currentDocument);
@@ -165,7 +165,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Customer
         {
             var customer = _fixture.GetValidCustomer();
             Action action =
-                () => customer.Update(name!);
+                () => customer.Update(name!, null, "unit.testing");
 
             action.Should().Throw<EntityValidationException>()
                 .WithMessage("Name should not be empty or null");

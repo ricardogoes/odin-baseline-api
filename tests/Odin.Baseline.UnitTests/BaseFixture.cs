@@ -47,7 +47,7 @@ namespace Odin.Baseline.UnitTests
         public Customer GetValidCustomer()
         {
             var customer = new Customer(GetValidCustomerName(), GetValidCustomerDocument());
-            customer.Create();
+            customer.Create("unit.testing");
             return customer;
         }
 
@@ -89,7 +89,7 @@ namespace Odin.Baseline.UnitTests
         public Department GetValidDepartment(Guid? customerId = null)
         {
             var department = new Department(customerId ?? Guid.NewGuid(), GetValidDepartmentName());
-            department.Create();
+            department.Create("unit.testing");
 
             return department;
         }

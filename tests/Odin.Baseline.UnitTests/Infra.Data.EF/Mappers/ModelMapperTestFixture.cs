@@ -56,7 +56,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         public Department GetValidDepartment()
         {
             var department = new Department(Guid.NewGuid(), Faker.Commerce.Department(), isActive: true);
-            department.Create();
+            department.Create("unit.testing");
             return department;
         }
 
@@ -80,7 +80,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         public Position GetValidPosition()
         {
             var position = new Position(Guid.NewGuid(), Faker.Commerce.Department(), 1_000, isActive: true);
-            position.Create();
+            position.Create("unit.testing");
             return position;
         }
 
@@ -105,7 +105,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         public Employee GetValidEmployee()
         {
             var employee = new Employee(Guid.NewGuid(), Faker.Person.FirstName, Faker.Person.LastName, Faker.Person.Cpf(), Faker.Person.Email, Guid.NewGuid(), true);
-            employee.Create();
+            employee.Create("unit.testing");
             return employee;
         }
 
@@ -161,7 +161,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         public EmployeePositionHistory GetValidEmployeePositionHistory()
         {
             var positionHistory = new EmployeePositionHistory(Guid.NewGuid(), 10_000, DateTime.Now, DateTime.Now, true);
-            positionHistory.Create();
+            positionHistory.Create("unit.testing");
             return positionHistory;
         }
 

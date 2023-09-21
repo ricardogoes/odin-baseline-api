@@ -125,7 +125,7 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
                 if (employee is null) 
                     return;
                 
-                relationGroup.ToList().ForEach(relation => employee.AddHistoricPosition(relation.ToEmployeePositionHistory()));
+                relationGroup.ToList().ForEach(relation => employee.AddHistoricPosition(relation.ToEmployeePositionHistory(), "unit.testing"));
             });
 
             return new PaginatedListOutput<Employee>
