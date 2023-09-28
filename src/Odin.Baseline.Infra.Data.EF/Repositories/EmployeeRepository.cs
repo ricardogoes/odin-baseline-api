@@ -3,10 +3,10 @@ using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.DTO.Common;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
-using Odin.Baseline.Infra.Data.EF.Expressions;
-using Odin.Baseline.Infra.Data.EF.Helpers;
 using Odin.Baseline.Infra.Data.EF.Mappers;
 using Odin.Baseline.Infra.Data.EF.Models;
+using Odin.Infra.Data.Utilities.Expressions;
+using Odin.Infra.Data.Utilities.Sort;
 
 namespace Odin.Baseline.Infra.Data.EF.Repositories
 {
@@ -104,14 +104,14 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
 
         public async Task<PaginatedListOutput<Employee>> FindPaginatedListAsync(Dictionary<string, object?> filters, int pageNumber, int pageSize, string sort, CancellationToken cancellationToken) 
         {
-            var filtersExpression = ExpressionsFactory<EmployeeModel>.BuildFilterExpression(filters);
-            var expression = ExpressionsFactory<EmployeeModel>.BuildQueryableExpression(filtersExpression);
+            var filtersExpression = ExpressionsUtility<EmployeeModel>.BuildFilterExpression(filters);
+            var expression = ExpressionsUtility<EmployeeModel>.BuildQueryableExpression(filtersExpression);
 
             var employees = expression != null
                 ? await Employees.Where(expression).Include(x => x.Customer).Include(x => x.Department).ToListAsync(cancellationToken)
                 : await Employees.Include(x => x.Customer).Include(x => x.Department).ToListAsync(cancellationToken);
 
-            var sortedEmployees = SortHelper.ApplySort(employees, sort).ToEmployee();
+            var sortedEmployees = SortUtility.ApplySort(employees, sort)!.ToEmployee();
 
             var employeesIds = sortedEmployees.Select(employee => employee.Id).ToList();
             

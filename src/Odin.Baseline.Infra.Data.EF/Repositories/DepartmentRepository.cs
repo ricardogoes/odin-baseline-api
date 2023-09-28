@@ -3,10 +3,10 @@ using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.DTO.Common;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
-using Odin.Baseline.Infra.Data.EF.Expressions;
-using Odin.Baseline.Infra.Data.EF.Helpers;
 using Odin.Baseline.Infra.Data.EF.Mappers;
 using Odin.Baseline.Infra.Data.EF.Models;
+using Odin.Infra.Data.Utilities.Expressions;
+using Odin.Infra.Data.Utilities.Sort;
 
 namespace Odin.Baseline.Infra.Data.EF.Repositories
 {
@@ -50,14 +50,14 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
 
         public async Task<PaginatedListOutput<Department>> FindPaginatedListAsync(Dictionary<string, object?> filters, int pageNumber, int pageSize, string sort, CancellationToken cancellationToken) 
         {
-            var filtersExpression = ExpressionsFactory<DepartmentModel>.BuildFilterExpression(filters);
-            var expression = ExpressionsFactory<DepartmentModel>.BuildQueryableExpression(filtersExpression);
+            var filtersExpression = ExpressionsUtility<DepartmentModel>.BuildFilterExpression(filters);
+            var expression = ExpressionsUtility<DepartmentModel>.BuildQueryableExpression(filtersExpression);
 
             var data = expression != null 
                 ? await Departments.Where(expression).Include(x => x.Customer).ToListAsync(cancellationToken) 
                 : await Departments.Include(x => x.Customer).ToListAsync(cancellationToken);
 
-            var sortedData = SortHelper.ApplySort(data, sort);
+            var sortedData = SortUtility.ApplySort(data, sort)!;
 
             return new PaginatedListOutput<Department>
             (
