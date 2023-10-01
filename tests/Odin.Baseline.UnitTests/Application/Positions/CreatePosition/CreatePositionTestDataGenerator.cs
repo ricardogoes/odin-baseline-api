@@ -4,7 +4,7 @@
     {
 
 
-        public static IEnumerable<object[]> GetInvalidInputs(int times = 12)
+        public static IEnumerable<object[]> GetInvalidInputs(int times = 4)
         {
             var fixture = new CreatePositionTestFixture();
             var invalidInputsList = new List<object[]>();
@@ -15,12 +15,6 @@
                 switch (index % totalInvalidCases)
                 {
                     case 0:
-                        invalidInputsList.Add(new object[] {
-                        fixture.GetCreatePositionInputWithEmptyCustomerId(),
-                        "CustomerId should not be empty or null"
-                    });
-                        break;
-                    case 1:
                         invalidInputsList.Add(new object[] {
                         fixture.GetCreatePositionInputWithEmptyName(),
                         "Name should not be empty or null"

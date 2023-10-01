@@ -1,4 +1,4 @@
-﻿using Odin.Baseline.Domain.DTO.Common;
+﻿using Odin.Baseline.Domain.Models;
 using Odin.Baseline.Domain.SeedWork;
 
 namespace Odin.Baseline.Domain.Interfaces.Repositories

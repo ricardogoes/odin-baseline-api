@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Employees.AddPosition;
-using Odin.Baseline.UnitTests.Application.Employees.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
 {
@@ -20,8 +19,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
                 positionId: Guid.NewGuid(),
                 salary: 10_000,
                 startDate: DateTime.Now,
-                finishDate: null,
-                loggedUsername: "unit.testing"
+                finishDate: null
             );
         }
 
@@ -33,8 +31,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
                 positionId: Guid.NewGuid(),
                 salary: 10_000,
                 startDate: DateTime.Now,
-                finishDate: null,
-                loggedUsername: "unit.testing"
+                finishDate: null
             );
         }
 
@@ -46,8 +43,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
                 positionId: Guid.Empty,
                 salary: 10_000,
                 startDate: DateTime.Now,
-                finishDate: null,
-                loggedUsername: "unit.testing"
+                finishDate: null
             );
         }
 
@@ -59,21 +55,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
                 positionId: Guid.NewGuid(),
                 salary: 0,
                 startDate: DateTime.Now,
-                finishDate: null,
-                loggedUsername: "unit.testing"
-            );
-        }
-
-        public AddPositionInput GetInputWithEmptyLoggerUsername()
-        {
-            return new AddPositionInput
-            (
-                employeeId: Guid.NewGuid(),
-                positionId: Guid.NewGuid(),
-                salary: 10_000,
-                startDate: DateTime.Now,
-                finishDate: null,
-                loggedUsername: ""
+                finishDate: null
             );
         }
     }

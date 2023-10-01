@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Odin.Baseline.Domain.DTO.Common;
+using Odin.Baseline.Domain.Models.AppSettings;
 using Odin.Baseline.Infra.Data.EF;
 
 namespace Odin.Baseline.Api.Configurations
@@ -16,7 +16,7 @@ namespace Odin.Baseline.Api.Configurations
         {
             services.AddDbContext<OdinBaselineDbContext>(options =>
             {
-                options.UseNpgsql(appSettings.ConnectionStrings!.OdinBaselineDB);
+                options.UseNpgsql(appSettings.ConnectionStringsSettings!.OdinBaselineDbConnection);
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 

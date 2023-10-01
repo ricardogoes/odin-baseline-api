@@ -2,9 +2,8 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using Odin.Baseline.Application.Employees.Common;
+using Odin.Baseline.Application.Employees;
 using Odin.Baseline.Application.Employees.CreateEmployee;
-using Odin.Baseline.Application.Positions.CreatePosition;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.DomainServices;
@@ -42,7 +41,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.CreateEmployee
                .ReturnsAsync(new ValidationResult());
 
             var input = _fixture.GetValidCreateEmployeeInput();
-            var employeeToInsert = new Employee(input.CustomerId, input.FirstName, input.LastName, input.Document, input.Email, departmentId: input.DepartmentId, isActive: true);
+            var employeeToInsert = new Employee(input.FirstName, input.LastName, input.Document, input.Email, departmentId: input.DepartmentId, isActive: true);
             var expectedEmployeeInserted = new EmployeeOutput
             (
                 id: Guid.NewGuid(),
@@ -78,7 +77,6 @@ namespace Odin.Baseline.UnitTests.Application.Employees.CreateEmployee
             output.Email.Should().Be(expectedEmployeeInserted.Email);
             output.IsActive.Should().BeTrue();
             output.Id.Should().NotBeEmpty();
-            output.CreatedAt.Should().NotBeSameDateAs(default);
         }
 
         [Fact(DisplayName = "Handle() should throw an error when validation failed")]

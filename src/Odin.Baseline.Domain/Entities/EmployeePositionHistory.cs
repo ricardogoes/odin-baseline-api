@@ -22,22 +22,10 @@ namespace Odin.Baseline.Domain.Entities
             Validate();
         }
 
-        public void Create(string loggedUsername)
-        {
-            CreatedAt = DateTime.UtcNow;
-            CreatedBy = loggedUsername;
-            LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername;
-
-            Validate();
-        }
-
-        public void UpdateFinishDate(DateTime finishDate, string loggedUsername)
+        public void UpdateFinishDate(DateTime finishDate)
         {
             FinishDate = finishDate;
             IsActual = false;
-            LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername;
             Validate();
         }
 

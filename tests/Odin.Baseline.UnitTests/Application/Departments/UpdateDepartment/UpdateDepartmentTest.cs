@@ -28,15 +28,13 @@ namespace Odin.Baseline.UnitTests.Application.Departments.UpdateDepartment
             _validatorMock = new();
         }
 
-        [Theory(DisplayName = "Handle() should update department with valid data")]
-        [Trait("Application", "Departments / UpdateDepartment")]
-        [MemberData(
-            nameof(UpdateDepartmentTestDataGenerator.GetDepartmentsToUpdate),
-            parameters: 10,
-            MemberType = typeof(UpdateDepartmentTestDataGenerator)
-        )]
-        public async Task UpdateDepartment(Department exampleDepartment, App.UpdateDepartmentInput input)
-        {
+        [Fact(DisplayName = "Handle() should update department with valid data")]
+        [Trait("Application", "Departments / UpdateDepartment")]        
+        public async Task UpdateDepartment()
+        {            
+            var exampleDepartment = _fixture.GetValidDepartmentWithId();
+            var input = _fixture.GetValidUpdateDepartmentInput(exampleDepartment.Id);
+
             _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<UpdateDepartmentInput>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ValidationResult());
 
@@ -92,34 +90,6 @@ namespace Odin.Baseline.UnitTests.Application.Departments.UpdateDepartment
             await task.Should().ThrowAsync<NotFoundException>();
 
             _repositoryMock.Verify(x => x.FindByIdAsync(input.Id, It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Theory(DisplayName = "Handle() should throw an error when cant update a department")]
-        [Trait("Application", "Departments / UpdateDepartment")]
-        [MemberData(
-            nameof(UpdateDepartmentTestDataGenerator.GetInvalidInputs),
-            parameters: 12,
-            MemberType = typeof(UpdateDepartmentTestDataGenerator)
-        )]
-        public async Task ThrowWhenCantUpdateDepartment(App.UpdateDepartmentInput input, string expectedExceptionMessage)
-        {
-            var validDepartment = _fixture.GetValidDepartment();
-            input.ChangeId(validDepartment.Id);
-
-            _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<UpdateDepartmentInput>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ValidationResult());
-
-            _repositoryMock.Setup(x => x.FindByIdAsync(validDepartment.Id, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(validDepartment);
-
-            var useCase = new App.UpdateDepartment(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
-
-            var task = async () => await useCase.Handle(input, CancellationToken.None);
-
-            await task.Should().ThrowAsync<EntityValidationException>()
-                .WithMessage(expectedExceptionMessage);
-
-            _repositoryMock.Verify(x => x.FindByIdAsync(validDepartment.Id, It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

@@ -18,17 +18,12 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         public void MapDepartmentToDepartmentModel()
         {
             var department = _fixture.GetValidDepartment();
-            var model = department.ToDepartmentModel();
+            var model = department.ToDepartmentModel(Guid.NewGuid());
 
             model.Should().NotBeNull();
             model.Id.Should().Be(department.Id);
-            model.CustomerId.Should().Be(department.CustomerId);
             model.Name.Should().Be(department.Name);
             model.IsActive.Should().Be(department.IsActive);
-            model.CreatedAt.Should().Be(department.CreatedAt);
-            model.CreatedBy.Should().Be(department.CreatedBy);
-            model.LastUpdatedAt.Should().Be(department.LastUpdatedAt);
-            model.LastUpdatedBy.Should().Be(department.LastUpdatedBy);
         }
 
         [Fact(DisplayName = "ToDepartmentModel() should map a list of departments to DepartmentModel")]
@@ -39,20 +34,15 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             var department2 = _fixture.GetValidDepartment();
             var departments = new List<Department> { department1, department2 };
 
-            var model = departments.ToDepartmentModel();
+            var model = departments.ToDepartmentModel(Guid.NewGuid());
 
             model.Should().NotBeNull();
             foreach (var department in model)
             {
                 var departmentToCompare = departments.FirstOrDefault(x => x.Id == department.Id);
                 department.Id.Should().Be(departmentToCompare!.Id);
-                department.CustomerId.Should().Be(departmentToCompare.CustomerId);
                 department.Name.Should().Be(departmentToCompare.Name);
                 department.IsActive.Should().Be(departmentToCompare.IsActive);
-                department.CreatedAt.Should().Be(departmentToCompare.CreatedAt);
-                department.CreatedBy.Should().Be(departmentToCompare.CreatedBy);
-                department.LastUpdatedAt.Should().Be(departmentToCompare.LastUpdatedAt);
-                department.LastUpdatedBy.Should().Be(departmentToCompare.LastUpdatedBy);
             }
         }
 
@@ -65,13 +55,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
 
             department.Should().NotBeNull();
             department.Id.Should().Be(model.Id);
-            department.CustomerId.Should().Be(model.CustomerId);
             department.Name.Should().Be(model.Name);
             department.IsActive.Should().Be(model.IsActive);
-            department.CreatedAt.Should().Be(model.CreatedAt);
-            department.CreatedBy.Should().Be(model.CreatedBy);
-            department.LastUpdatedAt.Should().Be(model.LastUpdatedAt);
-            department.LastUpdatedBy.Should().Be(model.LastUpdatedBy);
         }
 
         [Fact(DisplayName = "ToDepartment() should map a list of departments models to Department")]
@@ -90,13 +75,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 var departmentToCompare = departmentsModel.FirstOrDefault(x => x.Id == department.Id);
                 department.Should().NotBeNull();
                 department.Id.Should().Be(departmentToCompare!.Id);
-                department.CustomerId.Should().Be(departmentToCompare.CustomerId);
                 department.Name.Should().Be(departmentToCompare.Name);
                 department.IsActive.Should().Be(departmentToCompare.IsActive);
-                department.CreatedAt.Should().Be(departmentToCompare.CreatedAt);
-                department.CreatedBy.Should().Be(departmentToCompare.CreatedBy);
-                department.LastUpdatedAt.Should().Be(departmentToCompare.LastUpdatedAt);
-                department.LastUpdatedBy.Should().Be(departmentToCompare.LastUpdatedBy);
             }
         }
     }

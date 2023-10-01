@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Departments.GetDepartments;
-using Odin.Baseline.UnitTests.Application.Departments.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Departments.GetDepartments
 {
@@ -12,7 +11,6 @@ namespace Odin.Baseline.UnitTests.Application.Departments.GetDepartments
         public GetDepartmentsInput GetValidGetDepartmentsInput(Guid? id = null)
             => new()
             {
-                CustomerId = id ?? Guid.NewGuid(),
                 Name = Faker.Commerce.Department(),
                 IsActive = true
             };

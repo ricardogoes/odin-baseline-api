@@ -92,22 +92,6 @@ namespace Odin.Baseline.UnitTests.Application.Employees.UpdateEmployee
             validateResult.Errors[0].ErrorMessage.Should().Be("'Email' is not a valid email address.");
         }
 
-        [Fact(DisplayName = "Validate() should not validate when LoggedUsername is empty")]
-        [Trait("Application", "Employees / UpdateEmployeeInputValidator")]
-        public void DontValidateWhenLoggedUsernameDocument()
-        {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
-            var input = _fixture.GetUpdateEmployeeInputWithEmptyLoggedUsername();
-            var validator = new UpdateEmployeeInputValidator();
-
-            var validateResult = validator.Validate(input);
-
-            validateResult.Should().NotBeNull();
-            validateResult.IsValid.Should().BeFalse();
-            validateResult.Errors.Should().HaveCount(1);
-            validateResult.Errors[0].ErrorMessage.Should().Be("'Logged Username' must not be empty.");
-        }
-
 
         [Fact(DisplayName = "Validate() should validate with valid data")]
         [Trait("Application", "Employees / UpdateEmployeeInputValidator")]

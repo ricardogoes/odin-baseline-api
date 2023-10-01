@@ -7,10 +7,6 @@ namespace Odin.Baseline.Domain.Entities
 {
     public class Employee : EntityWithDocument
     {
-        public Guid CustomerId { get; private set; }
-
-        public CustomerData? CustomerData { get; private set; }
-
         public Guid? DepartmentId { get; private set; }
 
         public DepartmentData? DepartmentData { get; private set; }
@@ -29,11 +25,10 @@ namespace Odin.Baseline.Domain.Entities
 
         private readonly List<EmployeePositionHistory> _historicPositions;
 
-        public Employee(Guid id, Guid customerId, string firstName, string lastName, string document, string email, Guid? departmentId = null, bool isActive = true,
+        public Employee(Guid id, string firstName, string lastName, string document, string email, Guid? departmentId = null, bool isActive = true,
             List<EmployeePositionHistory>? positionsHistory = null)
            : base(document, id)
         {
-            CustomerId = customerId;
             DepartmentId = departmentId;
             FirstName = firstName;
             LastName = lastName;
@@ -45,10 +40,9 @@ namespace Odin.Baseline.Domain.Entities
             Validate();
         }
 
-        public Employee(Guid customerId, string firstName, string lastName, string document, string email, Guid? departmentId = null, bool isActive = true)
+        public Employee(string firstName, string lastName, string document, string email, Guid? departmentId = null, bool isActive = true)
             : base(document)
         {
-            CustomerId = customerId;
             DepartmentId = departmentId;
             FirstName = firstName;
             LastName = lastName;
@@ -60,81 +54,42 @@ namespace Odin.Baseline.Domain.Entities
             Validate();
         }
 
-        public void Create(string loggedUsername)
+        public void Update(string newFirstName, string newLastName, string newDocument, string newEmail, Guid? newDepartmentId = null)
         {
-            CreatedAt = DateTime.UtcNow;
-            CreatedBy = loggedUsername;
-            LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername;
-
-            Validate();
-        }
-
-        public void Update(string newFirstName, string newLastName, string newDocument, string newEmail, string loggedUsername, Guid? newCustomerId = null, Guid? newDepartmentId = null)
-        {
-            CustomerId = newCustomerId ?? CustomerId;
             DepartmentId = newDepartmentId ?? DepartmentId;
             FirstName = newFirstName;
             LastName = newLastName;
             Document = newDocument;
             Email = newEmail;
-            LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername;
 
             Validate();
         }
 
-        public void SetAuditLog(DateTime createdAt, string createdBy, DateTime lastUpdatedAt, string lastUpdatedBy)
-        {
-            CreatedAt = createdAt;
-            CreatedBy = createdBy;
-            LastUpdatedAt = lastUpdatedAt;
-            LastUpdatedBy = lastUpdatedBy;
-
-            Validate();
-        }
-
-        public void ChangeAddress(Address newAddress, string loggedUsername)
+        public void ChangeAddress(Address newAddress)
         {
             Address = newAddress;
-
-            LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername;
-
             Validate();
         }
 
-        public void Activate(string loggedUsername)
+        public void Activate()
         {
             IsActive = true;
-            LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername;
-
             Validate();
         }
 
-        public void Deactivate(string loggedUsername)
+        public void Deactivate()
         {
             IsActive = false;
-            LastUpdatedAt = DateTime.UtcNow;
-            LastUpdatedBy = loggedUsername;
-
             Validate();
         }
 
-        public void AddHistoricPosition(EmployeePositionHistory positionHistory, string loggedUsername)
+        public void AddHistoricPosition(EmployeePositionHistory positionHistory)
         {
             var actualPosition = HistoricPositions.FirstOrDefault(x => x.IsActual);
-            actualPosition?.UpdateFinishDate(DateTime.UtcNow, loggedUsername);
+            actualPosition?.UpdateFinishDate(DateTime.UtcNow);
 
             LoadHistoricPosition(positionHistory);
 
-            Validate();
-        }
-
-        public void LoadCustomerData(CustomerData customerData)
-        {
-            CustomerData = customerData;
             Validate();
         }
 
@@ -164,7 +119,6 @@ namespace Odin.Baseline.Domain.Entities
 
         private void Validate()
         {
-            DomainValidation.NotNullOrEmpty(CustomerId, nameof(CustomerId));
             DomainValidation.NotNullOrEmpty(FirstName, nameof(FirstName));
             DomainValidation.NotNullOrEmpty(LastName, nameof(LastName));
             DomainValidation.Email(Email, nameof(Email));

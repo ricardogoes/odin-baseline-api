@@ -55,7 +55,6 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployeeById
             output.Email.Should().Be(validEmployee.Email);
             output.IsActive.Should().Be(validEmployee.IsActive);
             output.Id.Should().Be(validEmployee.Id);
-            output.CreatedAt.Should().Be(validEmployee.CreatedAt);
         }
 
         [Fact(DisplayName = "Handle() should throw an error when validation failed")]

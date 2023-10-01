@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Employees.Common;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Enums;
 using Odin.Baseline.Domain.Interfaces.Repositories;
@@ -33,10 +32,10 @@ namespace Odin.Baseline.Application.Employees.ChangeStatusEmployee
             switch (input.Action)
             {
                 case ChangeStatusAction.ACTIVATE:
-                    employee.Activate(input.LoggedUsername);
+                    employee.Activate();
                     break;
                 case ChangeStatusAction.DEACTIVATE:
-                    employee.Deactivate(input.LoggedUsername);
+                    employee.Deactivate();
                     break;
             }
 

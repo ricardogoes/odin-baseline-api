@@ -1,27 +1,33 @@
 ﻿using Bogus;
 using Bogus.Extensions.Brazil;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using Odin.Baseline.Domain.Entities;
+using Odin.Baseline.Domain.Interfaces.Repositories;
 using Odin.Baseline.Domain.ValueObjects;
 using Odin.Baseline.Infra.Data.EF;
-using Odin.Baseline.Infra.Data.EF.Models;
 
 namespace Odin.Baseline.UnitTests
 {
     public abstract class BaseFixture
     {
         protected Faker Faker { get; set; }
+        public Guid TenantId = Guid.NewGuid();
 
         protected BaseFixture()
             => Faker = new Faker("pt_BR");
 
         public OdinBaselineDbContext CreateDbContext(bool preserveData = false)
         {
+            var tenantServiceMock = new Mock<ITenantService>();
+            tenantServiceMock.Setup(s => s.GetTenant()).Returns(TenantId);
+
             var context = new OdinBaselineDbContext(
                 new DbContextOptionsBuilder<OdinBaselineDbContext>()
                 .UseInMemoryDatabase("integration-tests-db")
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-                .Options
+                .Options,
+                tenantServiceMock.Object
             );
 
             if (preserveData == false)
@@ -37,34 +43,6 @@ namespace Odin.Baseline.UnitTests
 
         public static bool GetRandomBoolean()
             => new Random().NextDouble() < 0.5;
-
-        public string GetValidCustomerName()
-            => Faker.Company.CompanyName(1);
-
-        public string GetValidCustomerDocument()
-            => Faker.Company.Cnpj();
-
-        public Customer GetValidCustomer()
-        {
-            var customer = new Customer(GetValidCustomerName(), GetValidCustomerDocument());
-            customer.Create("unit.testing");
-            return customer;
-        }
-
-        public CustomerModel GetValidCustomerModel()
-        {
-            return new CustomerModel
-            (
-                id: Guid.NewGuid(),
-                name: GetValidCustomerName(),
-                document: GetValidCustomerDocument(),
-                isActive: true,
-                createdAt: DateTime.Now,
-                createdBy: "unit.test",
-                lastUpdatedAt: DateTime.Now,
-                lastUpdatedBy: "unit.test"
-            );
-        }
 
         public Address GetValidAddress()
         {
@@ -86,10 +64,16 @@ namespace Odin.Baseline.UnitTests
         public string GetValidDepartmentDocument()
             => Faker.Company.Cnpj();
 
-        public Department GetValidDepartment(Guid? customerId = null)
+        public Department GetValidDepartment()
         {
-            var department = new Department(customerId ?? Guid.NewGuid(), GetValidDepartmentName());
-            department.Create("unit.testing");
+            var department = new Department(GetValidDepartmentName());
+
+            return department;
+        }
+
+        public Department GetValidDepartmentWithId()
+        {
+            var department = new Department(Guid.NewGuid(), GetValidDepartmentName());
 
             return department;
         }

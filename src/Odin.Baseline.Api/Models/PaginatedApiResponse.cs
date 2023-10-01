@@ -1,4 +1,4 @@
-﻿using Odin.Baseline.Domain.DTO.Common;
+﻿using Odin.Baseline.Domain.Models;
 
 namespace Odin.Baseline.Api.Models
 {

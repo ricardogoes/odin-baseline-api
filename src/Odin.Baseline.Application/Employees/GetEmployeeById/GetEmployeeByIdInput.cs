@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Odin.Baseline.Application.Employees.Common;
 
 namespace Odin.Baseline.Application.Employees.GetEmployeeById
 {

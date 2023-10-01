@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Positions.ChangeStatusPosition;
-using Odin.Baseline.UnitTests.Application.Positions.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Positions.ChangeStatusPosition
 {
@@ -16,32 +15,21 @@ namespace Odin.Baseline.UnitTests.Application.Positions.ChangeStatusPosition
             => new
             (
                 id ?? Guid.NewGuid(),
-                Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
-                "unit.testing"
+                Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE
             );
 
         public ChangeStatusPositionInput GetValidChangeStatusPositionInputToDeactivate(Guid? id = null)
            => new
            (
                id ?? Guid.NewGuid(),
-               Baseline.Domain.Enums.ChangeStatusAction.DEACTIVATE,
-               "unit.testing"
+               Baseline.Domain.Enums.ChangeStatusAction.DEACTIVATE
            );
 
         public ChangeStatusPositionInput GetChangeStatusPositionInputWithEmptyAction(Guid? id = null)
           => new
           (
               id ?? Guid.NewGuid(),
-              null,
-              "unit.testing"
+              null
           );
-
-        public ChangeStatusPositionInput GetChangeStatusPositionInputWithEmptyLoggedUsername(Guid? id = null)
-           => new
-           (
-               id ?? Guid.NewGuid(),
-               Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
-               ""
-           );
     }
 }

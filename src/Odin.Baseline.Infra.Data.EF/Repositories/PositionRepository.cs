@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Odin.Baseline.Domain.CustomExceptions;
-using Odin.Baseline.Domain.DTO.Common;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
+using Odin.Baseline.Domain.Models;
 using Odin.Baseline.Infra.Data.EF.Mappers;
 using Odin.Baseline.Infra.Data.EF.Models;
 using Odin.Infra.Data.Utilities.Expressions;
@@ -10,37 +11,44 @@ using Odin.Infra.Data.Utilities.Sort;
 
 namespace Odin.Baseline.Infra.Data.EF.Repositories
 {
-    public class PositionRepository : IRepository<Position>
+    public class PositionRepository : BaseRepository, IRepository<Position>
     {
         private readonly OdinBaselineDbContext _dbContext;
-
+        
         private DbSet<PositionModel> Positions => _dbContext.Set<PositionModel>();
 
-        public PositionRepository(OdinBaselineDbContext dbContext)
-            =>  _dbContext = dbContext;
+        public PositionRepository(OdinBaselineDbContext dbContext, IHttpContextAccessor httpContextAccessor, ITenantService tenantService)
+            : base(httpContextAccessor, tenantService)
+        { 
+             _dbContext = dbContext;
+        }   
 
         public async Task<Position> InsertAsync(Position position, CancellationToken cancellationToken)
-        {            
-            var positionInserted = await Positions.AddAsync(position.ToPositionModel(), cancellationToken);
-            positionInserted.Reference("Customer").Load();
+        {
+            var model = position.ToPositionModel(GetTenantId());
+            model.SetAuditLog(GetCurrentUsername(), created: true);
+
+            var positionInserted = await Positions.AddAsync(model, cancellationToken);
 
             return positionInserted.Entity.ToPosition();
         }
 
         public async Task<Position> UpdateAsync(Position position, CancellationToken cancellationToken)
         {
-            var positionUpdated = await Task.FromResult(Positions.Update(position.ToPositionModel()));
-            positionUpdated.Reference("Customer").Load();
+            var model = position.ToPositionModel(GetTenantId());
+            model.SetAuditLog(GetCurrentUsername(), created: false);
+
+            var positionUpdated = await Task.FromResult(Positions.Update(model));
 
             return positionUpdated.Entity.ToPosition();
         }
 
         public async Task DeleteAsync(Position position)
-            => await Task.FromResult(Positions.Remove(position.ToPositionModel()));
+            => await Task.FromResult(Positions.Remove(position.ToPositionModel(GetTenantId())));
 
         public async Task<Position> FindByIdAsync(Guid id, CancellationToken cancellationToken) 
         {
-            var model = await Positions.Include(x => x.Customer).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            var model = await Positions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             NotFoundException.ThrowIfNull(model, $"Position with Id '{id}' not found.");
 
             return model!.ToPosition(); 
@@ -52,8 +60,8 @@ namespace Odin.Baseline.Infra.Data.EF.Repositories
             var expression = ExpressionsUtility<PositionModel>.BuildQueryableExpression(filtersExpression);
 
             var data = expression != null 
-                ? await Positions.Where(expression).Include(x => x.Customer).ToListAsync(cancellationToken) 
-                : await Positions.Include(x => x.Customer).ToListAsync(cancellationToken);
+                ? await Positions.Where(expression).ToListAsync(cancellationToken) 
+                : await Positions.ToListAsync(cancellationToken);
 
             var sortedData = SortUtility.ApplySort(data, sort)!;
 

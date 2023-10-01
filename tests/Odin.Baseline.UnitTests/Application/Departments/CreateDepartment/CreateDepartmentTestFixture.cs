@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Departments.CreateDepartment;
-using Odin.Baseline.UnitTests.Application.Departments.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Departments.CreateDepartment
 {
@@ -13,35 +12,9 @@ namespace Odin.Baseline.UnitTests.Application.Departments.CreateDepartment
             : base() { }
 
         public CreateDepartmentInput GetValidCreateDepartmentInput()
-            => new
-            (
-                Guid.NewGuid(),
-                GetValidName(),
-                GetValidUsername()
-            );
-
-        public CreateDepartmentInput GetCreateDepartmentInputWithEmptyCustomerId()
-            => new
-            (
-                Guid.Empty,
-                GetValidName(),
-                GetValidUsername()
-            );
-
+            => new(GetValidName());
+                    
         public CreateDepartmentInput GetCreateDepartmentInputWithEmptyName()
-            => new
-            (
-                Guid.NewGuid(),
-                "",
-                GetValidUsername()
-            );
-
-        public CreateDepartmentInput GetCreateDepartmentInputWithEmptyLoggedUsername()
-           => new
-           (
-               Guid.NewGuid(),
-               GetValidName(),
-               ""
-           );
+            => new("");
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Positions.CreatePosition;
-using Odin.Baseline.UnitTests.Application.Positions.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Positions.CreatePosition
 {
@@ -15,37 +14,15 @@ namespace Odin.Baseline.UnitTests.Application.Positions.CreatePosition
         public CreatePositionInput GetValidCreatePositionInput()
             => new
             (
-                customerId: Guid.NewGuid(),
                 name: GetValidName(),
-                baseSalary: GetValidBaseSalary(),                
-                loggedUsername: GetValidUsername()
-            );
-
-        public CreatePositionInput GetCreatePositionInputWithEmptyCustomerId()
-            => new
-            (
-                customerId: Guid.Empty,
-                name: GetValidName(),
-                baseSalary: GetValidBaseSalary(),
-                loggedUsername: GetValidUsername()
+                baseSalary: GetValidBaseSalary()
             );
 
         public CreatePositionInput GetCreatePositionInputWithEmptyName()
             => new
             (
-                customerId: Guid.NewGuid(),
                 name: "",
-                baseSalary: GetValidBaseSalary(),
-                loggedUsername: GetValidUsername()
+                baseSalary: GetValidBaseSalary()
             );
-
-        public CreatePositionInput GetCreatePositionInputWithEmptyLoggedUsername()
-           => new
-           (
-               customerId: Guid.NewGuid(),
-               name: GetValidName(),
-               baseSalary: GetValidBaseSalary(),
-               loggedUsername: ""
-           );
     }
 }

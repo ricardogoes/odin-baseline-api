@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Employees.GetEmployeeById;
-using Odin.Baseline.UnitTests.Application.Employees.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployeeById
 {

@@ -1,8 +1,6 @@
 ﻿using MediatR;
-using Odin.Baseline.Application.Common;
-using Odin.Baseline.Application.Employees.Common;
-using Odin.Baseline.Domain.DTO.Common;
 using Odin.Baseline.Domain.Interfaces.Repositories;
+using Odin.Baseline.Domain.Models;
 
 namespace Odin.Baseline.Application.Employees.GetEmployees
 {
@@ -17,7 +15,6 @@ namespace Odin.Baseline.Application.Employees.GetEmployees
         {
             var filters = new Dictionary<string, object?>
             {
-                { "CustomerId", input.CustomerId },
                 { "DepartmentId", input.DepartmentId },
                 { "FirstName", input.FirstName },
                 { "LastName", input.LastName },
@@ -34,7 +31,7 @@ namespace Odin.Baseline.Application.Employees.GetEmployees
             (
                 pageNumber: input.PageNumber,
                 pageSize: input.PageSize,
-                totalPages: PaginatedListHelper.GetTotalPages(employees.TotalItems, input.PageSize),
+                totalPages: PaginatedListOutput<EmployeeOutput>.GetTotalPages(employees.TotalItems, input.PageSize),
                 totalItems: employees.TotalItems,
                 items: EmployeeOutput.FromEmployee(employees.Items)
             );

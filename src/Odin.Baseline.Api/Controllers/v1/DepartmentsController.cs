@@ -3,16 +3,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Odin.Baseline.Api.Helpers;
 using Odin.Baseline.Api.Models;
-using Odin.Baseline.Api.Models.Departments;
+using Odin.Baseline.Application.Departments;
 using Odin.Baseline.Application.Departments.ChangeStatusDepartment;
-using Odin.Baseline.Application.Departments.Common;
 using Odin.Baseline.Application.Departments.CreateDepartment;
 using Odin.Baseline.Application.Departments.GetDepartmentById;
+using Odin.Baseline.Application.Departments.GetDepartments;
 using Odin.Baseline.Application.Departments.UpdateDepartment;
-using Odin.Baseline.Application.Employees.Common;
+using Odin.Baseline.Application.Employees;
 using Odin.Baseline.Application.Employees.GetEmployees;
 using Odin.Baseline.Domain.CustomExceptions;
-using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Enums;
 
 namespace Odin.Baseline.Api.Controllers.v1
@@ -29,6 +28,40 @@ namespace Odin.Baseline.Api.Controllers.v1
         public DepartmentsController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(DepartmentOutput), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAll(
+            CancellationToken cancellationToken,
+            [FromQuery(Name = "page_number")] int? pageNumber = null,
+            [FromQuery(Name = "page_size")] int? pageSize = null,
+            [FromQuery(Name = "sort")] string? sort = null,
+            [FromQuery(Name = "name")] string? name = null,
+            [FromQuery(Name = "is_active")] bool? isActive = null,
+            [FromQuery(Name = "created_by")] string? createdBy = null,
+            [FromQuery(Name = "last_updated_by")] string? lastUpdatedBy = null,
+            [FromQuery(Name = "created_at_start")] DateTime? createdAtStart = null,
+            [FromQuery(Name = "created_at_end")] DateTime? createdAtEnd = null,
+            [FromQuery(Name = "last_updated_at_start")] DateTime? LastUpdatedAtStart = null,
+            [FromQuery(Name = "last_updated_at_end")] DateTime? LastUpdatedAtEnd = null)
+        {
+            var input = new GetDepartmentsInput(
+                page: pageNumber ?? 1,
+                pageSize: pageSize ?? 5,
+                sort: Utils.GetSortParam(sort),
+                name: name,
+                isActive: isActive,
+                createdBy: createdBy,
+                createdAtStart: createdAtStart,
+                createdAtEnd: createdAtEnd,
+                lastUpdatedBy: lastUpdatedBy,
+                lastUpdatedAtStart: LastUpdatedAtStart,
+                lastUpdatedAtEnd: LastUpdatedAtEnd);
+
+            var paginatedCustomers = await _mediator.Send(input, cancellationToken);
+
+            return Ok(new PaginatedApiResponse<DepartmentOutput>(paginatedCustomers));
         }
 
         [HttpGet("{id:guid}")]
@@ -49,11 +82,8 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(DepartmentOutput), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Create([FromBody] CreateDepartmentApiRequest request, CancellationToken cancellationToken)
-        {
-            var loggedUsername = User.Identity!.Name!;
-            var input = new CreateDepartmentInput(request.CustomerId, request.Name, loggedUsername);
-
+        public async Task<IActionResult> Create([FromBody] CreateDepartmentInput input, CancellationToken cancellationToken)
+        {            
             var departmentCreated = await _mediator.Send(input, cancellationToken);
 
             return CreatedAtAction(
@@ -67,13 +97,10 @@ namespace Odin.Baseline.Api.Controllers.v1
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateDepartmentApiRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateDepartmentInput input, CancellationToken cancellationToken)
         {
-            if (id == Guid.Empty || id != request.Id)
+            if (id == Guid.Empty || id != input.Id)
                 throw new BadRequestException("Invalid request");
-
-            var loggedUsername = User.Identity!.Name!;
-            var input = new UpdateDepartmentInput(id, request.CustomerId, request.Name, loggedUsername);
 
             var departmentUpdated = await _mediator.Send(input, cancellationToken);
 
@@ -92,13 +119,10 @@ namespace Odin.Baseline.Api.Controllers.v1
             if (action.ToUpper() != "ACTIVATE" && action.ToUpper() != "DEACTIVATE")
                 throw new BadRequestException("Invalid action. Only ACTIVATE or DEACTIVATE values are allowed");
 
-            var loggedUsername = User.Identity!.Name!;
-
             var departmentUpdated = await _mediator.Send(new ChangeStatusDepartmentInput
             (
                 id,
-                (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true),
-                loggedUsername
+                (ChangeStatusAction)Enum.Parse(typeof(ChangeStatusAction), action, true)
             ), cancellationToken);
 
             return Ok(departmentUpdated);
@@ -132,7 +156,6 @@ namespace Odin.Baseline.Api.Controllers.v1
                  page: pageNumber ?? 1,
                  pageSize: pageSize ?? 5,
                  sort: Utils.GetSortParam(sort),
-                 customerId: null,
                  departmentId: id,
                  firstName: firstName,
                  lastName: lastName,

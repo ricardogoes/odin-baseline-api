@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Departments.Common;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
@@ -28,13 +27,12 @@ namespace Odin.Baseline.Application.Departments.CreateDepartment
                 throw new EntityValidationException($"One or more validation errors occurred on type {nameof(input)}.", validationResult.ToDictionary());
             }
             
-            var position = new Department(input.CustomerId, input.Name);
-            position.Create(input.LoggedUsername);
+            var position = new Department(input.Name);
 
-            await _repository.InsertAsync(position, cancellationToken);
+            var positionInserted = await _repository.InsertAsync(position, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            return DepartmentOutput.FromDepartment(position);
+            return DepartmentOutput.FromDepartment(positionInserted);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Departments.UpdateDepartment;
-using Odin.Baseline.UnitTests.Application.Departments.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Departments.UpdateDepartment
 {
@@ -13,41 +12,9 @@ namespace Odin.Baseline.UnitTests.Application.Departments.UpdateDepartment
             : base() { }
 
         public UpdateDepartmentInput GetValidUpdateDepartmentInput(Guid? id = null)
-            => new
-            (
-                id ?? Guid.NewGuid(),
-                Guid.NewGuid(),
-                GetValidName(),             
-                GetValidUsername()
-            );
-
-        public UpdateDepartmentInput GetUpdateDepartmentInputWithEmptyCustomerId(Guid? id = null)
-            => new
-            (
-                id ?? Guid.NewGuid(),
-                Guid.Empty,
-                GetValidName(),
-                GetValidUsername()
-            );
+            => new(id ?? Guid.NewGuid(), GetValidName());
 
         public UpdateDepartmentInput GetUpdateDepartmentInputWithEmptyName(Guid? id = null)
-            => new
-            (
-                id ?? Guid.NewGuid(),
-                Guid.NewGuid(),
-                "",
-                GetValidUsername()
-            );
-
-        public UpdateDepartmentInput GetUpdateDepartmentInputWithEmptyLoggedUsername(Guid? id = null)
-           => new
-           (
-               id ?? Guid.NewGuid(),
-               Guid.NewGuid(),
-               GetValidName(),
-               ""
-           );
+            => new(id ?? Guid.NewGuid(), "");
     }
-
-
 }

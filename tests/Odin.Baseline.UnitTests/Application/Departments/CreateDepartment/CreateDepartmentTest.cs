@@ -2,9 +2,8 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using Odin.Baseline.Application.Departments.Common;
+using Odin.Baseline.Application.Departments;
 using Odin.Baseline.Application.Departments.CreateDepartment;
-using Odin.Baseline.Application.Positions.CreatePosition;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
@@ -37,7 +36,7 @@ namespace Odin.Baseline.UnitTests.Application.Departments.CreateDepartment
                .ReturnsAsync(new ValidationResult());
 
             var input = _fixture.GetValidCreateDepartmentInput();
-            var departmentToInsert = new Department(input.CustomerId, input.Name);
+            var departmentToInsert = new Department(input.Name);
             var expectedDepartmentInserted = new DepartmentOutput
             (
                 Guid.NewGuid(),
@@ -64,7 +63,6 @@ namespace Odin.Baseline.UnitTests.Application.Departments.CreateDepartment
             output.Name.Should().Be(expectedDepartmentInserted.Name);
             output.IsActive.Should().BeTrue();
             output.Id.Should().NotBeEmpty();
-            output.CreatedAt.Should().NotBeSameDateAs(default);
         }
 
         [Fact(DisplayName = "Handle() should throw an error when validation failed")]
@@ -82,28 +80,23 @@ namespace Odin.Baseline.UnitTests.Application.Departments.CreateDepartment
             await task.Should().ThrowAsync<EntityValidationException>();
         }
 
-        [Theory(DisplayName = "Handle() should throw an error when data is invalid")]
+        [Theory(DisplayName = "Handle() should throw an error when name is invalid")]
         [Trait("Application", "Departments / CreateDepartment")]
-        [MemberData(
-            nameof(CreateDepartmentTestDataGenerator.GetInvalidInputs),
-            parameters: 12,
-            MemberType = typeof(CreateDepartmentTestDataGenerator)
-        )]
-        public async void ThrowWhenCantInstantiateDepartment(
-            App.CreateDepartmentInput input,
-            string exceptionMessage
-        )
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData(null)]
+        public async void ThrowWhenCantInstantiateDepartment(string name)
         {
             _validatorMock.Setup(s => s.ValidateAsync(It.IsAny<CreateDepartmentInput>(), It.IsAny<CancellationToken>()))
                .ReturnsAsync(new ValidationResult());
 
             var useCase = new App.CreateDepartment(_unitOfWorkMock.Object, _repositoryMock.Object, _validatorMock.Object);
 
-            Func<Task> task = async () => await useCase.Handle(input, CancellationToken.None);
+            Func<Task> task = async () => await useCase.Handle(new CreateDepartmentInput(name!), CancellationToken.None);
 
             await task.Should()
                 .ThrowAsync<EntityValidationException>()
-                .WithMessage(exceptionMessage);
+                .WithMessage("Name should not be empty or null");
         }
     }
 }

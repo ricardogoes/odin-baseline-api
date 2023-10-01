@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Positions.GetPositionById;
-using Odin.Baseline.UnitTests.Application.Positions.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Positions.GetPositionById
 {

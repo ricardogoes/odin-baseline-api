@@ -28,22 +28,6 @@ namespace Odin.Baseline.UnitTests.Application.Departments.UpdateDepartment
             validateResult.Errors[0].ErrorMessage.Should().Be("'Id' must not be empty.");
         }
 
-
-        [Fact(DisplayName = "Validate() should not validate when CustomerId is empty")]
-        [Trait("Application", "Departments / UpdateDepartmentInputValidator")]
-        public void DontValidateWhenEmptyCustomerId()
-        {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
-            var input = _fixture.GetUpdateDepartmentInputWithEmptyCustomerId();
-            var validator = new UpdateDepartmentInputValidator();
-
-            var validateResult = validator.Validate(input);
-
-            validateResult.Should().NotBeNull();
-            validateResult.IsValid.Should().BeFalse();
-            validateResult.Errors.Should().HaveCount(1);
-            validateResult.Errors[0].ErrorMessage.Should().Be("'Customer Id' must not be empty.");
-        }
         [Fact(DisplayName = "Validate() should not validate when Name is empty")]
         [Trait("Application", "Departments / UpdateDepartmentInputValidator")]
         public void DontValidateWhenEmptyName()
@@ -59,23 +43,6 @@ namespace Odin.Baseline.UnitTests.Application.Departments.UpdateDepartment
             validateResult.Errors.Should().HaveCount(1);
             validateResult.Errors[0].ErrorMessage.Should().Be("'Name' must not be empty.");
         }
-
-        [Fact(DisplayName = "Validate() should not validate when LoggedUsername is empty")]
-        [Trait("Application", "Departments / UpdateDepartmentInputValidator")]
-        public void DontValidateWhenLoggedUsernameDocument()
-        {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
-            var input = _fixture.GetUpdateDepartmentInputWithEmptyLoggedUsername();
-            var validator = new UpdateDepartmentInputValidator();
-
-            var validateResult = validator.Validate(input);
-
-            validateResult.Should().NotBeNull();
-            validateResult.IsValid.Should().BeFalse();
-            validateResult.Errors.Should().HaveCount(1);
-            validateResult.Errors[0].ErrorMessage.Should().Be("'Logged Username' must not be empty.");
-        }
-
 
         [Fact(DisplayName = "Validate() should validate with valid data")]
         [Trait("Application", "Departments / UpdateDepartmentInputValidator")]

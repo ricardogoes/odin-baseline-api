@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Positions.GetPositions;
-using Odin.Baseline.UnitTests.Application.Positions.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Positions.GetPositions
 {
@@ -9,12 +8,11 @@ namespace Odin.Baseline.UnitTests.Application.Positions.GetPositions
 
     public class GetPositionsTestFixture : PositionBaseFixture
     {
-        public GetPositionsInput GetValidGetPositionsInput(Guid? id = null)
+        public GetPositionsInput GetValidGetPositionsInput()
             => new GetPositionsInput
             (
                 page: 1,
                 pageSize: 5,                
-                customerId: id ?? Guid.NewGuid(),
                 name: Faker.Commerce.Department(),
                 isActive: true                
             );

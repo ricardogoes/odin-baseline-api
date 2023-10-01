@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Employees.UpdateEmployee;
-using Odin.Baseline.UnitTests.Application.Employees.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Employees.UpdateEmployee
 {
@@ -16,91 +15,66 @@ namespace Odin.Baseline.UnitTests.Application.Employees.UpdateEmployee
             => new
             (
                 id:  id ?? Guid.NewGuid(),
-                customerId: Guid.NewGuid(),
                 departmentId: Guid.NewGuid(),
                 firstName: GetValidFirstName(),
                 lastName: GetValidLastName(),
                 document: GetValidDocument(),
-                email: GetValidEmail(),
-                loggedUsername: GetValidUsername()
+                email: GetValidEmail()
             );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithEmptyFirstName(Guid? id = null)
             => new
             (
                 id:  id ?? Guid.NewGuid(),
-                customerId: Guid.NewGuid(),
                 departmentId: Guid.NewGuid(),
                 firstName: "",
                 lastName: GetValidLastName(),
                 document: GetValidDocument(),
-                email: GetValidEmail(),
-                loggedUsername: GetValidUsername()
+                email: GetValidEmail()
             );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithEmptyLastName(Guid? id = null)
             => new
             (
                 id:  id ?? Guid.NewGuid(),
-                customerId: Guid.NewGuid(),
                 departmentId: Guid.NewGuid(),
                 firstName: GetValidFirstName(),
                 lastName: "",
                 document: GetValidDocument(),
-                email: GetValidEmail(),
-                loggedUsername: GetValidUsername()
+                email: GetValidEmail()
             );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithEmptyDocument(Guid? id = null)
             => new
             (
                 id: id ?? Guid.NewGuid(),
-                customerId: Guid.NewGuid(),
                 departmentId: Guid.NewGuid(),
                 firstName: GetValidFirstName(),
                 lastName: GetValidLastName(),
                 document: "",
-                email: GetValidEmail(),
-                loggedUsername: GetValidUsername()
+                email: GetValidEmail()
             );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithInvalidDocument(Guid? id = null)
             => new
             (
                 id:  id ?? Guid.NewGuid(),
-                customerId: Guid.NewGuid(),
                 departmentId: Guid.NewGuid(),
                 firstName: GetValidFirstName(),
                 lastName: GetValidLastName(),
                 document: GetInvalidDocument(),
-                email: GetValidEmail(),
-                loggedUsername: GetValidUsername()
+                email: GetValidEmail()
             );
 
         public UpdateEmployeeInput GetUpdateEmployeeInputWithInvalidEmail(Guid? id = null)
             => new
             (
                 id:  id ?? Guid.NewGuid(),
-                customerId: Guid.NewGuid(),
                 departmentId: Guid.NewGuid(),
                 firstName: GetValidFirstName(),
                 lastName: GetValidLastName(),
                 document: GetValidDocument(),
-                email: "",
-                loggedUsername: GetValidUsername()
+                email: ""
             );
-
-        public UpdateEmployeeInput GetUpdateEmployeeInputWithEmptyLoggedUsername(Guid? id = null)
-           => new
-           (
-               id:  id ?? Guid.NewGuid(),
-               customerId: Guid.NewGuid(),
-               departmentId: Guid.NewGuid(),
-               firstName: GetValidFirstName(),
-               lastName: GetInvalidDocument(),
-               document: GetValidDocument(),
-               email: GetValidEmail(),
-               loggedUsername: ""
-           );
     }
 }

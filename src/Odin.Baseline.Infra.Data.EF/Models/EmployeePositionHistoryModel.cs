@@ -13,7 +13,9 @@
         public DateTime? FinishDate { get; private set; }
         public bool IsActual { get; private set; }
 
-        public EmployeePositionHistoryModel(Guid employeeId, Guid positionId, decimal salary, DateTime startDate, DateTime? finishDate, bool isActual)
+        public Guid TenantId { get; private set; }
+
+        public EmployeePositionHistoryModel(Guid employeeId, Guid positionId, decimal salary, DateTime startDate, DateTime? finishDate, bool isActual, Guid tenantId)
         {
             EmployeeId = employeeId;
             PositionId = positionId;
@@ -21,6 +23,7 @@
             StartDate = startDate;
             FinishDate = finishDate;
             IsActual = isActual;
+            TenantId = tenantId;
         }
     }
 }

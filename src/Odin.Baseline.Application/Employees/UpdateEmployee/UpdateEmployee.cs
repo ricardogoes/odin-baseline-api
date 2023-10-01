@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Employees.Common;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.DomainServices;
@@ -32,7 +31,7 @@ namespace Odin.Baseline.Application.Employees.UpdateEmployee
             }
             
             var employee = await _repository.FindByIdAsync(input.Id, cancellationToken);
-            employee.Update(input.FirstName, input.LastName, input.Document, input.Email, input.LoggedUsername, input.CustomerId, input.DepartmentId);
+            employee.Update(input.FirstName, input.LastName, input.Document, input.Email, input.DepartmentId);
 
             var isDocumentUnique = await _documentService.IsDocumentUnique(employee, cancellationToken);
             if (!isDocumentUnique)

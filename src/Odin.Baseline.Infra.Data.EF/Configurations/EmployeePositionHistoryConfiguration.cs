@@ -9,7 +9,8 @@ namespace Odin.Baseline.Infra.Data.EF.Configurations
         public void Configure(EntityTypeBuilder<EmployeePositionHistoryModel> builder)
         {
             builder.ToTable("employees_positions_history")
-                .HasKey(relation => new {
+                .HasKey(relation => new
+                {
                     relation.EmployeeId,
                     relation.PositionId
                 });
@@ -35,6 +36,10 @@ namespace Odin.Baseline.Infra.Data.EF.Configurations
 
             builder.Property(position => position.IsActual)
                .HasColumnName("is_actual")
+               .IsRequired();
+
+            builder.Property(position => position.TenantId)
+               .HasColumnName("tenant_id")
                .IsRequired();
         }
     }

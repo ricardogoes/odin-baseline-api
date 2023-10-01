@@ -44,23 +44,6 @@ namespace Odin.Baseline.UnitTests.Application.Positions.ChangeStatusPosition
             validateResult.Errors[0].ErrorMessage.Should().Be("'Action' must not be empty.");
         }
 
-        [Fact(DisplayName = "Validate() should not validate when LoggedUsername is empty")]
-        [Trait("Application", "Positions / ChangeStatusPositionInputValidator")]
-        public void DontValidateWhenLoggedUsernameDocument()
-        {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
-            var input = _fixture.GetChangeStatusPositionInputWithEmptyLoggedUsername();
-            var validator = new ChangeStatusPositionInputValidator();
-
-            var validateResult = validator.Validate(input);
-
-            validateResult.Should().NotBeNull();
-            validateResult.IsValid.Should().BeFalse();
-            validateResult.Errors.Should().HaveCount(1);
-            validateResult.Errors[0].ErrorMessage.Should().Be("'Logged Username' must not be empty.");
-        }
-
-
         [Fact(DisplayName = "Validate() should validate with valid data")]
         [Trait("Application", "Positions / ChangeStatusPositionInputValidator")]
         public void ValidateWhenValid()

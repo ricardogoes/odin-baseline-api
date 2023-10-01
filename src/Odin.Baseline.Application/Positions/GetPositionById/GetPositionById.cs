@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Positions.Common;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;

@@ -9,7 +9,6 @@ namespace Odin.Baseline.Application.Employees.AddPosition
             RuleFor(x => x.EmployeeId).NotNull().NotEmpty();
             RuleFor(x => x.PositionId).NotNull().NotEmpty();
             RuleFor(x => x.Salary).NotNull().NotEmpty();
-            RuleFor(x => x.LoggedUsername).NotNull().NotEmpty();
         }
     }
 }
