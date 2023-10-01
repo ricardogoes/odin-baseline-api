@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Employees.Common;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
@@ -30,7 +29,7 @@ namespace Odin.Baseline.Application.Employees.AddPosition
             
             var employee = await _repository.FindByIdAsync(input.EmployeeId, cancellationToken);
 
-            employee.AddHistoricPosition(new EmployeePositionHistory(input.PositionId, input.Salary, input.StartDate, input.FinishDate), input.LoggedUsername);
+            employee.AddHistoricPosition(new EmployeePositionHistory(input.PositionId, input.Salary, input.StartDate, input.FinishDate));
 
             var employeeUpdated = await _repository.UpdateAsync(employee, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);

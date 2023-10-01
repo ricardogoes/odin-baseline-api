@@ -13,9 +13,6 @@ namespace Odin.Baseline.UnitTests.Domain.Services.DocumentService
 
     public class DocumentServiceTestFixture : BaseFixture
     {
-        public Mock<ICustomerRepository> GetCustomerRepository()
-           => new();
-
         public Mock<IEmployeeRepository> GetEmployeeRepository()
           => new();
 
@@ -33,8 +30,7 @@ namespace Odin.Baseline.UnitTests.Domain.Services.DocumentService
 
         public Employee GetValidEmployee()
         {
-            var employee = new Employee(Guid.NewGuid(), GetValidEmployeeFistName(), GetValidEmployeeLastName(), GetValidEmployeeDocument(), GetValidEmployeeEmail(), isActive: true);
-            employee.Create("unit.testing");
+            var employee = new Employee(GetValidEmployeeFistName(), GetValidEmployeeLastName(), GetValidEmployeeDocument(), GetValidEmployeeEmail(), isActive: true);
 
             return employee;
         }
@@ -53,7 +49,7 @@ namespace Odin.Baseline.UnitTests.Domain.Services.DocumentService
                 createdBy: "unit.test",
                 lastUpdatedAt: DateTime.Now,
                 lastUpdatedBy: "unit.test",
-                customerId: customerId ?? Guid.NewGuid(),
+                tenantId: Guid.NewGuid(),
                 departmentId: departmentId ?? Guid.NewGuid()
             );
 

@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Departments.ChangeStatusDepartment;
-using Odin.Baseline.UnitTests.Application.Departments.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Departments.ChangeStatusDepartment
 {
@@ -16,32 +15,21 @@ namespace Odin.Baseline.UnitTests.Application.Departments.ChangeStatusDepartment
             => new
             (
                 id ?? Guid.NewGuid(),
-                Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
-                "unit.testing"
+                Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE
             );
 
         public ChangeStatusDepartmentInput GetValidChangeStatusDepartmentInputToDeactivate(Guid? id = null)
            => new
            (
                id ?? Guid.NewGuid(),
-               Baseline.Domain.Enums.ChangeStatusAction.DEACTIVATE,
-               "unit.testing"
+               Baseline.Domain.Enums.ChangeStatusAction.DEACTIVATE
            );
 
         public ChangeStatusDepartmentInput GetChangeStatusDepartmentInputWithEmptyAction(Guid? id = null)
           => new
           (
               id ?? Guid.NewGuid(),
-              null,
-              "unit.testing"
+              null
           );
-
-        public ChangeStatusDepartmentInput GetChangeStatusDepartmentInputWithEmptyLoggedUsername(Guid? id = null)
-           => new
-           (
-               id ?? Guid.NewGuid(),
-               Baseline.Domain.Enums.ChangeStatusAction.ACTIVATE,
-               ""
-           );
     }
 }

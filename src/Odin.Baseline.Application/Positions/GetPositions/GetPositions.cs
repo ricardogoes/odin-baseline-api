@@ -1,11 +1,8 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Common;
-using Odin.Baseline.Application.Positions.Common;
-using Odin.Baseline.Domain.CustomExceptions;
-using Odin.Baseline.Domain.DTO.Common;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
+using Odin.Baseline.Domain.Models;
 
 namespace Odin.Baseline.Application.Positions.GetPositions
 {
@@ -21,16 +18,9 @@ namespace Odin.Baseline.Application.Positions.GetPositions
         }
 
         public async Task<PaginatedListOutput<PositionOutput>> Handle(GetPositionsInput input, CancellationToken cancellationToken)
-        {
-            var validationResult = await _validator.ValidateAsync(input, cancellationToken);
-            if (!validationResult.IsValid)
-            {
-                throw new EntityValidationException($"One or more validation errors occurred on type {nameof(input)}.", validationResult.ToDictionary());
-            }
-            
+        {          
             var filters = new Dictionary<string, object?>
             {
-                { "CustomerId", input.CustomerId },
                 { "Name", input.Name },
                 { "IsActive", input.IsActive },
             };
@@ -43,7 +33,7 @@ namespace Odin.Baseline.Application.Positions.GetPositions
             (
                 pageNumber: input.PageNumber,
                 pageSize: input.PageSize,
-                totalPages: PaginatedListHelper.GetTotalPages(positions.TotalItems, input.PageSize),
+                totalPages: PaginatedListOutput<PositionOutput>.GetTotalPages(positions.TotalItems, input.PageSize),
                 totalItems: positions.TotalItems,
                 items: PositionOutput.FromPosition(positions.Items)
             );

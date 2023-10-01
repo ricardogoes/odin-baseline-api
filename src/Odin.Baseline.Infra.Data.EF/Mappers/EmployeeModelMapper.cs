@@ -7,7 +7,7 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
 {
     public static class EmployeeModelMapper
     {
-        public static EmployeeModel ToEmployeeModel(this Employee employee)
+        public static EmployeeModel ToEmployeeModel(this Employee employee, Guid tenantId)
         {
             return new EmployeeModel
             (
@@ -28,27 +28,25 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
                 employee.CreatedBy ?? "",
                 employee.LastUpdatedAt ?? default,
                 employee.LastUpdatedBy ?? "",
-                employee.CustomerId,
+                tenantId,
                 employee.DepartmentId
             );
         }
 
-        public static IEnumerable<EmployeeModel> ToEmployeeModel(this IEnumerable<Employee> employees)
-            => employees.Select(ToEmployeeModel);
+        public static IEnumerable<EmployeeModel> ToEmployeeModel(this IEnumerable<Employee> employees, Guid tenantId)
+            => employees.Select(x => ToEmployeeModel(x, tenantId));
 
         public static Employee ToEmployee(this EmployeeModel model)
         {
-            var employee = new Employee(model.Id, model.CustomerId, model.FirstName, model.LastName, model.Document, model.Email, 
+            var employee = new Employee(model.Id, model.FirstName, model.LastName, model.Document, model.Email, 
                 departmentId: model.DepartmentId, 
                 isActive: model.IsActive);
 
             if (!string.IsNullOrWhiteSpace(model.StreetName))
             {
                 var address = new Address(model.StreetName, model.StreetNumber ?? 0, model.Complement ?? "", model.Neighborhood!, model.ZipCode!, model.City!, model.State!);
-                employee.ChangeAddress(address, "unit.testing");
+                employee.ChangeAddress(address);
             }
-
-            employee.LoadCustomerData(new CustomerData(model.CustomerId, model.Customer!.Name));
 
             if(model.DepartmentId.HasValue && model.DepartmentId.Value != Guid.Empty)
             {
@@ -63,7 +61,7 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
                 }
             }
 
-            employee.SetAuditLog(model.CreatedAt, model.CreatedBy, model.LastUpdatedAt, model.LastUpdatedBy);
+            employee.SetAuditLog(model.CreatedAt!, model.CreatedBy!, model.LastUpdatedAt!, model.LastUpdatedBy!);
 
             return employee;
         }

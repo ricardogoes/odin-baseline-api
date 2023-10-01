@@ -52,7 +52,6 @@ namespace Odin.Baseline.UnitTests.Application.Departments.GetDepartmentById
             output.Name.Should().Be(validDepartment.Name);
             output.IsActive.Should().Be(validDepartment.IsActive);
             output.Id.Should().Be(validDepartment.Id);
-            output.CreatedAt.Should().Be(validDepartment.CreatedAt);
         }
 
         [Fact(DisplayName = "Handle() should throw an error when validation failed")]

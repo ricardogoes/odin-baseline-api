@@ -76,9 +76,8 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.EmployeePositionHistory
             var validEmployeePositionHistory = _fixture.GetValidEmployeePositionHistory();
 
             var finishDate = DateTime.Now;
-            var loggedUsername = "unit.testing";
 
-            validEmployeePositionHistory.UpdateFinishDate(finishDate, loggedUsername);
+            validEmployeePositionHistory.UpdateFinishDate(finishDate);
 
             validEmployeePositionHistory.Should().NotBeNull();
             validEmployeePositionHistory.FinishDate.Should().Be(finishDate);

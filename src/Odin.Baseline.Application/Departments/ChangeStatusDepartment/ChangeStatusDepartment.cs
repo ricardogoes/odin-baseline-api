@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Departments.Common;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Enums;
@@ -34,10 +33,10 @@ namespace Odin.Baseline.Application.Departments.ChangeStatusDepartment
             switch (input.Action)
             {
                 case ChangeStatusAction.ACTIVATE:
-                    department.Activate(input.LoggedUsername);
+                    department.Activate();
                     break;
                 case ChangeStatusAction.DEACTIVATE:
-                    department.Deactivate(input.LoggedUsername);
+                    department.Deactivate();
                     break;
             }
 

@@ -1,6 +1,7 @@
 ﻿using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
 using Odin.Baseline.Infra.Data.EF.Repositories;
+using Odin.Baseline.Infra.Data.EF.Services;
 
 namespace Odin.Baseline.Api.Configurations
 {
@@ -8,11 +9,13 @@ namespace Odin.Baseline.Api.Configurations
     {
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            services.AddTransient<ICustomerRepository, CustomerRepository>();
-            services.AddTransient<IRepository<Department>, DepartmentRepository>();
-            services.AddTransient<IEmployeeRepository, EmployeeRepository>();
-            services.AddTransient<IRepository<Position>, PositionRepository>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IRepository<Department>, DepartmentRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IRepository<Position>, PositionRepository>();
+            
+            services.AddScoped<ITenantService, TenantService>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Departments.GetDepartmentById;
-using Odin.Baseline.UnitTests.Application.Departments.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Departments.GetDepartmentById
 {

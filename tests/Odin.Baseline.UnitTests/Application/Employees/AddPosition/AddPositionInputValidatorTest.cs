@@ -60,22 +60,6 @@ namespace Odin.Baseline.UnitTests.Application.Employees.AddPosition
             validateResult.Errors[0].ErrorMessage.Should().Be("'Salary' must not be empty.");
         }
 
-        [Fact(DisplayName = "Validate() should not validate when LoggedUsername is empty")]
-        [Trait("Application", "Employees / AddPositionInputValidator")]
-        public void DontValidateWhenEmptyLoggedUsername()
-        {
-            ValidatorOptions.Global.LanguageManager.Enabled = false;
-            var input = _fixture.GetInputWithEmptyLoggerUsername();
-            var validator = new AddPositionInputValidator();
-
-            var validateResult = validator.Validate(input);
-
-            validateResult.Should().NotBeNull();
-            validateResult.IsValid.Should().BeFalse();
-            validateResult.Errors.Should().HaveCount(1);
-            validateResult.Errors[0].ErrorMessage.Should().Be("'Logged Username' must not be empty.");
-        }
-
         [Fact(DisplayName = "Validate() should validate with valid data")]
         [Trait("Application", "Employees / AddPositionInputValidator")]
         public void ValidateWhenValid()

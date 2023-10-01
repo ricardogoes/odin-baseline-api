@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using Odin.Baseline.Application.Employees.GetEmployees;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
+using Odin.Baseline.Domain.Interfaces.Repositories;
 using Odin.Baseline.Infra.Data.EF.Mappers;
-using Odin.Baseline.Infra.Data.EF.Models;
 using Odin.Baseline.Infra.Data.EF.Repositories;
 
 namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
@@ -13,9 +15,18 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
     {
         private readonly EmployeeRepositoryTestFixture _fixture;
 
+        private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
+        private readonly Mock<ITenantService> _tenantServiceMock;
+
         public EmployeeRepositoryTest(EmployeeRepositoryTestFixture fixture)
         {
             _fixture = fixture;
+
+            _httpContextAccessorMock = new();
+            _httpContextAccessorMock.Setup(s => s.HttpContext.User.Identity!.Name).Returns("unit.testing");
+
+            _tenantServiceMock = new();
+            _tenantServiceMock.Setup(s => s.GetTenant()).Returns(_fixture.TenantId);
         }
 
         [Fact(DisplayName = "InsertAsync() should insert a valid employee")]
@@ -24,13 +35,9 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var exampleCustomer = _fixture.GetValidCustomerModel();
-            await dbContext.AddAsync(exampleCustomer);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
+            var exampleEmployee = _fixture.GetValidEmployee();
 
-            var exampleEmployee = _fixture.GetValidEmployee(exampleCustomer.Id);
-
-            var repository = new EmployeeRepository(dbContext);
+            var repository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var unitOfWork = new UnitOfWork(dbContext);
 
             await repository.InsertAsync(exampleEmployee, CancellationToken.None);
@@ -53,19 +60,15 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var dbContext = _fixture.CreateDbContext(true);
 
-            var exampleCustomer = _fixture.GetValidCustomerModel();
-            await dbContext.AddAsync(exampleCustomer);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
-
-            var exampleEmployee = _fixture.GetValidEmployee(exampleCustomer.Id);
+            var exampleEmployee = _fixture.GetValidEmployee();
 
             var historicPosition1 = new EmployeePositionHistory(Guid.NewGuid(), 1_000, DateTime.Now.AddMonths(-2), DateTime.Now, isActual: false);
             var historicPosition2 = new EmployeePositionHistory(Guid.NewGuid(), 2_000, DateTime.Now.AddMonths(-2), null, isActual: true);
 
-            exampleEmployee.AddHistoricPosition(historicPosition1, "unit.testing");
-            exampleEmployee.AddHistoricPosition(historicPosition2, "unit.testing");
+            exampleEmployee.AddHistoricPosition(historicPosition1);
+            exampleEmployee.AddHistoricPosition(historicPosition2);
 
-            var repository = new EmployeeRepository(dbContext);
+            var repository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var unitOfWork = new UnitOfWork(dbContext);
 
             await repository.InsertAsync(exampleEmployee, CancellationToken.None);
@@ -102,18 +105,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var exampleCustomer = _fixture.GetValidCustomerModel();
-            await dbContext.AddAsync(exampleCustomer);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
-
-            var exampleEmployee = _fixture.GetValidEmployeeModel(customerId: exampleCustomer.Id);
-            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { exampleCustomer.Id }, length: 15);
+            var exampleEmployee = _fixture.GetValidEmployeeModel();
+            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(length: 15);
             exampleEmployeesList.Add(exampleEmployee);
 
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var employeeRepository = new EmployeeRepository(_fixture.CreateDbContext(true));
+            var employeeRepository = new EmployeeRepository(_fixture.CreateDbContext(true), _httpContextAccessorMock.Object, _tenantServiceMock.Object);
 
             var dbEmployee = await employeeRepository.FindByIdAsync(exampleEmployee.Id, CancellationToken.None);
 
@@ -134,10 +133,10 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             var dbContext = _fixture.CreateDbContext();
             var exampleId = Guid.NewGuid();
 
-            await dbContext.AddRangeAsync(_fixture.GetValidEmployeesModelList(new List<Guid> { Guid.NewGuid() }, length: 15));
+            await dbContext.AddRangeAsync(_fixture.GetValidEmployeesModelList(length: 15));
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var employeeRepository = new EmployeeRepository(dbContext);
+            var employeeRepository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
 
             var task = async () => await employeeRepository.FindByIdAsync(exampleId, CancellationToken.None);
 
@@ -151,23 +150,19 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var exampleCustomer = _fixture.GetValidCustomerModel();
-            await dbContext.AddAsync(exampleCustomer);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
+            var exampleEmployee = _fixture.GetValidEmployee();
+            var newEmployeeValues = _fixture.GetValidEmployee();
 
-            var exampleEmployee = _fixture.GetValidEmployee(exampleCustomer.Id);
-            var newEmployeeValues = _fixture.GetValidEmployee(exampleCustomer.Id);
-
-            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { Guid.NewGuid() }, length: 15);
-            exampleEmployeesList.Add(exampleEmployee.ToEmployeeModel());
+            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(length: 15);
+            exampleEmployeesList.Add(exampleEmployee.ToEmployeeModel(Guid.NewGuid()));
 
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            exampleEmployee.Update(newEmployeeValues.FirstName, newEmployeeValues.LastName, newEmployeeValues.Document, newEmployeeValues.Email, "unit.testing");
+            exampleEmployee.Update(newEmployeeValues.FirstName, newEmployeeValues.LastName, newEmployeeValues.Document, newEmployeeValues.Email);
 
             dbContext = _fixture.CreateDbContext(true);
-            var employeeRepository = new EmployeeRepository(dbContext);
+            var employeeRepository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var unitOfWork = new UnitOfWork(dbContext);
 
             await employeeRepository.UpdateAsync(exampleEmployee, CancellationToken.None);
@@ -189,29 +184,25 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var exampleCustomer = _fixture.GetValidCustomerModel();
-            await dbContext.AddAsync(exampleCustomer);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
-
-            var exampleEmployee = _fixture.GetValidEmployee(exampleCustomer.Id);
+            var exampleEmployee = _fixture.GetValidEmployee();
 
             var historicPosition = new EmployeePositionHistory(Guid.NewGuid(), 2_000, DateTime.Now.AddMonths(-2), DateTime.Now, false);
-            exampleEmployee.AddHistoricPosition(historicPosition, "unit.testing");
+            exampleEmployee.AddHistoricPosition(historicPosition);
 
-            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { Guid.NewGuid() }, length: 15);
-            exampleEmployeesList.Add(exampleEmployee.ToEmployeeModel());
+            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(length: 15);
+            exampleEmployeesList.Add(exampleEmployee.ToEmployeeModel(Guid.NewGuid()));
 
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             var newEmployeeValues = _fixture.GetValidEmployee();
-            exampleEmployee.Update(newEmployeeValues.FirstName, newEmployeeValues.LastName, newEmployeeValues.Document, newEmployeeValues.Email, "unit.testing");
+            exampleEmployee.Update(newEmployeeValues.FirstName, newEmployeeValues.LastName, newEmployeeValues.Document, newEmployeeValues.Email);
 
             var newHistoricPosition = new EmployeePositionHistory(Guid.NewGuid(), 2_500, DateTime.Now, null, true);
-            exampleEmployee.AddHistoricPosition(newHistoricPosition, "unit.testing");
+            exampleEmployee.AddHistoricPosition(newHistoricPosition);
 
             dbContext = _fixture.CreateDbContext(true);
-            var employeeRepository = new EmployeeRepository(dbContext);
+            var employeeRepository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var unitOfWork = new UnitOfWork(dbContext);
 
             await employeeRepository.UpdateAsync(exampleEmployee, CancellationToken.None);
@@ -247,14 +238,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var dbContext = _fixture.CreateDbContext(true);
             var exampleEmployee = _fixture.GetValidEmployee();
-            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { Guid.NewGuid() }, length: 15);
-            exampleEmployeesList.Add(exampleEmployee.ToEmployeeModel());
+            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(length: 15);
+            exampleEmployeesList.Add(exampleEmployee.ToEmployeeModel(Guid.NewGuid()));
 
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             dbContext = _fixture.CreateDbContext(true);
-            var employeeRepository = new EmployeeRepository(dbContext);
+            var employeeRepository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var unitOfWork = new UnitOfWork(dbContext);
 
             await employeeRepository.DeleteAsync(exampleEmployee);
@@ -271,23 +262,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var customer1 = _fixture.GetValidCustomerModel();
-            var customer2 = _fixture.GetValidCustomerModel();
-            
-            await dbContext.AddRangeAsync(new List<CustomerModel> { customer1, customer2 });
-            await dbContext.SaveChangesAsync(CancellationToken.None);
-
-            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(
-                customersIds: new List<Guid> { customer1.Id, customer2.Id },
-                length: 15);
+            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(length: 15);
 
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetEmployeesInput(1, 20, customerId: customer1.Id, sort: "firstname", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: true, "", null, null, "", null, null);
+            var searchInput = new GetEmployeesInput(1, 20, sort: "firstname", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: true, "", null, null, "", null, null);
             var filters = new Dictionary<string, object?>
             {
-                { "CustomerId", searchInput.CustomerId },
                 { "DepartmentId", searchInput.DepartmentId },
                 { "FirstName", searchInput.FirstName },
                 { "LastName", searchInput.LastName },
@@ -296,20 +278,19 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
                 { "IsActive", searchInput.IsActive },
             };
 
-            var employeeRepository = new EmployeeRepository(dbContext);
+            var employeeRepository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
-            output.TotalItems.Should().Be(exampleEmployeesList.Where(x => x.CustomerId == customer1.Id  && x.IsActive).Count());
-            output.Items.Should().HaveCount(exampleEmployeesList.Where(x => x.CustomerId == customer1.Id  && x.IsActive).Count());
+            output.TotalItems.Should().Be(exampleEmployeesList.Where(x => x.IsActive).Count());
+            output.Items.Should().HaveCount(exampleEmployeesList.Where(x => x.IsActive).Count());
             foreach (var outputItem in output.Items)
             {
                 var exampleItem = exampleEmployeesList.Find(
                     employee => employee.Id == outputItem.Id
                 );
                 exampleItem.Should().NotBeNull();
-                outputItem.CustomerId.Should().Be(customer1.Id);
                 outputItem.FirstName.Should().Be(exampleItem!.FirstName);
                 outputItem.LastName.Should().Be(exampleItem.LastName);
                 outputItem.Document.Should().Be(exampleItem.Document);
@@ -325,15 +306,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var customer1 = _fixture.GetValidCustomerModel();
-            var customer2 = _fixture.GetValidCustomerModel();
-
-            await dbContext.AddRangeAsync(new List<CustomerModel> { customer1, customer2 });
-            await dbContext.SaveChangesAsync(CancellationToken.None);
-
-            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(
-                customersIds: new List<Guid> { customer1.Id, customer2.Id },
-                length: 15);
+            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(length: 15);
 
             var employeeToAddPositionHistory = exampleEmployeesList.FirstOrDefault(x => x.IsActive)!;
             var examplePositionsHistoryList = _fixture.GetValidEmployeesPositionsHistoryModelList(employeeToAddPositionHistory.Id);
@@ -342,10 +315,9 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             await dbContext.AddRangeAsync(examplePositionsHistoryList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetEmployeesInput(1, 20, customerId: customer1.Id, sort: "firstname", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: true, "", null, null, "", null, null);
+            var searchInput = new GetEmployeesInput(1, 20, sort: "firstname", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: true, "", null, null, "", null, null);
             var filters = new Dictionary<string, object?>
             {
-                { "CustomerId", searchInput.CustomerId },
                 { "DepartmentId", searchInput.DepartmentId },
                 { "FirstName", searchInput.FirstName },
                 { "LastName", searchInput.LastName },
@@ -354,20 +326,19 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
                 { "IsActive", searchInput.IsActive },
             };
 
-            var employeeRepository = new EmployeeRepository(dbContext);
+            var employeeRepository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
-            output.TotalItems.Should().Be(exampleEmployeesList.Where(x => x.CustomerId == customer1.Id && x.IsActive).Count());
-            output.Items.Should().HaveCount(exampleEmployeesList.Where(x => x.CustomerId == customer1.Id && x.IsActive).Count());
+            output.TotalItems.Should().Be(exampleEmployeesList.Where(x => x.IsActive).Count());
+            output.Items.Should().HaveCount(exampleEmployeesList.Where(x => x.IsActive).Count());
             foreach (var outputItem in output.Items)
             {
                 var exampleItem = exampleEmployeesList.Find(
                     employee => employee.Id == outputItem.Id
                 );
                 exampleItem.Should().NotBeNull();
-                outputItem.CustomerId.Should().Be(customer1.Id);
                 outputItem.FirstName.Should().Be(exampleItem!.FirstName);
                 outputItem.LastName.Should().Be(exampleItem.LastName);
                 outputItem.Document.Should().Be(exampleItem.Document);
@@ -394,19 +365,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var customer1 = _fixture.GetValidCustomerModel();
-            await dbContext.AddRangeAsync(customer1);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
-
-            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { customer1.Id },length: 15);
+            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(length: 15);
 
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetEmployeesInput(1, 20, customerId: null, sort: "firstname", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: null, "", null, null, "", null, null);
+            var searchInput = new GetEmployeesInput(1, 20, sort: "firstname", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: null, "", null, null, "", null, null);
             var filters = new Dictionary<string, object?>
             {
-                { "CustomerId", searchInput.CustomerId },
                 { "DepartmentId", searchInput.DepartmentId },
                 { "FirstName", searchInput.FirstName },
                 { "LastName", searchInput.LastName },
@@ -415,7 +381,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
                 { "IsActive", searchInput.IsActive },
             };
 
-            var employeeRepository = new EmployeeRepository(dbContext);
+            var employeeRepository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var output = await employeeRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
@@ -426,8 +392,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             {
                 var exampleItem = exampleEmployeesList.Find(employee => employee.Id == outputItem.Id);
                 exampleItem.Should().NotBeNull();
-                outputItem.CustomerId.Should().Be(exampleItem!.CustomerId);
-                outputItem.DepartmentId.Should().Be(exampleItem.DepartmentId);
+                outputItem.DepartmentId.Should().Be(exampleItem!.DepartmentId);
                 outputItem.FirstName.Should().Be(exampleItem.FirstName);
                 outputItem.LastName.Should().Be(exampleItem.LastName);
                 outputItem.Document.Should().Be(exampleItem.Document);
@@ -442,12 +407,11 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         public async Task SearchRetursEmptyWhenPersistenceIsEmpty()
         {
             var dbContext = _fixture.CreateDbContext();
-            var employeeRepository = new EmployeeRepository(dbContext);
+            var employeeRepository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
 
-            var searchInput = new GetEmployeesInput(1, 20, customerId: null, sort: "name", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: null, "", null, null, "", null, null);
+            var searchInput = new GetEmployeesInput(1, 20, sort: "name", departmentId: null, firstName: "", lastName: "", document: "", email: "", isActive: null, "", null, null, "", null, null);
             var filters = new Dictionary<string, object?>
             {
-                { "CustomerId", searchInput.CustomerId },
                 { "DepartmentId", searchInput.DepartmentId },
                 { "FirstName", searchInput.FirstName },
                 { "LastName", searchInput.LastName },
@@ -470,18 +434,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var exampleCustomer = _fixture.GetValidCustomerModel();
-            await dbContext.AddAsync(exampleCustomer);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
-
-            var exampleEmployee = _fixture.GetValidEmployeeModel(customerId: exampleCustomer.Id);
-            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(new List<Guid> { exampleCustomer.Id }, length: 15);
+            var exampleEmployee = _fixture.GetValidEmployeeModel();
+            var exampleEmployeesList = _fixture.GetValidEmployeesModelList(length: 15);
             exampleEmployeesList.Add(exampleEmployee);
 
             await dbContext.AddRangeAsync(exampleEmployeesList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var employeeRepository = new EmployeeRepository(_fixture.CreateDbContext(true));
+            var employeeRepository = new EmployeeRepository(_fixture.CreateDbContext(true), _httpContextAccessorMock.Object, _tenantServiceMock.Object);
 
             var dbEmployee = await employeeRepository.FindByDocumentAsync(exampleEmployee.Document, CancellationToken.None);
 
@@ -503,7 +463,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Employee
             await dbContext.AddRangeAsync(_fixture.GetValidEmployeesModelList(new List<Guid> { Guid.NewGuid() }, length: 15));
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var employeeRepository = new EmployeeRepository(dbContext);
+            var employeeRepository = new EmployeeRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
 
             var task = async () => await employeeRepository.FindByDocumentAsync(document, CancellationToken.None);
 

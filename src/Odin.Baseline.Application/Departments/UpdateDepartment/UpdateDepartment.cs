@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Departments.Common;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
@@ -29,7 +28,7 @@ namespace Odin.Baseline.Application.Departments.UpdateDepartment
             }
             
             var department = await _repository.FindByIdAsync(input.Id, cancellationToken);
-            department.Update(input.Name, input.CustomerId, input.LoggedUsername);
+            department.Update(input.Name);
 
             var departmentUpdated = await _repository.UpdateAsync(department, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);

@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Odin.Baseline.Domain.CustomExceptions;
-using Odin.Baseline.Domain.DTO;
 using DomainEntity = Odin.Baseline.Domain.Entities;
 
 namespace Odin.Baseline.UnitTests.Domain.Entities.Position
@@ -18,28 +17,13 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
         public void Instantiate()
         {
             var validPosition = _fixture.GetValidPosition();            
-            var position = new DomainEntity.Position(customerId: validPosition.CustomerId, validPosition.Name, validPosition.BaseSalary);
+            var position = new DomainEntity.Position(validPosition.Name, validPosition.BaseSalary);
             
             position.Should().NotBeNull();
-            position.CustomerId.Should().Be(validPosition.CustomerId);
             position.Name.Should().Be(validPosition.Name);
             position.BaseSalary.Should().Be(validPosition.BaseSalary);
             position.Id.Should().NotBeEmpty();
             position.IsActive.Should().BeTrue();
-        }
-
-        [Fact(DisplayName = "ctor() should throw an error when customerId is empty")]
-        [Trait("Domain", "Entities / Position")]        
-        public void InstantiateErrorWhenCustomerIdIsEmpty()
-        {
-            var validPosition = _fixture.GetValidPosition();
-            var emptyGuid = Guid.Empty;
-
-            Action action = () => _ = new DomainEntity.Position(emptyGuid, validPosition.Name, validPosition.BaseSalary);
-
-            action.Should()
-                .Throw<EntityValidationException>()
-                .WithMessage("CustomerId should not be empty or null");
         }
 
         [Theory(DisplayName = "ctor() hould throw an error when name is empty")]
@@ -51,7 +35,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
         {
             var validPosition = _fixture.GetValidPosition();
 
-            Action action = () => new DomainEntity.Position(validPosition.CustomerId, name!, validPosition.BaseSalary);
+            Action action = () => new DomainEntity.Position(name!, validPosition.BaseSalary);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -64,8 +48,8 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
         {
             var validPosition = _fixture.GetValidPosition();
 
-            var position = new DomainEntity.Position(validPosition.CustomerId, validPosition.Name, validPosition.BaseSalary);
-            position.Activate("unit.testing");
+            var position = new DomainEntity.Position(validPosition.Name, validPosition.BaseSalary);
+            position.Activate();
 
             position.IsActive.Should().BeTrue();
         }
@@ -76,23 +60,10 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
         {
             var validPosition = _fixture.GetValidPosition();
 
-            var position = new DomainEntity.Position(validPosition.CustomerId, validPosition.Name, validPosition.BaseSalary);
-            position.Deactivate("unit.testing");
+            var position = new DomainEntity.Position(validPosition.Name, validPosition.BaseSalary);
+            position.Deactivate();
 
             position.IsActive.Should().BeFalse();
-        }
-
-        [Fact(DisplayName = "Create() should create a position with valid CreatedAt and CreatedBy")]
-        [Trait("Domain", "Entities / Position")]
-        public void Create()
-        {
-            var position = _fixture.GetValidPosition();
-            var loggedUsername = _fixture.GetValidUsername();
-
-            position.Create(loggedUsername);
-
-            position.CreatedAt.Should().NotBeSameDateAs(default);
-            position.CreatedBy.Should().Be(loggedUsername);
         }
 
         [Fact(DisplayName = "Update() should update a position")]
@@ -102,27 +73,13 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
             var position = _fixture.GetValidPosition();
             var positionWithNewValues = _fixture.GetValidPosition();
 
-            position.Update(positionWithNewValues.Name, positionWithNewValues.CustomerId, positionWithNewValues.BaseSalary, "unit.testing");
+            position.Update(positionWithNewValues.Name, positionWithNewValues.BaseSalary);
 
             position.Name.Should().Be(positionWithNewValues.Name);
             position.BaseSalary.Should().Be(positionWithNewValues.BaseSalary);
         }
 
-        [Fact(DisplayName = "Update() should update only a name of a position")]
-        [Trait("Domain", "Entities / Position")]
-        public void UpdateOnlyName()
-        {
-            var position = _fixture.GetValidPosition();
-            var newName = _fixture.GetValidPositionName();
-            var currentBaseSalary = position.BaseSalary;
-
-            position.Update(newName, position.CustomerId, position.BaseSalary, "unit.testing");
-
-            position.Name.Should().Be(newName);
-            position.BaseSalary.Should().Be(currentBaseSalary);
-        }
-
-        [Theory(DisplayName = "Should throw an error when name is empty")]
+        [Theory(DisplayName = "Update() should throw an error when name is empty")]
         [Trait("Domain", "Entities / Position")]
         [InlineData("")]
         [InlineData(null)]
@@ -131,24 +88,10 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
         {
             var position = _fixture.GetValidPosition();
 
-            Action action = () => position.Update(name!, position.CustomerId, position.BaseSalary, "unit.testing");
+            Action action = () => position.Update(name!, position.BaseSalary);
 
             action.Should().Throw<EntityValidationException>()
                 .WithMessage("Name should not be empty or null");
-        }
-
-        [Fact(DisplayName = "LoadCustomerData() should load data of the customer related with position")]
-        [Trait("Domain", "Entities / Position")]
-        public void CustomerLoad()
-        {
-            var customer = _fixture.GetValidCustomer();
-            var employee = _fixture.GetValidPosition(customer.Id);
-
-            employee.LoadCustomerData(new CustomerData(customer.Id, customer.Name));
-
-            employee.CustomerData.Should().NotBeNull();
-            employee.CustomerData!.Id.Should().Be(customer.Id);
-            employee.CustomerData.Name.Should().Be(customer.Name);
         }
 
         [Fact(DisplayName = "SetAuditLog() should set auditLog")]

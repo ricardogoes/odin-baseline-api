@@ -1,8 +1,5 @@
 ﻿using Bogus.Extensions.Brazil;
-using Castle.Core.Resource;
-using Odin.Baseline.Domain.DTO;
 using Odin.Baseline.Domain.Entities;
-using Odin.Baseline.Domain.ValueObjects;
 using Odin.Baseline.Infra.Data.EF.Models;
 
 namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
@@ -14,56 +11,13 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
     public class ModelMapperTestFixture : BaseFixture
     {
         public ModelMapperTestFixture()
-            : base() { }
-
-        public CustomerModel GetValidCustomerModel(Guid? id = null)
-        {
-            return new CustomerModel
-            (
-                id: id ?? Guid.NewGuid(),
-                name: Faker.Company.CompanyName(1),
-                document: Faker.Company.Cnpj(),
-                isActive: true,
-                streetName: Faker.Address.StreetName(),
-                streetNumber: int.Parse(Faker.Address.BuildingNumber()),
-                complement: Faker.Address.SecondaryAddress(),
-                neighborhood: Faker.Address.CardinalDirection(),
-                zipCode: Faker.Address.ZipCode(),
-                city: Faker.Address.City(),
-                state: Faker.Address.StateAbbr(),
-                createdAt: DateTime.UtcNow,
-                createdBy: "unit.testing",
-                lastUpdatedAt: DateTime.UtcNow,
-                lastUpdatedBy: "unit.testing"
-            );
-        }
-
-        public CustomerModel GetValidCustomerModelWithoutAddress()
-        {
-            return new CustomerModel
-            (
-                id: Guid.NewGuid(),
-                name: Faker.Company.CompanyName(1),
-                document: Faker.Company.Cnpj(),
-                isActive: true,
-                createdAt: DateTime.UtcNow,
-                createdBy: "unit.testing",
-                lastUpdatedAt: DateTime.UtcNow,
-                lastUpdatedBy: "unit.testing"
-            );
-        }
-
-        public Department GetValidDepartment()
-        {
-            var department = new Department(Guid.NewGuid(), Faker.Commerce.Department(), isActive: true);
-            department.Create("unit.testing");
-            return department;
-        }
+            : base() { }        
 
         public DepartmentModel GetValidDepartmentModel()
         {
-            var customerId = Guid.NewGuid();
-            return new DepartmentModel
+            var tenantId = Guid.NewGuid();
+            
+            var model = new DepartmentModel
             (
                 id: Guid.NewGuid(),                
                 name: Faker.Company.CompanyName(1),
@@ -72,21 +26,23 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 createdBy: "unit.testing",
                 lastUpdatedAt: DateTime.UtcNow,
                 lastUpdatedBy: "unit.testing",
-                customerId: customerId,
-                customerModel: GetValidCustomerModel(customerId)
+                tenantId: tenantId
             );
+
+            model.SetAuditLog("unit.testing", created: true);
+
+            return model;
         }
 
         public Position GetValidPosition()
         {
-            var position = new Position(Guid.NewGuid(), Faker.Commerce.Department(), 1_000, isActive: true);
-            position.Create("unit.testing");
+            var position = new Position(Faker.Commerce.Department(), 1_000, isActive: true);            
             return position;
         }
 
         public PositionModel GetValidPositionModel()
         {
-            var customerId = Guid.NewGuid();
+            var tenantId = Guid.NewGuid();
             return new PositionModel
             (
                 id: Guid.NewGuid(),                
@@ -97,21 +53,19 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 createdBy: "unit.testing",
                 lastUpdatedAt: DateTime.UtcNow,
                 lastUpdatedBy: "unit.testing",
-                customerId: customerId,
-                customerModel: GetValidCustomerModel(customerId)
+                tenantId: tenantId
             );
         }
 
         public Employee GetValidEmployee()
         {
-            var employee = new Employee(Guid.NewGuid(), Faker.Person.FirstName, Faker.Person.LastName, Faker.Person.Cpf(), Faker.Person.Email, Guid.NewGuid(), true);
-            employee.Create("unit.testing");
+            var employee = new Employee(Faker.Person.FirstName, Faker.Person.LastName, Faker.Person.Cpf(), Faker.Person.Email, Guid.NewGuid(), true);
             return employee;
         }
 
         public EmployeeModel GetValidEmployeeModel()
         {
-            var customerId = Guid.NewGuid();
+            var tenantId = Guid.NewGuid();
             return new EmployeeModel
             (
                 id: Guid.NewGuid(),
@@ -131,15 +85,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 createdBy: "unit.testing",
                 lastUpdatedAt: DateTime.UtcNow,
                 lastUpdatedBy: "unit.testing",
-                customerId: customerId,
-                departmentId: null,
-                customerModel: GetValidCustomerModel(customerId)
+                tenantId: tenantId,
+                departmentId: null
             );
         }
 
         public EmployeeModel GetValidEmployeeModelWithoutAddress()
         {
-            var customerId = Guid.NewGuid();
+            var tenantId = Guid.NewGuid();
             return new EmployeeModel
             (
                id: Guid.NewGuid(),
@@ -152,16 +105,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                createdBy: "unit.testing",
                lastUpdatedAt: DateTime.UtcNow,
                lastUpdatedBy: "unit.testing",
-               customerId: customerId,
-               departmentId: null,
-               customerModel: GetValidCustomerModel(customerId)
+               tenantId: tenantId,
+               departmentId: null
            );
         }
 
         public EmployeePositionHistory GetValidEmployeePositionHistory()
         {
             var positionHistory = new EmployeePositionHistory(Guid.NewGuid(), 10_000, DateTime.Now, DateTime.Now, true);
-            positionHistory.Create("unit.testing");
             return positionHistory;
         }
 
@@ -174,7 +125,8 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 salary: 10_000,
                 startDate: DateTime.Now,
                 finishDate: DateTime.Now,
-                isActual: true
+                isActual: true,
+                tenantId: Guid.NewGuid()
             );
         }
     }

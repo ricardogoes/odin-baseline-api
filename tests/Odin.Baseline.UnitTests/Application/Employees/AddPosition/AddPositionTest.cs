@@ -2,7 +2,6 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using Odin.Baseline.Application.Customers.ChangeAddressCustomer;
 using Odin.Baseline.Application.Employees.AddPosition;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;

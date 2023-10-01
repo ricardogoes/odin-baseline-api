@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Odin.Baseline.Application.Departments.Common;
 
 namespace Odin.Baseline.Application.Departments.GetDepartmentById
 {

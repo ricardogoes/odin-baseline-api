@@ -1,5 +1,4 @@
 ﻿using Odin.Baseline.Application.Positions.UpdatePosition;
-using Odin.Baseline.UnitTests.Application.Positions.Common;
 
 namespace Odin.Baseline.UnitTests.Application.Positions.UpdatePosition
 {
@@ -16,42 +15,16 @@ namespace Odin.Baseline.UnitTests.Application.Positions.UpdatePosition
             => new
             (
                 id ?? Guid.NewGuid(),
-                Guid.NewGuid(),
                 GetValidName(),
-                GetValidBaseSalary(),                
-                GetValidUsername()
-            );
-
-        public UpdatePositionInput GetUpdatePositionInputWithEmptyCustomerId(Guid? id = null)
-            => new
-            (
-                id ?? Guid.NewGuid(),
-                Guid.Empty,
-                GetValidName(),
-                GetValidBaseSalary(),
-                GetValidUsername()
+                GetValidBaseSalary()
             );
 
         public UpdatePositionInput GetUpdatePositionInputWithEmptyName(Guid? id = null)
             => new
             (
                 id ?? Guid.NewGuid(),
-                Guid.NewGuid(),
                 "",
-                GetValidBaseSalary(),
-                GetValidUsername()
+                GetValidBaseSalary()
             );
-
-        public UpdatePositionInput GetUpdatePositionInputWithEmptyLoggedUsername(Guid? id = null)
-           => new
-           (
-               id ?? Guid.NewGuid(),
-               Guid.NewGuid(),
-               GetValidName(),
-               GetValidBaseSalary(),
-               ""
-           );
     }
-
-
 }

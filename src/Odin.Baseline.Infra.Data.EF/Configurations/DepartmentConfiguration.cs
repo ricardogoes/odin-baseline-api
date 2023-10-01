@@ -15,10 +15,6 @@ namespace Odin.Baseline.Infra.Data.EF.Configurations
                 .HasColumnName("id")
                 .IsRequired();
 
-            builder.Property(department => department.CustomerId)
-                .HasColumnName("customer_id")                
-                .IsRequired();
-
             builder.Property(department => department.Name)
                 .HasColumnName("name")
                 .IsRequired()
@@ -42,6 +38,10 @@ namespace Odin.Baseline.Infra.Data.EF.Configurations
 
             builder.Property(department => department.LastUpdatedBy)
                .HasColumnName("last_updated_by")
+               .IsRequired();
+
+            builder.Property(department => department.TenantId)
+               .HasColumnName("tenant_id")               
                .IsRequired();
         }
     }

@@ -1,6 +1,9 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using Odin.Baseline.Application.Positions.GetPositions;
 using Odin.Baseline.Domain.CustomExceptions;
+using Odin.Baseline.Domain.Interfaces.Repositories;
 using Odin.Baseline.Infra.Data.EF.Mappers;
 using Odin.Baseline.Infra.Data.EF.Models;
 using Odin.Baseline.Infra.Data.EF.Repositories;
@@ -12,9 +15,18 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
     {
         private readonly PositionRepositoryTestFixture _fixture;
 
+        private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
+        private readonly Mock<ITenantService> _tenantServiceMock;
+
         public PositionRepositoryTest(PositionRepositoryTestFixture fixture)
         {
             _fixture = fixture;
+
+            _httpContextAccessorMock = new();
+            _httpContextAccessorMock.Setup(s => s.HttpContext.User.Identity!.Name).Returns("unit.testing");
+
+            _tenantServiceMock = new();
+            _tenantServiceMock.Setup(s => s.GetTenant()).Returns(_fixture.TenantId);
         }
 
         [Fact(DisplayName = "InsertAsync() should insert a valid position")]
@@ -23,13 +35,9 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var exampleCustomer = _fixture.GetValidCustomerModel();
-            await dbContext.AddAsync(exampleCustomer);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
+            var examplePosition = _fixture.GetValidPosition();
 
-            var examplePosition = _fixture.GetValidPosition(exampleCustomer.Id);
-
-            var repository = new PositionRepository(dbContext);
+            var repository = new PositionRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var unitOfWork = new UnitOfWork(dbContext);
 
             await repository.InsertAsync(examplePosition, CancellationToken.None);
@@ -52,19 +60,15 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var exampleCustomer = _fixture.GetValidCustomerModel();
-            await dbContext.AddAsync(exampleCustomer);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
+            var examplePosition = _fixture.GetValidPositionModel();
 
-            var examplePosition = _fixture.GetValidPositionModel(exampleCustomer.Id);
-
-            var examplePositionsList = _fixture.GetValidPositionsModelList(new List<Guid> { exampleCustomer.Id }, 15);
+            var examplePositionsList = _fixture.GetValidPositionsModelList(15);
             examplePositionsList.Add(examplePosition);
 
             await dbContext.AddRangeAsync(examplePositionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var positionRepository = new PositionRepository(_fixture.CreateDbContext(true));
+            var positionRepository = new PositionRepository(_fixture.CreateDbContext(true), _httpContextAccessorMock.Object, _tenantServiceMock.Object);
 
             var dbPosition = await positionRepository.FindByIdAsync(examplePosition.Id, CancellationToken.None);
 
@@ -83,10 +87,10 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
             var dbContext = _fixture.CreateDbContext();
             var exampleId = Guid.NewGuid();
 
-            await dbContext.AddRangeAsync(_fixture.GetValidPositionsModelList(new List<Guid> { Guid.NewGuid() }, 15));
+            await dbContext.AddRangeAsync(_fixture.GetValidPositionsModelList(15));
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var positionRepository = new PositionRepository(dbContext);
+            var positionRepository = new PositionRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
 
             var task = async () => await positionRepository.FindByIdAsync(exampleId, CancellationToken.None);
 
@@ -100,23 +104,19 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
         {
             var dbContext = _fixture.CreateDbContext();
             
-            var exampleCustomer = _fixture.GetValidCustomerModel();
-            await dbContext.AddAsync(exampleCustomer);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
+            var examplePosition = _fixture.GetValidPosition();
+            var newPositionValues = _fixture.GetValidPosition();
 
-            var examplePosition = _fixture.GetValidPosition(exampleCustomer.Id);
-            var newPositionValues = _fixture.GetValidPosition(exampleCustomer.Id);
-
-            var examplePositionsList = _fixture.GetValidPositionsModelList(new List<Guid> { exampleCustomer.Id }, 15);
-            examplePositionsList.Add(examplePosition.ToPositionModel());
+            var examplePositionsList = _fixture.GetValidPositionsModelList(15);
+            examplePositionsList.Add(examplePosition.ToPositionModel(Guid.NewGuid()));
 
             await dbContext.AddRangeAsync(examplePositionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            examplePosition.Update(newPositionValues.Name, examplePosition.CustomerId, examplePosition.BaseSalary, "unit.testing");
+            examplePosition.Update(newPositionValues.Name, examplePosition.BaseSalary);
 
             dbContext = _fixture.CreateDbContext(true);
-            var positionRepository = new PositionRepository(dbContext);
+            var positionRepository = new PositionRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var unitOfWork = new UnitOfWork(dbContext);
 
             await positionRepository.UpdateAsync(examplePosition, CancellationToken.None);
@@ -136,14 +136,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
         {
             var dbContext = _fixture.CreateDbContext(true);
             var examplePosition = _fixture.GetValidPosition();
-            var examplePositionsList = _fixture.GetValidPositionsModelList(new List<Guid> { Guid.NewGuid() }, 15);
-            examplePositionsList.Add(examplePosition.ToPositionModel());
+            var examplePositionsList = _fixture.GetValidPositionsModelList(15);
+            examplePositionsList.Add(examplePosition.ToPositionModel(Guid.NewGuid()));
 
             await dbContext.AddRangeAsync(examplePositionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
             dbContext = _fixture.CreateDbContext(true);
-            var positionRepository = new PositionRepository(dbContext);
+            var positionRepository = new PositionRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var unitOfWork = new UnitOfWork(dbContext);
 
             await positionRepository.DeleteAsync(examplePosition);
@@ -160,39 +160,31 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var customer1 = _fixture.GetValidCustomerModel();
-            var customer2 = _fixture.GetValidCustomerModel();
-
-            await dbContext.AddRangeAsync(new List<CustomerModel> { customer1, customer2 });
-
-
-            var examplePositionsList = _fixture.GetValidPositionsModelList(new List<Guid> { customer1.Id, customer2.Id }, 15);
+            var examplePositionsList = _fixture.GetValidPositionsModelList(15);
 
             await dbContext.AddRangeAsync(examplePositionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetPositionsInput(1, 20, customerId: customer1.Id, sort: "name", name: "", isActive: true, "", null, null, "", null, null);
+            var searchInput = new GetPositionsInput(1, 20, sort: "name", name: "", isActive: true, "", null, null, "", null, null);
             var filters = new Dictionary<string, object?>
             {
-                { "CustomerId", searchInput.CustomerId },
                 { "Name", searchInput.Name },
                 { "IsActive", searchInput.IsActive },
             };
 
-            var positionRepository = new PositionRepository(dbContext);
+            var positionRepository = new PositionRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var output = await positionRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
             output.Items.Should().NotBeNull();
-            output.TotalItems.Should().Be(examplePositionsList.Where(x => x.CustomerId == customer1.Id && x.IsActive).Count());
-            output.Items.Should().HaveCount(examplePositionsList.Where(x => x.CustomerId == customer1.Id && x.IsActive).Count());
+            output.TotalItems.Should().Be(examplePositionsList.Where(x => x.IsActive).Count());
+            output.Items.Should().HaveCount(examplePositionsList.Where(x => x.IsActive).Count());
             foreach (var outputItem in output.Items)
             {
                 var exampleItem = examplePositionsList.Find(
                     position => position.Id == outputItem.Id
                 );
                 exampleItem.Should().NotBeNull();
-                outputItem.CustomerId.Should().Be(customer1.Id);
                 outputItem.Name.Should().Be(exampleItem!.Name);
                 outputItem.BaseSalary.Should().Be(exampleItem.BaseSalary);
                 outputItem.IsActive.Should().Be(exampleItem.IsActive);
@@ -206,23 +198,19 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
         {
             var dbContext = _fixture.CreateDbContext();
 
-            var exampleCustomer = _fixture.GetValidCustomerModel();
-            await dbContext.AddAsync(exampleCustomer);
-
-            var examplePositionsList = _fixture.GetValidPositionsModelList(new List<Guid> { exampleCustomer.Id },15);
+            var examplePositionsList = _fixture.GetValidPositionsModelList(15);
 
             await dbContext.AddRangeAsync(examplePositionsList);
             await dbContext.SaveChangesAsync(CancellationToken.None);
 
-            var searchInput = new GetPositionsInput(1, 20, customerId: Guid.Empty, sort: "name", name: "", isActive: null, "", null, null, "", null, null);
+            var searchInput = new GetPositionsInput(1, 20, sort: "name", name: "", isActive: null, "", null, null, "", null, null);
             var filters = new Dictionary<string, object?>
             {
-                { "CustomerId", searchInput.CustomerId },
                 { "Name", searchInput.Name },
                 { "IsActive", searchInput.IsActive },
             };
 
-            var positionRepository = new PositionRepository(dbContext);
+            var positionRepository = new PositionRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
             var output = await positionRepository.FindPaginatedListAsync(filters, searchInput.PageNumber, searchInput.PageSize, searchInput.Sort!, CancellationToken.None);
 
             output.Should().NotBeNull();
@@ -233,8 +221,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
             {
                 var exampleItem = examplePositionsList.Find(position => position.Id == outputItem.Id);
                 exampleItem.Should().NotBeNull();
-                outputItem.CustomerId.Should().Be(exampleItem!.CustomerId);
-                outputItem.Name.Should().Be(exampleItem.Name);
+                outputItem.Name.Should().Be(exampleItem!.Name);
                 outputItem.BaseSalary.Should().Be(exampleItem.BaseSalary);
                 outputItem.IsActive.Should().Be(exampleItem.IsActive);
                 outputItem.CreatedAt.Should().Be(exampleItem.CreatedAt);
@@ -246,11 +233,10 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
         public async Task SearchRetursEmptyWhenPersistenceIsEmpty()
         {
             var dbContext = _fixture.CreateDbContext();
-            var positionRepository = new PositionRepository(dbContext);
-            var searchInput = new GetPositionsInput(1, 20, customerId: Guid.Empty, sort: "", name: "", isActive: true, "", null, null, "", null, null);
+            var positionRepository = new PositionRepository(dbContext, _httpContextAccessorMock.Object, _tenantServiceMock.Object);
+            var searchInput = new GetPositionsInput(1, 20, sort: "", name: "", isActive: true, "", null, null, "", null, null);
             var filters = new Dictionary<string, object?>
             {
-                { "CustomerId", searchInput.CustomerId },
                 { "Name", searchInput.Name },                
                 { "IsActive", searchInput.IsActive },
             };

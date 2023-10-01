@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Odin.Baseline.Application.Positions.Common;
 using Odin.Baseline.Domain.Enums;
 
 namespace Odin.Baseline.Application.Positions.ChangeStatusPosition
@@ -8,13 +7,11 @@ namespace Odin.Baseline.Application.Positions.ChangeStatusPosition
     {        
         public Guid Id { get; private set; }
         public ChangeStatusAction? Action { get; private set; }
-        public string LoggedUsername { get; private set; }
 
-        public ChangeStatusPositionInput(Guid id, ChangeStatusAction? action, string loggedUsername)
+        public ChangeStatusPositionInput(Guid id, ChangeStatusAction? action)
         {
             Id = id;
             Action = action;
-            LoggedUsername = loggedUsername;
         }
     }
 }

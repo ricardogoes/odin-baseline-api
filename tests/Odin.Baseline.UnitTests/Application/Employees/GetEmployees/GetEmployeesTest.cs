@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Moq;
-using Odin.Baseline.Domain.DTO.Common;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
+using Odin.Baseline.Domain.Models;
 using App = Odin.Baseline.Application.Employees.GetEmployees;
 
 namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployees
@@ -29,21 +29,21 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployees
                 totalItems: 15,
                 items: new List<Employee>
                 {
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
-                    new Employee(Guid.NewGuid(), _fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
+                    new Employee(_fixture.GetValidFirstName(), _fixture.GetValidLastName(), _fixture.GetValidDocument(), _fixture.GetValidEmail(), Guid.NewGuid(), isActive: true),
                 }
             );
 
@@ -51,7 +51,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployees
                 .Returns(() => Task.FromResult(expectedEmployees));
 
             var useCase = new App.GetEmployees(_repositoryMock.Object);
-            var employees = await useCase.Handle(new App.GetEmployeesInput(1, 10, Guid.Empty, "name", Guid.Empty, "", "", "", "", true, "", null, null, "", null, null), new CancellationToken());
+            var employees = await useCase.Handle(new App.GetEmployeesInput(1, 10, "name", Guid.Empty, "", "", "", "", true, "", null, null, "", null, null), new CancellationToken());
 
             employees.Should().NotBeNull();
             employees.TotalItems.Should().Be(15);
@@ -81,7 +81,7 @@ namespace Odin.Baseline.UnitTests.Application.Employees.GetEmployees
                 .Returns(() => Task.FromResult(expectedEmployees));
 
             var useCase = new App.GetEmployees(_repositoryMock.Object);
-            var employees = await useCase.Handle(new App.GetEmployeesInput(1, 10, Guid.Empty, "name", Guid.Empty, "", "", "", "", true, "", null, null, "", null, null), new CancellationToken());
+            var employees = await useCase.Handle(new App.GetEmployeesInput(1, 10, "name", Guid.Empty, "", "", "", "", true, "", null, null, "", null, null), new CancellationToken());
 
             employees.Should().NotBeNull();
             employees.TotalItems.Should().Be(4);

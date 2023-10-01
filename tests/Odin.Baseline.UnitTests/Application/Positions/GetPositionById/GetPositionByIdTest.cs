@@ -54,7 +54,6 @@ namespace Odin.Baseline.UnitTests.Application.Positions.GetPositionById
             output.BaseSalary.Should().Be(validPosition.BaseSalary);
             output.IsActive.Should().Be(validPosition.IsActive);
             output.Id.Should().Be(validPosition.Id);
-            output.CreatedAt.Should().Be(validPosition.CreatedAt);
         }
 
         [Fact(DisplayName = "Handle() should throw an error when validation failed")]

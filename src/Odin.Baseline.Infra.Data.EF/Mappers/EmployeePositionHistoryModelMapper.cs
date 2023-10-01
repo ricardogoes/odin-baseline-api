@@ -5,7 +5,7 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
 {
     public static class EmployeePositionHistoryModelMapper
     {
-        public static EmployeePositionHistoryModel ToEmployeePositionHistoryModel(this EmployeePositionHistory positionHistory, Guid employeeId)
+        public static EmployeePositionHistoryModel ToEmployeePositionHistoryModel(this EmployeePositionHistory positionHistory, Guid employeeId, Guid tenantId)
         {
             return new EmployeePositionHistoryModel
             (
@@ -14,12 +14,13 @@ namespace Odin.Baseline.Infra.Data.EF.Mappers
                 positionHistory.Salary,
                 positionHistory.StartDate,
                 positionHistory.FinishDate,                
-                positionHistory.IsActual
+                positionHistory.IsActual,
+                tenantId
             );
         }
 
-        public static IEnumerable<EmployeePositionHistoryModel> ToEmployeePositionHistoryModel(this IEnumerable<EmployeePositionHistory> positionHistorys, Guid employeeId)
-            => positionHistorys.Select(positionHistory => ToEmployeePositionHistoryModel(positionHistory, employeeId));
+        public static IEnumerable<EmployeePositionHistoryModel> ToEmployeePositionHistoryModel(this IEnumerable<EmployeePositionHistory> positionHistorys, Guid employeeId, Guid tenantId)
+            => positionHistorys.Select(positionHistory => ToEmployeePositionHistoryModel(positionHistory, employeeId, tenantId));
 
         public static EmployeePositionHistory ToEmployeePositionHistory(this EmployeePositionHistoryModel model)
         {

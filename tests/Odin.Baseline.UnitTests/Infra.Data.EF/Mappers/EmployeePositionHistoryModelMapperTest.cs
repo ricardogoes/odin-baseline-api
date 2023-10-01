@@ -19,7 +19,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         {
             var employeeId = Guid.NewGuid();
             var positionHistory = _fixture.GetValidEmployeePositionHistory();
-            var model = positionHistory.ToEmployeePositionHistoryModel(employeeId);
+            var model = positionHistory.ToEmployeePositionHistoryModel(employeeId, Guid.NewGuid());
 
             model.Should().NotBeNull();
             model.EmployeeId.Should().Be(employeeId);
@@ -39,7 +39,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             var positionHistory2 = _fixture.GetValidEmployeePositionHistory();
             var positionHistorys = new List<EmployeePositionHistory> { positionHistory1, positionHistory2 };
 
-            var model = positionHistorys.ToEmployeePositionHistoryModel(employeeId);
+            var model = positionHistorys.ToEmployeePositionHistoryModel(employeeId, Guid.NewGuid());
 
             model.Should().NotBeNull();
             foreach (var positionHistory in model)

@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Models;
 using Odin.Baseline.Api.Configurations;
 using Odin.Baseline.Api.Filters;
-using Odin.Baseline.Domain.DTO.Common;
+using Odin.Baseline.Api.Middlewares;
+using Odin.Baseline.Domain.Models.AppSettings;
 using Odin.Baseline.Infra.Messaging.JsonPolicies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +23,12 @@ builder.Services.AddCors(options =>
     });
 });
 
-var connectionString = new ConnectionStrings(Environment.GetEnvironmentVariable("OdinSettings__ConnectionStrings__OdinBaselineDB")!);
-var appSettings = new AppSettings(connectionString, builder.Configuration.GetSection("CancellationTokenTimeout").Get<int>());
+var connectionStrings = new ConnectionStringsSettings(Environment.GetEnvironmentVariable("OdinSettings:ConnectionStrings:OdinBaselineDB")!);
+
+var keycloakSettings = builder.Configuration.GetSection("Keycloak").Get<KeycloakSettings>()!;
+keycloakSettings.Credentials!.Secret = Environment.GetEnvironmentVariable("OdinSettings:Keycloak:Credentials:Secret")!;
+
+var appSettings = new AppSettings(connectionStrings, keycloakSettings);
 
 var keycloakOptions = builder.Configuration
     .GetSection(KeycloakAuthenticationOptions.Section)
@@ -33,6 +38,7 @@ var keycloakOptions = builder.Configuration
 builder.Services
     .AddSingleton(appSettings)
     .AddSingleton(keycloakOptions)
+    .AddHttpContextAccessor()
     .AddAppConnections(appSettings)
     .AddApplications()
     .AddRepositories()
@@ -112,6 +118,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<TenantMiddleware>();
 app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();

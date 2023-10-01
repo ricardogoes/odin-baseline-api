@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
-using Odin.Baseline.Api.Models.Customers;
-using Odin.Baseline.Application.Customers.CreateCustomer;
+using Odin.Baseline.Application.Departments.CreateDepartment;
 using Odin.Baseline.Domain.Interfaces.DomainServices;
 using Odin.Baseline.Domain.Services;
 
@@ -13,13 +12,13 @@ namespace Odin.Baseline.Api.Configurations
         {
             services.AddMediatR(cfg =>
             {
-                cfg.RegisterServicesFromAssembly(typeof(CreateCustomer).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(CreateDepartment).Assembly);
             });
 
 
             ValidatorOptions.Global.LanguageManager.Enabled = false;
 
-            services.AddValidatorsFromAssemblyContaining<CreateCustomerInputValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateDepartmentInputValidator>();
 
             //Domain Services
             services.AddTransient<IDocumentService, DocumentService> ();

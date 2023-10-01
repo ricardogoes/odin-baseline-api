@@ -18,18 +18,13 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         public void MapPositionToPositionModel()
         {
             var position = _fixture.GetValidPosition();
-            var model = position.ToPositionModel();
+            var model = position.ToPositionModel(Guid.NewGuid());
 
             model.Should().NotBeNull();
             model.Id.Should().Be(position.Id);
-            model.CustomerId.Should().Be(position.CustomerId);
             model.Name.Should().Be(position.Name);
             model.BaseSalary.Should().Be(position.BaseSalary);
             model.IsActive.Should().Be(position.IsActive);
-            model.CreatedAt.Should().Be(position.CreatedAt);
-            model.CreatedBy.Should().Be(position.CreatedBy);
-            model.LastUpdatedAt.Should().Be(position.LastUpdatedAt);
-            model.LastUpdatedBy.Should().Be(position.LastUpdatedBy);
         }
 
         [Fact(DisplayName = "ToPositionModel() should map a list of positions to PositionModel")]
@@ -40,21 +35,16 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             var position2 = _fixture.GetValidPosition();
             var positions = new List<Position> { position1, position2 };
 
-            var model = positions.ToPositionModel();
+            var model = positions.ToPositionModel(Guid.NewGuid());
 
             model.Should().NotBeNull();
             foreach (var position in model)
             {
                 var positionToCompare = positions.FirstOrDefault(x => x.Id == position.Id);
                 position.Id.Should().Be(positionToCompare!.Id);
-                position.CustomerId.Should().Be(positionToCompare.CustomerId);
                 position.Name.Should().Be(positionToCompare.Name);
                 position.BaseSalary.Should().Be(positionToCompare.BaseSalary);
                 position.IsActive.Should().Be(positionToCompare.IsActive);
-                position.CreatedAt.Should().Be(positionToCompare.CreatedAt);
-                position.CreatedBy.Should().Be(positionToCompare.CreatedBy);
-                position.LastUpdatedAt.Should().Be(positionToCompare.LastUpdatedAt);
-                position.LastUpdatedBy.Should().Be(positionToCompare.LastUpdatedBy);
             }
         }
 
@@ -67,14 +57,9 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
 
             position.Should().NotBeNull();
             position.Id.Should().Be(model.Id);
-            position.CustomerId.Should().Be(model.CustomerId);
             position.Name.Should().Be(model.Name);
             position.BaseSalary.Should().Be(model.BaseSalary);
             position.IsActive.Should().Be(model.IsActive);
-            position.CreatedAt.Should().Be(model.CreatedAt);
-            position.CreatedBy.Should().Be(model.CreatedBy);
-            position.LastUpdatedAt.Should().Be(model.LastUpdatedAt);
-            position.LastUpdatedBy.Should().Be(model.LastUpdatedBy);
         }
 
         [Fact(DisplayName = "ToPosition() should map a list of positions models to Position")]
@@ -93,14 +78,9 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 var positionToCompare = positionsModel.FirstOrDefault(x => x.Id == position.Id);
                 position.Should().NotBeNull();
                 position.Id.Should().Be(positionToCompare!.Id);
-                position.CustomerId.Should().Be(positionToCompare.CustomerId);
                 position.Name.Should().Be(positionToCompare.Name);
                 position.BaseSalary.Should().Be(positionToCompare.BaseSalary);
                 position.IsActive.Should().Be(positionToCompare.IsActive);
-                position.CreatedAt.Should().Be(positionToCompare.CreatedAt);
-                position.CreatedBy.Should().Be(positionToCompare.CreatedBy);
-                position.LastUpdatedAt.Should().Be(positionToCompare.LastUpdatedAt);
-                position.LastUpdatedBy.Should().Be(positionToCompare.LastUpdatedBy);
             }
         }
     }

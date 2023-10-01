@@ -2,8 +2,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using Odin.Baseline.Application.Employees.GetEmployeeById;
-using Odin.Baseline.Application.Positions.Common;
+using Odin.Baseline.Application.Positions;
 using Odin.Baseline.Application.Positions.CreatePosition;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
@@ -37,7 +36,7 @@ namespace Odin.Baseline.UnitTests.Application.Positions.CreatePosition
                .ReturnsAsync(new ValidationResult());
 
             var input = _fixture.GetValidCreatePositionInput();
-            var positionToInsert = new Position(input.CustomerId, input.Name, input.BaseSalary);
+            var positionToInsert = new Position(input.Name, input.BaseSalary);
             var expectedPositionInserted = new PositionOutput
             (
                 id: Guid.NewGuid(),
@@ -66,7 +65,6 @@ namespace Odin.Baseline.UnitTests.Application.Positions.CreatePosition
             output.BaseSalary.Should().Be(expectedPositionInserted.BaseSalary);
             output.IsActive.Should().BeTrue();
             output.Id.Should().NotBeEmpty();
-            output.CreatedAt.Should().NotBeSameDateAs(default);
         }
 
         [Fact(DisplayName = "Handle() should throw an error when validation failed")]

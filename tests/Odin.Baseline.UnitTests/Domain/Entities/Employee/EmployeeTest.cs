@@ -19,7 +19,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         public void Instantiate()
         {
             var validEmployee = _fixture.GetValidEmployee();
-            var employee = new DomainEntity.Employee(validEmployee.CustomerId, validEmployee.FirstName, validEmployee.LastName, validEmployee.Document, validEmployee.Email, validEmployee.DepartmentId);
+            var employee = new DomainEntity.Employee(validEmployee.FirstName, validEmployee.LastName, validEmployee.Document, validEmployee.Email, validEmployee.DepartmentId);
 
             employee.Should().NotBeNull();
             employee.FirstName.Should().Be(validEmployee.FirstName);
@@ -39,7 +39,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         {
             var validEmployee = _fixture.GetValidEmployee();
 
-            Action action = () => new DomainEntity.Employee(validEmployee.CustomerId, firstName!, validEmployee.LastName, validEmployee.Document, validEmployee.Email, validEmployee.DepartmentId);
+            Action action = () => new DomainEntity.Employee(firstName!, validEmployee.LastName, validEmployee.Document, validEmployee.Email, validEmployee.DepartmentId);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -55,7 +55,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         {
             var validEmployee = _fixture.GetValidEmployee();
 
-            Action action = () => new DomainEntity.Employee(validEmployee.CustomerId, validEmployee.FirstName, lastName!, validEmployee.Document, validEmployee.Email, validEmployee.DepartmentId);
+            Action action = () => new DomainEntity.Employee(validEmployee.FirstName, lastName!, validEmployee.Document, validEmployee.Email, validEmployee.DepartmentId);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -74,7 +74,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         {
             var validEmployee = _fixture.GetValidEmployee();
 
-            Action action = () => new DomainEntity.Employee(validEmployee.CustomerId, validEmployee.FirstName, validEmployee.LastName, validEmployee.Document, email!, validEmployee.DepartmentId);
+            Action action = () => new DomainEntity.Employee(validEmployee.FirstName, validEmployee.LastName, validEmployee.Document, email!, validEmployee.DepartmentId);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -88,7 +88,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             var validEmployee = _fixture.GetValidEmployee();
 
             Action action =
-                () => new DomainEntity.Employee(validEmployee.CustomerId, validEmployee.FirstName, validEmployee.LastName, "", validEmployee.Email, validEmployee.DepartmentId);
+                () => new DomainEntity.Employee(validEmployee.FirstName, validEmployee.LastName, "", validEmployee.Email, validEmployee.DepartmentId);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -100,11 +100,8 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         public void Activate()
         {
             var validEmployee = _fixture.GetValidEmployee();
-
-            var employee = new DomainEntity.Employee(validEmployee.CustomerId, validEmployee.FirstName, validEmployee.LastName, validEmployee.Document, validEmployee.Email, validEmployee.DepartmentId);
-            employee.Activate("unit.testing");
-
-            employee.IsActive.Should().BeTrue();
+            validEmployee.Activate();
+            validEmployee.IsActive.Should().BeTrue();
         }
 
         [Fact(DisplayName = "Deactivate() should deactivate a employee")]
@@ -112,11 +109,8 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         public void Deactivate()
         {
             var validEmployee = _fixture.GetValidEmployee();
-
-            var employee = new DomainEntity.Employee(validEmployee.CustomerId, validEmployee.FirstName, validEmployee.LastName, validEmployee.Document, validEmployee.Email, validEmployee.DepartmentId);
-            employee.Deactivate("unit.testing");
-
-            employee.IsActive.Should().BeFalse();
+            validEmployee.Deactivate();
+            validEmployee.IsActive.Should().BeFalse();
         }
 
         [Fact(DisplayName = "ChangeAddress() should change address")]
@@ -126,7 +120,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             var employee = _fixture.GetValidEmployee();
             var address = _fixture.GetValidAddress();
 
-            employee.ChangeAddress(address, "unit.testing");
+            employee.ChangeAddress(address);
 
             employee.Address.Should().NotBeNull();
             employee.Address!.StreetName.Should().Be(address.StreetName);
@@ -138,19 +132,6 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             employee.Address.State.Should().Be(address.State);
         }
 
-        [Fact(DisplayName = "Create() should create a employee with valid CreatedAt and CreatedBy")]
-        [Trait("Domain", "Entities / Employee")]
-        public void Create()
-        {
-            var employee = _fixture.GetValidEmployee();
-            var loggedUsername = _fixture.GetValidUsername();
-
-            employee.Create(loggedUsername);
-
-            employee.CreatedAt.Should().NotBeSameDateAs(default);
-            employee.CreatedBy.Should().Be(loggedUsername);
-        }
-
         [Fact(DisplayName = "Update() hould update a employee")]
         [Trait("Domain", "Entities / Employee")]
         public void Update()
@@ -158,13 +139,12 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             var employee = _fixture.GetValidEmployee();
             var newEmployee = _fixture.GetValidEmployee();
 
-            employee.Update(newEmployee.FirstName, newEmployee.LastName, newEmployee.Document, newEmployee.Email, "unit.testing", newEmployee.CustomerId, newEmployee.DepartmentId);
+            employee.Update(newEmployee.FirstName, newEmployee.LastName, newEmployee.Document, newEmployee.Email, newEmployee.DepartmentId);
 
             employee.FirstName.Should().Be(newEmployee.FirstName);
             employee.LastName.Should().Be(newEmployee.LastName);
             employee.Email.Should().Be(newEmployee.Email);
             employee.Document.Should().Be(newEmployee.Document);
-            employee.CustomerId.Should().Be(newEmployee.CustomerId);
             employee.DepartmentId.Should().Be(newEmployee.DepartmentId);
         }
 
@@ -177,7 +157,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         {
             var employee = _fixture.GetValidEmployee();
             Action action =
-                () => employee.Update(name!, employee.LastName, employee.Document, employee.Email, "unit.testing");
+                () => employee.Update(name!, employee.LastName, employee.Document, employee.Email);
 
             action.Should().Throw<EntityValidationException>()
                 .WithMessage("FirstName should not be empty or null");
@@ -192,7 +172,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         {
             var employee = _fixture.GetValidEmployee();
             Action action =
-                () => employee.Update(employee.FirstName, name!, employee.Document, employee.Email, "unit.testing");
+                () => employee.Update(employee.FirstName, name!, employee.Document, employee.Email);
 
             action.Should().Throw<EntityValidationException>()
                 .WithMessage("LastName should not be empty or null");
@@ -204,7 +184,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         {
             var employee = _fixture.GetValidEmployee();
 
-            Action action =() => employee.Update(employee.FirstName, employee.LastName, "", employee.Email, "unit.testing");
+            Action action =() => employee.Update(employee.FirstName, employee.LastName, "", employee.Email);
 
             action.Should()
                 .Throw<EntityValidationException>()
@@ -223,7 +203,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
         {
             var employee = _fixture.GetValidEmployee();
             Action action =
-                () => employee.Update(employee.FirstName, employee.LastName, employee.Document, email!, "unit.testing");
+                () => employee.Update(employee.FirstName, employee.LastName, employee.Document, email!);
 
             action.Should().Throw<EntityValidationException>()
                 .WithMessage("Email should be a valid email");
@@ -236,7 +216,7 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             var employee = _fixture.GetValidEmployee();
             var historicPosition = _fixture.GetValidHistoricPosition();
 
-            employee.AddHistoricPosition(historicPosition, "unit.testing");
+            employee.AddHistoricPosition(historicPosition);
 
             employee.HistoricPositions.Should().HaveCount(1);
             employee.HistoricPositions.Should().Contain(historicPosition);
@@ -250,8 +230,8 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             var historicPosition1 = _fixture.GetValidHistoricPosition();
             var historicPosition2 = _fixture.GetValidHistoricPosition();
 
-            employee.AddHistoricPosition(historicPosition1, "unit.testing");
-            employee.AddHistoricPosition(historicPosition2, "unit.testing");
+            employee.AddHistoricPosition(historicPosition1);
+            employee.AddHistoricPosition(historicPosition2);
 
             employee.HistoricPositions.Should().HaveCount(2);
             employee.HistoricPositions.Should().Contain(historicPosition1);
@@ -299,27 +279,12 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Employee
             employee.HistoricPositions.Should().HaveCount(0);
         }
 
-        [Fact(DisplayName = "LoadCustomerData() should load data of the customer related with employee")]
-        [Trait("Domain", "Entities / Employee")]
-        public void CustomerLoad()
-        {
-            var customer = _fixture.GetValidCustomer();
-            var employee = _fixture.GetValidEmployee(customer.Id);
-
-            employee.LoadCustomerData(new CustomerData(customer.Id, customer.Name));
-
-            employee.CustomerData.Should().NotBeNull();
-            employee.CustomerData!.Id.Should().Be(customer.Id);
-            employee.CustomerData.Name.Should().Be(customer.Name);
-        }
-
         [Fact(DisplayName = "LoadDepartmentData() should load data of the department related with employee")]
         [Trait("Domain", "Entities / Employee")]
         public void DepartmentLoad()
         {
-            var customer = _fixture.GetValidCustomer();
-            var department = _fixture.GetValidDepartment(customer.Id);
-            var employee = _fixture.GetValidEmployee(customer.Id, department.Id);
+            var department = _fixture.GetValidDepartment();
+            var employee = _fixture.GetValidEmployee(department.Id);
 
             employee.LoadDepartmentData(new DepartmentData(department.Id, department.Name));
 

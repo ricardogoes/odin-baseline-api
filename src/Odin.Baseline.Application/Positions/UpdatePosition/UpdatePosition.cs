@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Positions.Common;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
@@ -29,7 +28,7 @@ namespace Odin.Baseline.Application.Positions.UpdatePosition
             }
             
             var position = await _repository.FindByIdAsync(input.Id, cancellationToken);
-            position.Update(input.Name, input.CustomerId, input.BaseSalary, input.LoggedUsername);
+            position.Update(input.Name, input.BaseSalary);
 
             var positionUpdated = await _repository.UpdateAsync(position, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);

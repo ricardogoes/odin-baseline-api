@@ -17,10 +17,9 @@ namespace Odin.Baseline.UnitTests.Domain.Entities.Position
         public decimal GetValidBaseSalary()
             => 10_000;
 
-        public  DomainEntity.Position GetValidPosition(Guid? customerId = null)
+        public  DomainEntity.Position GetValidPosition()
         {
-            var position = new DomainEntity.Position(customerId ?? Guid.NewGuid(), GetValidPositionName(), GetValidBaseSalary());
-            position.Create("unit.testing");
+            var position = new DomainEntity.Position(GetValidPositionName(), GetValidBaseSalary());
 
             return position;
         }

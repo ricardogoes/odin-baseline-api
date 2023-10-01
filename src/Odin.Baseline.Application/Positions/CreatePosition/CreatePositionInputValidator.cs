@@ -7,11 +7,7 @@ namespace Odin.Baseline.Application.Positions.CreatePosition
     {
         public CreatePositionInputValidator()
         {
-            RuleFor(x => x.CustomerId).NotEmpty();
-
             RuleFor(x => x.Name).NotEmpty();
-            
-            RuleFor(x => x.LoggedUsername).NotEmpty();
         }
     }
 }

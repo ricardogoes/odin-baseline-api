@@ -16,27 +16,25 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
         public string GetValidName()
             => Faker.Commerce.Department();
 
-        public DomainEntity.Position GetValidPosition(Guid? customerId = null)
+        public DomainEntity.Position GetValidPosition()
         {
-            var position = new DomainEntity.Position(customerId ?? Guid.NewGuid(), GetValidName(), 10_000, isActive: true);
-            position.Create("unit.testing");
-
+            var position = new DomainEntity.Position(GetValidName(), 10_000, isActive: true);
             return position;
         }
 
-        public PositionModel GetValidPositionModel(Guid? customerId = null)
+        public PositionModel GetValidPositionModel()
         {
             return new PositionModel
             (
-                id: Guid.NewGuid(),
-                customerId: customerId ?? Guid.NewGuid(),
+                id: Guid.NewGuid(),                
                 name: GetValidName(),
                 baseSalary: 10_000,
                 isActive: true,
                 createdAt: DateTime.Now,
                 createdBy: "unit.test",
                 lastUpdatedAt: DateTime.Now,
-                lastUpdatedBy: "unit.test"
+                lastUpdatedBy: "unit.test",
+                tenantId: TenantId
             );
         }
 
@@ -44,14 +42,10 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Repositories.Position
             => Enumerable.Range(1, length)
                 .Select(_ => GetValidPosition()).ToList();
 
-        public List<PositionModel> GetValidPositionsModelList(List<Guid> customersIds, int length = 10)
+        public List<PositionModel> GetValidPositionsModelList(int length = 10)
         {
             var positions = new List<PositionModel>();
-            customersIds.ForEach(customerId =>
-            {
-                positions.AddRange(Enumerable.Range(1, length).Select(_ => GetValidPositionModel(customerId)).ToList());
-            });
-
+            positions.AddRange(Enumerable.Range(1, length).Select(_ => GetValidPositionModel()).ToList());
             return positions;
         }
     }

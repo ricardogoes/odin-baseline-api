@@ -1,8 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Employees.Common;
 using Odin.Baseline.Domain.CustomExceptions;
-using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Interfaces.Repositories;
 using Odin.Baseline.Domain.ValueObjects;
 
@@ -32,7 +30,7 @@ namespace Odin.Baseline.Application.Employees.ChangeAddressEmployee
             var employee = await _repository.FindByIdAsync(input.EmployeeId, cancellationToken);
             var address = new Address(input.StreetName, input.StreetNumber, input.Complement, input.Neighborhood, input.ZipCode, input.City, input.State);
 
-            employee.ChangeAddress(address, input.LoggedUsername);
+            employee.ChangeAddress(address);
 
             var employeeUpdated = await _repository.UpdateAsync(employee, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);

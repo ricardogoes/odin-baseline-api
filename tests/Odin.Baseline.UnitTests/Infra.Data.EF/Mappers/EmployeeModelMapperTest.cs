@@ -18,7 +18,7 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         public void MapEmployeeToEmployeeModel()
         {
             var employee = _fixture.GetValidEmployee();
-            var model = employee.ToEmployeeModel();
+            var model = employee.ToEmployeeModel(Guid.NewGuid());
 
             model.Should().NotBeNull();
             model.Id.Should().Be(employee.Id);
@@ -27,10 +27,6 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             model.Document.Should().Be(employee.Document);
             model.Email.Should().Be(employee.Email);
             model.IsActive.Should().Be(employee.IsActive);
-            model.CreatedAt.Should().Be(employee.CreatedAt);
-            model.CreatedBy.Should().Be(employee.CreatedBy);
-            model.LastUpdatedAt.Should().Be(employee.LastUpdatedAt);
-            model.LastUpdatedBy.Should().Be(employee.LastUpdatedBy);
 
             model.StreetName.Should().BeNull();
             model.StreetNumber.Should().BeNull();
@@ -47,9 +43,9 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
         {
             var employee = _fixture.GetValidEmployee();
             var address = _fixture.GetValidAddress();
-            employee.ChangeAddress(address, "unit.testing");
+            employee.ChangeAddress(address);
 
-            var model = employee.ToEmployeeModel();
+            var model = employee.ToEmployeeModel(Guid.NewGuid());
 
             model.Should().NotBeNull();
             model.Id.Should().Be(employee.Id);
@@ -58,10 +54,6 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             model.Document.Should().Be(employee.Document);
             model.Email.Should().Be(employee.Email);
             model.IsActive.Should().Be(employee.IsActive);
-            model.CreatedAt.Should().Be(employee.CreatedAt);
-            model.CreatedBy.Should().Be(employee.CreatedBy);
-            model.LastUpdatedAt.Should().Be(employee.LastUpdatedAt);
-            model.LastUpdatedBy.Should().Be(employee.LastUpdatedBy);
 
             model.StreetName.Should().Be(employee.Address!.StreetName);
             model.StreetNumber.Should().Be(employee.Address.StreetNumber);
@@ -79,14 +71,14 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             var address = _fixture.GetValidAddress();
 
             var employee1 = _fixture.GetValidEmployee();            
-            employee1.ChangeAddress(address, "unit.testing");
+            employee1.ChangeAddress(address);
 
             var employee2 = _fixture.GetValidEmployee();
-            employee2.ChangeAddress(address, "unit.testing");
+            employee2.ChangeAddress(address);
 
             var employees = new List<Employee> { employee1, employee2 };
 
-            var model = employees.ToEmployeeModel();
+            var model = employees.ToEmployeeModel(Guid.NewGuid());
 
             model.Should().NotBeNull();
             foreach (var employee in model)
@@ -98,10 +90,6 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 employee.Document.Should().Be(employeeToCompare.Document);
                 employee.Email.Should().Be(employeeToCompare.Email);
                 employee.IsActive.Should().Be(employeeToCompare.IsActive);
-                employee.CreatedAt.Should().Be(employeeToCompare.CreatedAt);
-                employee.CreatedBy.Should().Be(employeeToCompare.CreatedBy);
-                employee.LastUpdatedAt.Should().Be(employeeToCompare.LastUpdatedAt);
-                employee.LastUpdatedBy.Should().Be(employeeToCompare.LastUpdatedBy);
 
                 employee.StreetName.Should().Be(employeeToCompare.Address!.StreetName);
                 employee.StreetNumber.Should().Be(employeeToCompare.Address.StreetNumber);
@@ -112,12 +100,6 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 employee.State.Should().Be(employeeToCompare.Address.State);
             }
         }
-
-
-
-
-
-
 
         [Fact(DisplayName = "ToEmployee() should map an EmployeeModel to Employee with address")]
         [Trait("Infra.Data.EF", "Mappers / EmployeeModelMapper")]
@@ -133,10 +115,6 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             employee.Document.Should().Be(model.Document);
             employee.Email.Should().Be(model.Email);
             employee.IsActive.Should().Be(model.IsActive);
-            employee.CreatedAt.Should().Be(model.CreatedAt);
-            employee.CreatedBy.Should().Be(model.CreatedBy);
-            employee.LastUpdatedAt.Should().Be(model.LastUpdatedAt);
-            employee.LastUpdatedBy.Should().Be(model.LastUpdatedBy);
 
             employee.Address.Should().NotBeNull();
             employee.Address!.StreetName.Should().Be(employee.Address.StreetName);
@@ -163,10 +141,6 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
             employee.Email.Should().Be(model.Email);
             employee.Document.Should().Be(model.Document);
             employee.IsActive.Should().Be(model.IsActive);
-            employee.CreatedAt.Should().Be(model.CreatedAt);
-            employee.CreatedBy.Should().Be(model.CreatedBy);
-            employee.LastUpdatedAt.Should().Be(model.LastUpdatedAt);
-            employee.LastUpdatedBy.Should().Be(model.LastUpdatedBy);
 
             employee.Address.Should().BeNull();
         }
@@ -194,10 +168,6 @@ namespace Odin.Baseline.UnitTests.Infra.Data.EF.Mappers
                 employee.Email.Should().Be(employeeToCompare.Email);
                 employee.Document.Should().Be(employeeToCompare.Document);
                 employee.IsActive.Should().Be(employeeToCompare.IsActive);
-                employee.CreatedAt.Should().Be(employeeToCompare.CreatedAt);
-                employee.CreatedBy.Should().Be(employeeToCompare.CreatedBy);
-                employee.LastUpdatedAt.Should().Be(employeeToCompare.LastUpdatedAt);
-                employee.LastUpdatedBy.Should().Be(employeeToCompare.LastUpdatedBy);
 
                 employee.Address.Should().NotBeNull();
                 employee.Address!.StreetName.Should().Be(employeeToCompare.StreetName);

@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using Odin.Baseline.Application.Positions.Common;
 using Odin.Baseline.Domain.CustomExceptions;
 using Odin.Baseline.Domain.Entities;
 using Odin.Baseline.Domain.Enums;
@@ -34,10 +33,10 @@ namespace Odin.Baseline.Application.Positions.ChangeStatusPosition
             switch (input.Action)
             {
                 case ChangeStatusAction.ACTIVATE:
-                    position.Activate(input.LoggedUsername);
+                    position.Activate();
                     break;
                 case ChangeStatusAction.DEACTIVATE:
-                    position.Deactivate(input.LoggedUsername);
+                    position.Deactivate();
                     break;
             }
 
