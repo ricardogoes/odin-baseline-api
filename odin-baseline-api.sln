@@ -22,6 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "env", "env", "{9B515AE9-945E-4D5B-86F3-7EA3B750B060}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yaml = docker-compose.yaml
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Odin.Baseline.Infra.Messaging", "src\Odin.Baseline.Infra.Messaging\Odin.Baseline.Infra.Messaging.csproj", "{1D3CA092-909F-4122-B019-229BD928CB0A}"
