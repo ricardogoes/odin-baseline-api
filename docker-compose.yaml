@@ -8,8 +8,8 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: tIiefwntHebhEXI78twf
+      POSTGRES_USER: ${DB_ROOT_USERNAME}
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
       - ./.docker/postgres-data:/var/lib/postgresql/data
       - ./.docker/db/create-databases.sql:/docker-entrypoint-initdb.d/create-databases.sql
